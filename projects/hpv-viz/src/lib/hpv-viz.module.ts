@@ -9,13 +9,14 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 
 // SERVICES
 import { HpvDataService } from './services/hpv-data-service';
+import { VcfParserService } from '../../../vcf-parser/src/lib/vcf-parser.service';
 
 // DIRECTIVES
 import { FileDropDirective } from './directives/file-drop.directive';
 
 const CHILD_COMPONENTS = [ TypeGraphComponent, FileUploadComponent ]
 
-const SERVICES = [ HpvDataService ]
+const SERVICES = [ HpvDataService, VcfParserService ]
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ const SERVICES = [ HpvDataService ]
     BrowserAnimationsModule
   ],
   declarations: [ HpvVizComponent, FileDropDirective, CHILD_COMPONENTS ],
-  exports: [HpvVizComponent]
+  exports: [HpvVizComponent],
+  providers: [ SERVICES ]
 })
 export class HpvVizModule { }
