@@ -1,0 +1,9 @@
+<div class="box fill-width fill-height vert-align-parent"
+     fileDrop
+     (filesDropped)="handleDrop($event)"
+     (filesHovered)="dropzoneState($event)"
+     [ngClass]="{'active': dropzoneActive}">
+  <div class="vert-align-child text-align-center">
+    <h2>Drop HPV files</h2>
+  </div>
+</div>

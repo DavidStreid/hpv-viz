@@ -5,11 +5,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // COMPONENTS
 import { HpvVizComponent } from './hpv-viz.component';
 import { TypeGraphComponent } from './type-graph/type-graph.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 // SERVICES
 import { HpvDataService } from './services/hpv-data-service';
 
-const CHILD_COMPONENTS = [ TypeGraphComponent ]
+// DIRECTIVES
+import { FileDropDirective } from './directives/file-drop.directive';
+
+const CHILD_COMPONENTS = [ TypeGraphComponent, FileUploadComponent ]
 
 const SERVICES = [ HpvDataService ]
 
@@ -18,7 +22,7 @@ const SERVICES = [ HpvDataService ]
     NgxChartsModule,
     BrowserAnimationsModule
   ],
-  declarations: [ HpvVizComponent, CHILD_COMPONENTS ],
+  declarations: [ HpvVizComponent, FileDropDirective, CHILD_COMPONENTS ],
   exports: [HpvVizComponent]
 })
 export class HpvVizModule { }

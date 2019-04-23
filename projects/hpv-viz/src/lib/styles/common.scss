@@ -1,0 +1,28 @@
+.fill-width {
+  width: 100%;
+}
+
+.fill-height {
+  height: 100%;
+}
+
+.heightPer-80 {
+  height: 80%;
+}
+
+.heightPer-20 {
+  height: 20%;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+/* Complex Styling */
+.vert-align-parent {
+  display: table;
+}
+.vert-align-child {
+  display: table-cell;
+  vertical-align: middle;
+}

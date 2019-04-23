@@ -1,0 +1,17 @@
+@import '../styles/common.scss';
+
+.active {
+  border-color: #039be5 !important;
+  background-color: #cce2ff !important;
+  color: #ffffff !important;
+}
+
+.box {
+  border-color: #cce2ff;
+  border-style: solid;
+  border-radius: 1px;
+  background-color: #ffffff;
+  color: #039be5;
+  margin: 20px;
+  border-radius: 15px;
+}

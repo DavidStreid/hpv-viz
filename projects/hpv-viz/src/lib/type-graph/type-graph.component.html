@@ -1,12 +1,23 @@
-<ngx-charts-bubble-chart
-  [view]="view"
-  [scheme]="colorScheme"
-  [results]="hpvPatientData"
-  [legend]="showLegend"
-  [xAxis]="showXAxis"
-  [yAxis]="showYAxis"
-  [showXAxisLabel]="showXAxisLabel"
-  [showYAxisLabel]="showYAxisLabel"
-  [xAxisLabel]="xAxisLabel"
-  [yAxisLabel]="yAxisLabel">
-</ngx-charts-bubble-chart>
+<div class="fill-width fill-height">
+  <div class="fill-width heightPer-80">
+    <ngx-charts-bubble-chart
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="hpvPatientData"
+      [legend]="showLegend"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxisLabel]="yAxisLabel">
+    </ngx-charts-bubble-chart>
+  </div>
+
+  <div class="fill-width heightPer-20">
+    <app-file-upload></app-file-upload>
+  </div>
+</div>
+
+
+
