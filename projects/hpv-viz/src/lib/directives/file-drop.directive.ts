@@ -17,15 +17,15 @@ export class FileDropDirective {
   onDrop($event) {
     $event.preventDefault();            // prevent re-direct to localUrl of that file
 
-    let transfer = $event.dataTransfer;
+    const transfer = $event.dataTransfer;
     this.filesDropped.emit(transfer.files);
     this.filesHovered.emit(false);      // On drop, user is no longer hovering
   }
 
   @HostListener('dragover', ['$event'])
   onDragOver($event) {
-    event.preventDefault();
     this.filesHovered.emit(true);
+    $event.preventDefault();
   }
 
   @HostListener('dragleave', ['$event'])

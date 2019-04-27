@@ -1,0 +1,42 @@
+import { P1_MOCK } from './vcf-files/mock-vcfs';
+
+export const TEST_FILES: object = {
+  'P1_MOCK': {
+    contents: P1_MOCK,
+    datapoint: {
+      name: 'P1',
+      series: [
+        {
+          name: new Date('2011-02-13T10:38:12'),
+          y: 'C1',
+          x: new Date('2011-02-13T10:38:12'),
+          r: 1
+        },
+        {
+          name: new Date('2011-02-13T10:38:12'),
+          y: 'C2',
+          x: new Date('2011-02-13T10:38:12'),
+          r: 1
+        },
+        {
+          name: new Date('2011-02-13T10:38:12'),
+          y: 'C3',
+          x: new Date('2011-02-13T10:38:12'),
+          r: 1
+        },
+        {
+          name: new Date('2011-02-13T10:38:12'),
+          y: 'C4',
+          x: new Date('2011-02-13T10:38:12'),
+          r: 1
+        },
+        {
+          name: new Date('2011-02-13T10:38:12'),
+          y: 'C5',
+          x: new Date('2011-02-13T10:38:12'),
+          r: 1
+        }
+      ]
+    }
+  }
+}

@@ -8,18 +8,60 @@ import { HpvDataService } from '../services/hpv-data-service';
   providers:    [ HpvDataService ]
 })
 export class TypeGraphComponent implements OnInit {
-
   public hpvPatientData: Object[];
-
-  getPatientData(): Object[] {
-    return this.hpvDataService.getHpvData();
-  }
 
   constructor(private hpvDataService: HpvDataService) {
     this.hpvPatientData = this.getPatientData();
   }
+  ngOnInit() {}
 
-  ngOnInit() {
+  // TODO - Add mock data
+  getPatientData(): Object[] {
+    // Returns an empty array initially
+    return [];
+  }
+
+  isValidDataPoint(dataPoint: any): boolean {
+    // Verify type
+    if( dataPoint === null || typeof dataPoint !== 'object' ) {
+      return false;
+    }
+
+    // Verify fields are present
+    if( dataPoint[ 'name' ] === null ){
+      return false;
+    }
+    if( dataPoint[ 'series' ] === null || dataPoint[ 'series' ].length === 0 ) {
+      return false;
+    }
+
+    // Verify datapoint has a non-empty series
+    for( var point of dataPoint[ 'series' ] ){
+      var fields: string[] = [ 'name', 'x', 'y', 'r' ];
+
+      for( let f of fields ){
+        if( point[ f ] === undefined ){
+          return false;
+        }
+      }
+    }
+
+    // Passes all checks
+    return true;
+  }
+
+  /**
+   * Handler for uplaod event, which should be formatted as a datapoint
+   */
+  addVcfUpload($event: Object): void {
+    if( !this.isValidDataPoint( $event ) ){
+      console.error( 'Invalid upload' );
+      return;
+    }
+
+    const hpvPatientData = this.hpvPatientData.slice(0);
+    hpvPatientData.push($event);
+    this.hpvPatientData = hpvPatientData;
   }
 
   view: any[] = [750, 400];
