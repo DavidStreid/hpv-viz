@@ -50,7 +50,8 @@ export class VcfParserService {
 
     // Parse through headers
     function isNotHeaderLine(line) {
-      return !line.startsWith(HEADER_START) && !line.startsWith(COLUMN_START);
+      const trimmedLine = line.trim();  // Remove any whitespace
+      return !trimmedLine.startsWith(HEADER_START) && !trimmedLine.startsWith(COLUMN_START);
     }
     const data = lines.filter(isNotHeaderLine);
 
