@@ -5,6 +5,7 @@ export const TEST_FILES: object = {
     contents: P1_MOCK,
     datapoint: {
       name: 'P1',
+      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
       series: [
         {
           name: new Date('2011-02-13T10:38:12'),

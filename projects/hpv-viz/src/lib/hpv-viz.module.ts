@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HpvVizComponent } from './hpv-viz.component';
 import { TypeGraphComponent } from './type-graph/type-graph.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { SelectBoxComponent } from './common/select-box/select-box.component';
 
 // SERVICES
 import { HpvDataService } from './services/hpv-data-service';
@@ -14,9 +15,8 @@ import { VcfParserService } from '../../../vcf-parser/src/lib/vcf-parser.service
 // DIRECTIVES
 import { FileDropDirective } from './directives/file-drop.directive';
 
-const CHILD_COMPONENTS = [ TypeGraphComponent, FileUploadComponent ]
-
-const SERVICES = [ HpvDataService, VcfParserService ]
+const CHILD_COMPONENTS = [ TypeGraphComponent, FileUploadComponent, SelectBoxComponent ];
+const SERVICES = [ HpvDataService, VcfParserService ];
 
 @NgModule({
   imports: [

@@ -7,11 +7,26 @@
       [legend]="showLegend"
       [xAxis]="showXAxis"
       [yAxis]="showYAxis"
+      [xAxisTicks]="xAxisTicks"
       [showXAxisLabel]="showXAxisLabel"
       [showYAxisLabel]="showYAxisLabel"
       [xAxisLabel]="xAxisLabel"
-      [yAxisLabel]="yAxisLabel">
+      [yAxisLabel]="yAxisLabel"
+      [xAxisTickFormatting]="xAxisTickFormater"
+      [xScaleMin]="xScaleMin"
+      [xScaleMax]="xScaleMax">
     </ngx-charts-bubble-chart>
+  </div>
+
+  <div class="inline-block" *ngFor="let ds of dataSelectors | keyvalue">
+    <div *ngIf="ds.value['enabled']">
+      <div class="inline-block margin-right-10px"><p>{{ ds.value['label'] }}</p></div>
+      <div class="inline-block">
+        <select-box (toggle)="handleToggle(ds.value['selector'])"
+                    [selected]="ds.value['selected']">
+        </select-box>
+      </div>
+    </div>
   </div>
 
   <div class="fill-width heightPer-20">
