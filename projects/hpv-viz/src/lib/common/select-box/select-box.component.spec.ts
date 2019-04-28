@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By }                               from '@angular/platform-browser';
 import { SelectBoxComponent }               from './select-box.component';
-import { DebugElement }    from '@angular/core';
+import { DebugElement, SimpleChange }       from '@angular/core';
 
 describe('SelectBoxComponent', () => {
   let component: SelectBoxComponent;
@@ -29,26 +29,20 @@ describe('SelectBoxComponent', () => {
     var selectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-check-square-o'));
     expect( notSelectedClass ).not.toBeNull();
     expect( selectedClass ).toBeNull();
-    const firstChange = {
-                          selected: {
-                            currentValue: true,
-                            firstChange:  true
-                          }
-                        };
+
+    const firstChange = new SimpleChange(false, true, true);
+    component.ngOnChanges({selected: firstChange});
     fixture.detectChanges();
+
     notSelectedClass = fixture.debugElement.query(By.css('.fa-square-o'));
     selectedClass = fixture.debugElement.query(By.css('.fa-check-square-o'));
     expect( notSelectedClass ).not.toBeNull();
     expect( selectedClass ).toBeNull();
 
-    const userChange = {
-                          selected: {
-                            currentValue: true,
-                            firstChange:  false
-                          }
-                        };
-    component.ngOnChanges(userChange);
+    const userChange = new SimpleChange(false, true, false);
+    component.ngOnChanges({selected: userChange});
     fixture.detectChanges();
+
     notSelectedClass = fixture.debugElement.query(By.css('.fa-square-o'));
     selectedClass = fixture.debugElement.query(By.css('.fa-check-square-o'));
     expect( notSelectedClass ).toBeNull();
