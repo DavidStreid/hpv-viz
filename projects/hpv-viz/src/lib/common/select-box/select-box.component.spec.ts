@@ -24,15 +24,31 @@ describe('SelectBoxComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('Toggle select changes internal state', () => {
+  it('On Changes triggers select box's internal & external state to toggle', () => {
     var notSelectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-square-o'));
     var selectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-check-square-o'));
     expect( notSelectedClass ).not.toBeNull();
     expect( selectedClass ).toBeNull();
-
-    component.toggleSelect();
+    const firstChange = {
+                          selected: {
+                            currentValue: true,
+                            firstChange:  true
+                          }
+                        };
     fixture.detectChanges();
+    notSelectedClass = fixture.debugElement.query(By.css('.fa-square-o'));
+    selectedClass = fixture.debugElement.query(By.css('.fa-check-square-o'));
+    expect( notSelectedClass ).not.toBeNull();
+    expect( selectedClass ).toBeNull();
 
+    const userChange = {
+                          selected: {
+                            currentValue: true,
+                            firstChange:  false
+                          }
+                        };
+    component.ngOnChanges(userChange);
+    fixture.detectChanges();
     notSelectedClass = fixture.debugElement.query(By.css('.fa-square-o'));
     selectedClass = fixture.debugElement.query(By.css('.fa-check-square-o'));
     expect( notSelectedClass ).toBeNull();
