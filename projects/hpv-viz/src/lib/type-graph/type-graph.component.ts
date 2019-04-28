@@ -57,7 +57,7 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Initializes the currently sle
+   * Returns the selected time option from the global map
    */
   getSelectedTimeOption(): DateOpt {
     for( var key in this.dataSelectors ){
@@ -73,7 +73,7 @@ export class TypeGraphComponent implements OnInit {
   // Handles event emitted by select box
   public handleToggle(toggleOpt: DateOpt): void {
     const currOpt = this.getSelectedTimeOption();
-    if( toggleOpt === currOpt ){ return; };
+    if( toggleOpt === currOpt ) return;
 
     this.changeTimeSelector(toggleOpt, currOpt);
     this.hpvPatientData = this.reformatArray();

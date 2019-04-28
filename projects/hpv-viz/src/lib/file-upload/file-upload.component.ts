@@ -46,6 +46,7 @@ export class FileUploadComponent implements OnInit {
     return 'NO_NAME'
   }
 
+  // TODO - this should be done in the type-graph
   private formatForVisualization(patient: string, date: Date, hpvTypes: Set<string>){
     const name = patient;
     const series = [];
@@ -60,7 +61,7 @@ export class FileUploadComponent implements OnInit {
       series.push(o1);
     });
 
-    return { name, series };
+    return { name, series, date };
   }
 
   private readFile(file: File) {
