@@ -46,24 +46,6 @@ export class FileUploadComponent implements OnInit {
     return 'NO_NAME'
   }
 
-  // TODO - this should be done in the type-graph
-  private formatForVisualization(patient: string, date: Date, hpvTypes: Set<string>){
-    const name = patient;
-    const series = [];
-
-    hpvTypes.forEach( function(type) {
-      const o1 = {
-        name: date,
-        y: type,
-        x: date,
-        r: 1
-      }
-      series.push(o1);
-    });
-
-    return { name, series, date };
-  }
-
   private readFile(file: File) {
       const name = file['name'] || 'NO_NAME';
       const patient = this.getPatientFromFileName( name );
@@ -72,8 +54,7 @@ export class FileUploadComponent implements OnInit {
       reader.onload = () => {
         const hpvTypes = this.getHpvTypes(reader.result);
         const date = this.vcfParserService.extractDate(reader.result);
-        const dataPoint = this.formatForVisualization( patient, date, hpvTypes );
-        this.vcfUpload.emit( dataPoint );
+        this.vcfUpload.emit( {patient, date, hpvTypes});
       };
       var contents = reader.readAsText(file);
   }

@@ -9,10 +9,13 @@ import { DateOpt } from './graph-options.enums';
   providers:    [ HpvDataService ]
 })
 export class TypeGraphComponent implements OnInit {
-  public hpvPatientData: Object[];
+  public hpvPatientData: Object[];    // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
+  public results: Object[];           // MUTABLE - Modified or replaced on formatting changes and appending of data
+
+  // Map that tracks what date selectors to show
   public dataSelectors: Object = {
-    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false,  enabled: false },
-    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false,  enabled: false },
+    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false,  enabled: true },
+    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false,  enabled: true },
     [DateOpt.DAY]:      { label: 'Day',   selector: DateOpt.DAY,      selected: true,   enabled: true },
     [DateOpt.MONTH]:    { label: 'Month', selector: DateOpt.MONTH,    selected: false,  enabled: true },
     [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false,  enabled: true }
@@ -32,8 +35,9 @@ export class TypeGraphComponent implements OnInit {
   xScaleMax = this.getXScaleMax();
   xAxisTicks = [];
   xAxisTickFormater = function( date: Date ) {
+    return date.getFullYear();
     // TOOD
-    return date;
+    // return date;
     /*
     const year  = date.getFullYear();
     const month = this.showMonth() ? `${date.getMonth()+1}/` : '';
@@ -52,8 +56,13 @@ export class TypeGraphComponent implements OnInit {
   ngOnInit() {}
 
   init(): void {
+    this.hpvPatientData = [];
+    this.results = [];
+    /*
     this.hpvPatientData = this.hpvDataService.getHpvData();
+    this.results = this.hpvPatientData.slice(0);
     this.calculateTicks();
+    */
   }
 
   /**
@@ -74,10 +83,15 @@ export class TypeGraphComponent implements OnInit {
   public handleToggle(toggleOpt: DateOpt): void {
     const currOpt = this.getSelectedTimeOption();
     if( toggleOpt === currOpt ) return;
-
     this.changeTimeSelector(toggleOpt, currOpt);
-    this.hpvPatientData = this.reformatArray();
+    this.handlePatientDataUpdates();
+  }
+
+  // Called on data being added or needing to reformat
+  private handlePatientDataUpdates(): void {
+    this.results = this.reformatArray();
     this.calculateTicks();
+    this.aggregateDataPoints();
   }
 
   /**
@@ -92,14 +106,39 @@ export class TypeGraphComponent implements OnInit {
    * Handler for uplaod event, which should be formatted as a datapoint
    */
   public addVcfUpload($event: Object): void {
-    if( !this.isValidDataPoint( $event ) ){
+    const name = $event[ 'patient' ] || '';
+    const date = $event[ 'date' ] || null;
+    const hpvTypes = $event[ 'hpvTypes' ] || new Set();
+
+    const dataPoint = this.formatForVisualization( name, date, hpvTypes );
+
+    if( !this.isValidDataPoint( dataPoint) ){
       console.error( 'Invalid upload' );
       return;
     }
 
+    // Clone and add uploaded datapoint
     const hpvPatientData = this.hpvPatientData.slice(0);
-    hpvPatientData.push($event);
+    hpvPatientData.push(dataPoint);
     this.hpvPatientData = hpvPatientData;
+
+    this.handlePatientDataUpdates();
+  }
+
+  private formatForVisualization(name: string, date: Date, hpvTypes: Set<string>){
+    const series = [];
+
+    hpvTypes.forEach( function(type) {
+      const o1 = {
+        name: date,
+        y: type,
+        x: date,
+        r: 1
+      }
+      series.push(o1);
+    });
+
+    return { name, series, date };
   }
 
   /**
@@ -170,7 +209,7 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   *  Reformats hpvPatientData w/ new date values
+   *  Reformats hpvPatientData w/ new date values using hpvPatientData
    */
   private reformatArray(): Object[] {
     const dateFormatter = function( entry: Object ) {
@@ -188,6 +227,83 @@ export class TypeGraphComponent implements OnInit {
 
     const newData = this.hpvPatientData.map(dateFormatter, this)
     return newData;
+  }
+
+  /**
+   * Aggregates data points at the same tick and places into result array
+   *  - Should go after all formatting options
+   *  - Should go after new data being uploaded
+   */
+  private aggregateDataPoints(): void {
+    this.results.sort( (p1,p2)=> {
+      return p1['date'] - p2['date'];
+    });
+    const dateMap: Object = {}
+
+    for( var dp of this.results ) {
+      const series = dp['series'] || [];
+      if( series.length === 0 ) continue;
+      const formattedDate: Date = series[0]['x'];
+      const key: number = formattedDate.getTime()
+
+      if( key in dateMap ){
+        dateMap[ key ].push( dp );
+      } else {
+        dateMap[ key ] = [ dp ];
+      }
+    }
+
+    const newResults: Object[] = [];
+    for( var date in dateMap ){
+      newResults.push( this.combineEntries( parseInt(date), dateMap[ date ] ) );
+    }
+
+    this.results = newResults;
+  }
+
+  /**
+   * Combines the HPV entries for multiple data points into one
+   *    [ { hpv1: 1, hpv2: 1}, { hpv1: 1, hpv3: 1 }, ... ] => { hpv1: 2, hpv2: 1, hpv3: 1 }
+   */
+  private combineEntries( dateVal: number, entries: Object[] ): Object {
+    const names: string[] = [];
+    const hpvMap = {};
+
+    // Aggregate all hpv types recorded
+    for( var e of entries ){
+      const n = e[ 'name' ];
+      names.push( n );
+
+      const series = e[ 'series' ] || [];
+      for( var dp of series ){
+        const hpv = dp[ 'y' ];
+        if( hpv in hpvMap ){
+          hpvMap[ hpv ] += 1;
+        } else {
+          hpvMap[ hpv ] = 1;
+        }
+      }
+    }
+
+    const name    = names.join('-');
+    const date    = new Date(dateVal);
+    const series  = this.createSeriesFromMap(hpvMap, date);
+
+    return { name, series, date };
+  }
+
+  private createSeriesFromMap(hpvMap: Object, date: Date): Object[] {
+    const series = [];
+    for( var k in hpvMap ){
+      const dp = {
+        name: k,
+        y: k,
+        x: date,
+        r: hpvMap[k]
+      }
+      series.push(dp);
+    }
+    return series;
   }
 
   /**
@@ -232,7 +348,7 @@ export class TypeGraphComponent implements OnInit {
 
   // Calclates floor of the x view in graph. This will be a determined buffer level lower than the earliest date
   getXScaleMin(): Date {
-    if( this.hpvPatientData === undefined || this.hpvPatientData.length === 0 ){ return null; }
+    if( this.results === undefined || this.results.length === 0 ){ return null; }
 
     const xTicks = this.getSortedDates();
     const buffer = this.getBuffer( xTicks );
@@ -245,7 +361,7 @@ export class TypeGraphComponent implements OnInit {
 
   // Calclates ceiling of the x view in graph. This will be a determined buffer level higher than the earliest date
   getXScaleMax(): Date {
-    if( this.hpvPatientData === undefined || this.hpvPatientData.length === 0 ){ return null; }
+    if( this.results === undefined || this.results.length === 0 ){ return null; }
 
     const xTicks = this.getSortedDates();
     const buffer = this.getBuffer( xTicks );
@@ -280,7 +396,7 @@ export class TypeGraphComponent implements OnInit {
      * they should all be the same. If the series is for some reason empty, we'll take
      * the date value of the object that determines the x value of each point
      */
-    const dateValues = this.hpvPatientData.map( (d) => {
+    const dateValues = this.results.map( (d) => {
       return d['series'][0]['x'];
     });
     dateValues.sort((a,b)=> a-b)
