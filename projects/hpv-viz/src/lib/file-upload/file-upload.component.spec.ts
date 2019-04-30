@@ -42,7 +42,7 @@ describe('FileUploadComponent', () => {
     for( var fileName in TEST_FILES ) {
       const f = new File([""], "filename.txt");
       const contents = TEST_FILES[ fileName ]['contents'];
-      const datapoint = TEST_FILES[ fileName ]['datapoint'];
+      const event = TEST_FILES[ fileName ]['event'];
       const blob = new Blob([contents], {type : 'application/json'});
       blob['name'] = fileName;
       const file = <File>blob;
@@ -55,7 +55,7 @@ describe('FileUploadComponent', () => {
       };
 
       component.vcfUpload.subscribe($event => {
-        expect($event).toEqual(datapoint);
+        expect($event).toEqual(event);
         done();
       });
       component.handleDrop(fileList);

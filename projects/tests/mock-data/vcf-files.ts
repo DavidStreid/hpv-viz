@@ -3,6 +3,11 @@ import { P1_MOCK } from './vcf-files/mock-vcfs';
 export const TEST_FILES: object = {
   'P1_MOCK': {
     contents: P1_MOCK,
+    event: {
+      name: 'P1',
+      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
+      hpvTypes: new Set(['C1', 'C2', 'C3', 'C4', 'C5']),
+    },
     datapoint: {
       name: 'P1',
       date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),

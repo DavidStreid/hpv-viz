@@ -48,13 +48,13 @@ export class FileUploadComponent implements OnInit {
 
   private readFile(file: File) {
       const name = file['name'] || 'NO_NAME';
-      const patient = this.getPatientFromFileName( name );
+      const name = this.getPatientFromFileName( name );
       var reader = new FileReader();
 
       reader.onload = () => {
         const hpvTypes = this.getHpvTypes(reader.result);
         const date = this.vcfParserService.extractDate(reader.result);
-        this.vcfUpload.emit( {patient, date, hpvTypes});
+        this.vcfUpload.emit( {name, date, hpvTypes});
       };
       var contents = reader.readAsText(file);
   }
