@@ -159,4 +159,21 @@ describe('TypeGraphComponent', () => {
       expect( actual['series'] ).not.toBeNull():
     }
   });
+
+  it( 'Changing the date selection via handleToggle handler should reset the xAxisFormatter', () => {
+    const date = new Date('Mon Apr 29 2019 21:33:16 GMT-0400');
+
+    // On initialization, the date formatter should go to day
+    var formatter = component.xAxisTickFormater;
+    expect( formatter(date) ).toBe( '29/3/2019' );
+
+    // Toggling to year should change the formatter to only return the year
+    component.handleToggle(DateOpt.YEAR);
+    formatter = component.xAxisTickFormater;
+    expect( formatter(date) ).toBe( '2019' );
+
+    component.handleToggle(DateOpt.DAY);
+    formatter = component.xAxisTickFormater;
+    expect( formatter(date) ).toBe( '29/3/2019' );
+  });
 });

@@ -34,21 +34,7 @@ export class TypeGraphComponent implements OnInit {
   xScaleMin = this.getXScaleMin();
   xScaleMax = this.getXScaleMax();
   xAxisTicks = [];
-  xAxisTickFormater = function( date: Date ) {
-    return date.getFullYear();
-    // TOOD
-    // return date;
-    /*
-    const year  = date.getFullYear();
-    const month = this.showMonth() ? `${date.getMonth()+1}/` : '';
-    const day = this.showDay() ? `${date.getDay()+1}/` : '';
-    const min = this.showMinSec() ? `${date.getMinutes()}:` : '';
-    const sec = this.showMinSec() ? `${date.getSeconds()} ` : '';
-
-    return `${min}${sec}${month}${day}${year}`;
-    // return `${date.getMonth()+1}/${date.getDay()+1}/${}`;
-    */
-  }
+  xAxisTickFormater = this.getTickFormatter();
 
   constructor(private hpvDataService: HpvDataService) {
     this.init();
@@ -66,32 +52,13 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Returns the selected time option from the global map
+   * Handles event emitted by select box
    */
-  getSelectedTimeOption(): DateOpt {
-    for( var key in this.dataSelectors ){
-      const opt = this.dataSelectors[key] || {};
-      if( opt[ 'selected' ] ){
-        return opt['selector'];
-      }
-    }
-    console.error('NO DATE SELECTOR SELECTED');
-    return null;
-  }
-
-  // Handles event emitted by select box
   public handleToggle(toggleOpt: DateOpt): void {
     const currOpt = this.getSelectedTimeOption();
     if( toggleOpt === currOpt ) return;
     this.changeTimeSelector(toggleOpt, currOpt);
     this.handlePatientDataUpdates();
-  }
-
-  // Called on data being added or needing to reformat
-  private handlePatientDataUpdates(): void {
-    this.results = this.reformatArray();
-    this.calculateTicks();
-    this.aggregateDataPoints();
   }
 
   /**
@@ -106,7 +73,7 @@ export class TypeGraphComponent implements OnInit {
    * Handler for uplaod event, which should be formatted as a datapoint
    */
   public addVcfUpload($event: Object): void {
-    const name = $event[ 'patient' ] || '';
+    const name = $event[ 'name' ] || '';
     const date = $event[ 'date' ] || null;
     const hpvTypes = $event[ 'hpvTypes' ] || new Set();
 
@@ -123,6 +90,95 @@ export class TypeGraphComponent implements OnInit {
     this.hpvPatientData = hpvPatientData;
 
     this.handlePatientDataUpdates();
+  }
+
+  /**
+   * Called on data being added or needing to reformat
+   */
+  private handlePatientDataUpdates(): void {
+    this.results = this.reformatArray();
+    this.calculateTicks();
+    this.reAssignTickFormatter()
+    this.aggregateDataPoints();
+  }
+
+  /**
+   * Returns the selected time option from the global map
+   */
+  private getSelectedTimeOption(): DateOpt {
+    for( var key in this.dataSelectors ){
+      const opt = this.dataSelectors[key] || {};
+      if( opt[ 'selected' ] ){
+        return opt['selector'];
+      }
+    }
+    console.error('NO DATE SELECTOR SELECTED');
+    return null;
+  }
+
+  /**
+   * Returns function in closure w/ access to the currently toggled time option.
+   */
+  private getTickFormatter(): Function {
+    const dateOpt: DateOpt = this.getSelectedTimeOption();
+    const formatObject: Object[] = this.getFormatOrder(dateOpt);
+
+    return function (date: Date) {
+      var tick = '';
+      for( var o of formatObject ){
+        for( var f of o[ 'funcs' ] ){
+          tick = `${tick}${date[f]()}${o['delimiter']}`
+        }
+      }
+      return tick;
+    }
+  }
+
+  /**
+   * Re-assigns the xAxistTickFormatter. This must be done b/c ngx-charts evaluates all data-bound inputs only on
+   * initialization
+   *    - NOTE: This function requires a helper function to call it
+   */
+  private reAssignTickFormatter(): void {
+    this.xAxisTickFormater = this.getTickFormatter();
+  }
+
+  /**
+   * Creates a formatter object w/ knowledge of delimiter and funcs to use when creating the dateOpt field of a date
+   *    formatterObject: {
+   *      dateOpt:    specified DateOpt field
+   *      delimiter:  how this date field should be seperated from the date field that comes after it
+   *      funcs:      function properties of Date (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+   *                  that should be called on an input date object to determine the right values to extract
+   *    }
+   */
+  private createFormatObject(dateOpt: DateOpt, delimiter: string, funcs: string[]){
+    return { dateOpt, delimiter, funcs };
+  }
+
+  /**
+   * Returns an array of format objects ordered so that preceding elements in the array should be calculated first
+   *    e.g. On input DateOpt.DAY -> Use the objects for DAY, MONTH, and YEAR to format the date
+   */
+  private getFormatOrder(dateOpt: DateOpt): Object[] {
+    const formatOrder: Object[] = [
+      this.createFormatObject( DateOpt.MIN_SEC,':',['getSeconds', 'getMinutes']),
+      this.createFormatObject( DateOpt.HOUR,' ',['getHours']),
+      this.createFormatObject( DateOpt.DAY,'/',['getDate']),
+      this.createFormatObject( DateOpt.MONTH,'/',['getMonth']),
+      this.createFormatObject( DateOpt.YEAR,'',['getFullYear'])
+    ];
+
+    // Return the slice of objects that should be used for formatting the date
+    const numObjs = formatOrder.length;
+    for( var i = 0; i<numObjs; i++ ){
+      if( formatOrder[i]['dateOpt'] === dateOpt ){
+        return formatOrder.slice(i,numObjs);
+      }
+    }
+
+    // Chooose the last object - should be the date field that can stand alone (E.g. YEAR)
+    return formatOrder.slice(numObjs-1,numObjs);
   }
 
   private formatForVisualization(name: string, date: Date, hpvTypes: Set<string>){
