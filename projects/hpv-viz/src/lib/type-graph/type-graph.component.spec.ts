@@ -156,7 +156,7 @@ describe('TypeGraphComponent', () => {
       expect( actual['name'] ).toBe( expected['name'] );
       expect( actual['date'].toDateString() ).toBe( expected['date'].toDateString() );
       // NOTE - To test the series, comparing by date string isn't going to give the expected equality
-      expect( actual['series'] ).not.toBeNull():
+      expect( actual['series'] ).not.toBeNull();
     }
   });
 

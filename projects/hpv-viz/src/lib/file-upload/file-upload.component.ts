@@ -47,8 +47,8 @@ export class FileUploadComponent implements OnInit {
   }
 
   private readFile(file: File) {
-      const name = file['name'] || 'NO_NAME';
-      const name = this.getPatientFromFileName( name );
+      const fileName = file['name'] || 'NO_NAME';
+      const name = this.getPatientFromFileName( fileName );
       var reader = new FileReader();
 
       reader.onload = () => {

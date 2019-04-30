@@ -103,9 +103,9 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Returns the selected time option from the global map
+   * Returns the selected time option from the global map. Package private for tests
    */
-  private getSelectedTimeOption(): DateOpt {
+  getSelectedTimeOption(): DateOpt {
     for( var key in this.dataSelectors ){
       const opt = this.dataSelectors[key] || {};
       if( opt[ 'selected' ] ){
