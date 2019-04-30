@@ -6,6 +6,7 @@ import {  TypeGraphComponent }    from './type-graph.component';
 import {  NO_ERRORS_SCHEMA }      from '@angular/core';
 import {  INIT_DATA_POINTS,
           YEAR_TRANSFORM_DATES }  from '../../../../tests/mock-data/mock-viz';
+import {  TEST_FILES } from '../../../../tests/mock-data/vcf-files';
 
 describe('TypeGraphComponent', () => {
   let component: TypeGraphComponent;
@@ -116,7 +117,7 @@ describe('TypeGraphComponent', () => {
   // TODO - Maybe make this more finer-grained once a design is approved
   it( 'x-axis variables are changed with a min and max value outside the range of xAxisTicks', () => {
     var xScaleMin, xScaleMax, xAxisTicks;
-
+    component.hpvPatientData = INIT_DATA_POINTS;
     const values: DateOpt[] = Object.values(DateOpt);
     for( var v of values ) {
       component.handleToggle( v );
@@ -142,8 +143,20 @@ describe('TypeGraphComponent', () => {
     }
   });
 
-  // TODO - Will test when integrated w/ date options
-  it( 'TODO - test addVcfUpload', () => {
-    expect(null).toBeNull();
+  it( 'When addVcfUpload handler receives an event, it correctly parses it into a datapoint', () => {
+    for( var fileName in TEST_FILES ) {
+      const event = TEST_FILES[ fileName ]['event'];
+      component.addVcfUpload(event);
+
+      const patientData = component.hpvPatientData;
+
+      const expected = TEST_FILES[ fileName ]['datapoint'];
+      const actual = patientData[patientData.length-1];
+
+      expect( actual['name'] ).toBe( expected['name'] );
+      expect( actual['date'].toDateString() ).toBe( expected['date'].toDateString() );
+      // NOTE - To test the series, comparing by date string isn't going to give the expected equality
+      expect( actual['series'] ).not.toBeNull():
+    }
   });
 });
