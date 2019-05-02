@@ -1,5 +1,9 @@
 import { P1_MOCK } from './vcf-files/mock-vcfs';
 
+/**
+ * IF MODIFIED, YOU NEED TO RE-RUN THE TESTS TO MAKE SURE THEY PASS
+ * THIS FILE IS USED BY MANY OF THE TEST FILES
+ */
 export const TEST_FILES: object = {
   'P1_MOCK': {
     contents: P1_MOCK,
