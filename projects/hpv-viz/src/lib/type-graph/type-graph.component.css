@@ -1,1 +1,21 @@
-@import '../styles/common.scss'
+@import '../styles/common.scss';
+
+.date-selector-container {
+  width: 275px;
+  padding-left: 45px;
+}
+.opt-label {
+  width: 100px;
+}
+.opt-container {
+  width: 400px;
+}
+
+@media (min-width: 500px) {
+  .opt-label {
+    width: 25%;
+  }
+  .opt-container {
+    width: 75%;
+  }
+}

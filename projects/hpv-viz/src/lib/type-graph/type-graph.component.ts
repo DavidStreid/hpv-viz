@@ -16,8 +16,8 @@ export class TypeGraphComponent implements OnInit {
 
   // Map that tracks what date selectors to show
   public dataSelectors: Object = {
-    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false,  enabled: true },
-    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false,  enabled: true },
+    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false,  enabled: false },
+    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false,  enabled: false },
     [DateOpt.DAY]:      { label: 'Day',   selector: DateOpt.DAY,      selected: true,   enabled: true },
     [DateOpt.MONTH]:    { label: 'Month', selector: DateOpt.MONTH,    selected: false,  enabled: true },
     [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false,  enabled: true }

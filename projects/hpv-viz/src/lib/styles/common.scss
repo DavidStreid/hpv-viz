@@ -1,3 +1,9 @@
+p {
+  font-family: cambria;
+}
+.font-22px {
+  font-size: 22px;
+}
 .fill-width {
   width: 100%;
 }
@@ -14,6 +20,9 @@
   height: 20%;
 }
 
+.vertical-align-top {
+  vertical-align: top;
+}
 .text-align-center {
   text-align: center;
 }
@@ -21,9 +30,18 @@
 .inline-block {
   display: inline-block;
 }
-
+.block {
+  display: block;
+}
+.padding-left-25per {
+  padding-left: 25%;
+}
 .margin-right-10px {
   margin-right: 10px;
+}
+.margin-hor-auto{
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Complex Styling */
@@ -33,4 +51,10 @@
 .vert-align-child {
   display: table-cell;
   vertical-align: middle;
+}
+
+/* Horizontally center */
+.flex-center {
+  display: flex;
+  justify-content: center;
 }

@@ -19,25 +19,39 @@
   </div>
 
   <div class="selectors-container">
-    <div class="selector">
-      <div class="inline-block date-opt" *ngFor="let ds of dataSelectors | keyvalue">
-        <div *ngIf="ds.value['enabled']">
-          <div class="inline-block margin-right-10px"><p>{{ ds.value['label'] }}</p></div>
-          <div class="inline-block">
-            <select-box (toggle)="handleDateToggle(ds.value['selector'])"
-                        [selected]="ds.value['selected']">
-            </select-box>
+    <div class="block">
+      <div class="opt-label vertical-align-top inline-block">
+        <p class="padding-left-25per">Date</p>
+      </div>
+      <div class="inline-block opt-container">
+        <div class="selector flex-center">
+          <div class="inline-block date-opt" *ngFor="let ds of dataSelectors | keyvalue">
+            <div *ngIf="ds.value['enabled']">
+              <div class="inline-block margin-right-10px"><p>{{ ds.value['label'] }}</p></div>
+              <div class="inline-block">
+                <select-box (toggle)="handleDateToggle(ds.value['selector'])"
+                            [selected]="ds.value['selected']">
+                </select-box>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="selector">
-      <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
-        <div class="inline-block margin-right-10px"><p>{{ patient.key }}</p></div>
-        <div class="inline-block">
-          <select-box (toggle)="handlePatientToggle(patient.key)"
-                      [selected]="patient.value.isSelected()">
-          </select-box>
+    <div class="block">
+      <div class="opt-label vertical-align-top inline-block">
+        <p class="padding-left-25per">Patient</p>
+      </div>
+      <div class="inline-block opt-container">
+        <div class="selector flex-center">
+          <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
+            <div class="inline-block margin-right-10px"><p>{{ patient.key }}</p></div>
+            <div class="inline-block">
+              <select-box (toggle)="handlePatientToggle(patient.key)"
+                          [selected]="patient.value.isSelected()">
+              </select-box>
+            </div>
+          </div>
         </div>
       </div>
     </div>
