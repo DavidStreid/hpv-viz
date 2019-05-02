@@ -3,10 +3,14 @@ import {  async,
           TestBed }               from '@angular/core/testing';
 import {  DateOpt }               from './graph-options.enums';
 import {  TypeGraphComponent }    from './type-graph.component';
-import {  NO_ERRORS_SCHEMA }      from '@angular/core';
+import {  NO_ERRORS_SCHEMA,
+          DebugElement }          from '@angular/core';
 import {  INIT_DATA_POINTS,
+          INIT_DATA_POINTS_EVENTS,
           YEAR_TRANSFORM_DATES }  from '../../../../tests/mock-data/mock-viz';
-import {  TEST_FILES } from '../../../../tests/mock-data/vcf-files';
+import {  TEST_FILES }            from '../../../../tests/mock-data/vcf-files';
+import { PatientOption }          from './patient-option.class';
+import { By }                     from '@angular/platform-browser';
 
 describe('TypeGraphComponent', () => {
   let component: TypeGraphComponent;
@@ -46,7 +50,7 @@ describe('TypeGraphComponent', () => {
       const timeSelect = test[ 0 ];
       const expectedDate = <Date>test[ 1 ];
 
-      component.handleToggle(<DateOpt>timeSelect);
+      component.handleDateToggle(<DateOpt>timeSelect);
       const timeFields: DateOpt[] = component.getTimeFields();
       const actualDate = <Date>component.formatDate(testDate, timeFields );
 
@@ -58,7 +62,7 @@ describe('TypeGraphComponent', () => {
     expect( component.getSelectedTimeOption() ).toBe( DateOpt.DAY );
   });
 
-  it( 'Date selection fields (dataSelectors/timeSelect) change on toggle (handleToggle)', () => {
+  it( 'Date selection fields (dataSelectors/timeSelect) change on toggle (handleDateToggle)', () => {
     // Mock Data
     component.hpvPatientData = INIT_DATA_POINTS;
 
@@ -69,7 +73,7 @@ describe('TypeGraphComponent', () => {
     // Shouldn't do anything
     expect( component.dataSelectors[ oldToggle ][ 'selected' ] ).toBeTruthy();
     expect( component.dataSelectors[ newToggle ][ 'selected' ] ).toBeFalsy();
-    component.handleToggle( DateOpt.DAY );
+    component.handleDateToggle( DateOpt.DAY );
     expect( component.getSelectedTimeOption() ).toBe( oldToggle );
     expect( component.dataSelectors[ oldToggle ][ 'selected' ] ).toBeTruthy();
     expect( component.dataSelectors[ newToggle ][ 'selected' ] ).toBeFalsy();
@@ -80,7 +84,7 @@ describe('TypeGraphComponent', () => {
       expect( component.dataSelectors[ oldToggle ][ 'selected' ] ).toBeTruthy();
       expect( component.dataSelectors[ newToggle ][ 'selected' ] ).toBeFalsy();
 
-      component.handleToggle( newToggle );
+      component.handleDateToggle( newToggle );
 
       expect( component.getSelectedTimeOption() ).toBe( newToggle );
       expect( component.dataSelectors[ oldToggle ][ 'selected' ] ).toBeFalsy();
@@ -94,7 +98,7 @@ describe('TypeGraphComponent', () => {
     component.hpvPatientData = INIT_DATA_POINTS;
 
     // NOTE - TimeSelect should be initialized to DAY
-    component.handleToggle( DateOpt.YEAR );
+    component.handleDateToggle( DateOpt.YEAR );
 
     // Makes sure all datapoints get tested
     var numDataPoints = INIT_DATA_POINTS.length;
@@ -120,7 +124,7 @@ describe('TypeGraphComponent', () => {
     component.hpvPatientData = INIT_DATA_POINTS;
     const values: DateOpt[] = Object.values(DateOpt);
     for( var v of values ) {
-      component.handleToggle( v );
+      component.handleDateToggle( v );
       xScaleMin   = component.xScaleMin;
       xScaleMax   = component.xScaleMax;
       xAxisTicks  = component.xAxisTicks;
@@ -160,7 +164,29 @@ describe('TypeGraphComponent', () => {
     }
   });
 
-  it( 'Changing the date selection via handleToggle handler should reset the xAxisFormatter', () => {
+  it( 'When addVcfUpload handler receives an event, it should populate the patient options map and render a patient '
+      + 'option and render an option in the view', () => {
+    // Verify initial state
+    expect( fixture.debugElement.query(By.css('.patient-opt')) ).toBeNull();
+    expect( component.patientMap.size ).toBe( 0 );
+
+    for( var fileName in TEST_FILES ) {
+      const event = TEST_FILES[ fileName ]['event'];
+      const name = event['name'];
+
+      component.addVcfUpload(event);
+
+      // Patient Map is updated w/ a patient option
+      const patientOpt: PatientOption = component.patientMap.get(name);
+      expect( patientOpt.getName() ).toBe( name );
+      expect( patientOpt.isSelected() ).toBeTruthy();
+
+      fixture.detectChanges();
+      expect( fixture.debugElement.query(By.css('.patient-opt')) ).not.toBeNull();
+    }
+  });
+
+  it( 'Changing the date selection via handleDateToggle handler should reset the xAxisFormatter', () => {
     const date = new Date('Mon Apr 29 2019 21:33:16 GMT-0400');
 
     // On initialization, the date formatter should go to day
@@ -168,12 +194,39 @@ describe('TypeGraphComponent', () => {
     expect( formatter(date) ).toBe( '29/3/2019' );
 
     // Toggling to year should change the formatter to only return the year
-    component.handleToggle(DateOpt.YEAR);
+    component.handleDateToggle(DateOpt.YEAR);
     formatter = component.xAxisTickFormater;
     expect( formatter(date) ).toBe( '2019' );
 
-    component.handleToggle(DateOpt.DAY);
+    component.handleDateToggle(DateOpt.DAY);
     formatter = component.xAxisTickFormater;
     expect( formatter(date) ).toBe( '29/3/2019' );
+  });
+
+  it( 'Changing the patient selection should fitler results to only selected patients', () => {
+    // Toggle date selector to be the most granular so there is no name joining
+    component.handleDateToggle(DateOpt.MIN_SEC);
+
+    // Initialize component w/ selected patients - all selected
+    for( var evt of INIT_DATA_POINTS_EVENTS ){
+      component.addVcfUpload(evt);
+    }
+
+    // All patient options should remain toggled on a bad name
+    var numPatientsSelected = 0;
+    component.handlePatientToggle( 'bad_name' );
+    component.patientMap.forEach((opt: PatientOption, name: string) => {
+      expect( opt.isSelected() ).toBeTruthy();
+      numPatientsSelected += 1;
+    });
+
+    expect( numPatientsSelected ).toBe( INIT_DATA_POINTS_EVENTS.length );
+    expect( numPatientsSelected ).toBe( component.results.length );
+
+    // Toggle one of the patients and expect selected options to change and component's results
+    const name = INIT_DATA_POINTS_EVENTS[0]['name'];
+    component.handlePatientToggle( name );
+    expect( component.patientMap.get(name).isSelected() ).toBeFalsy();
+    expect(component.results.length).toBe( numPatientsSelected - 1 );
   });
 });

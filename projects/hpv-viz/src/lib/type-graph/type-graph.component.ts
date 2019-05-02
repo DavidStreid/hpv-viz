@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { HpvDataService } from '../services/hpv-data-service';
-import { DateOpt } from './graph-options.enums';
+import { Component, OnInit }  from '@angular/core';
+import { HpvDataService }     from '../services/hpv-data-service';
+import { DateOpt }            from './graph-options.enums';
+import { PatientOption }      from './patient-option.class';
 
 @Component({
   selector:      'app-type-graph',
@@ -9,8 +10,9 @@ import { DateOpt } from './graph-options.enums';
   providers:    [ HpvDataService ]
 })
 export class TypeGraphComponent implements OnInit {
-  public hpvPatientData: Object[];    // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
-  public results: Object[];           // MUTABLE - Modified or replaced on formatting changes and appending of data
+  public hpvPatientData: Object[];                // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
+  public results: Object[];                       // MUTABLE - Modified or replaced on formatting changes and appending of data
+  public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
 
   // Map that tracks what date selectors to show
   public dataSelectors: Object = {
@@ -44,29 +46,7 @@ export class TypeGraphComponent implements OnInit {
   init(): void {
     this.hpvPatientData = [];
     this.results = [];
-    /*
-    this.hpvPatientData = this.hpvDataService.getHpvData();
-    this.results = this.hpvPatientData.slice(0);
-    this.calculateTicks();
-    */
-  }
-
-  /**
-   * Handles event emitted by select box
-   */
-  public handleToggle(toggleOpt: DateOpt): void {
-    const currOpt = this.getSelectedTimeOption();
-    if( toggleOpt === currOpt ) return;
-    this.changeTimeSelector(toggleOpt, currOpt);
-    this.handlePatientDataUpdates();
-  }
-
-  /**
-   * Toggles global time selector map so that previous opt is toggled off and input timeselector is toggled on.
-   */
-  public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
-    this.dataSelectors[  currOpt  ][ 'selected' ] = false;
-    this.dataSelectors[ toggleOpt ][ 'selected' ] = true ;
+    this.patientMap = new Map();
   }
 
   /**
@@ -84,6 +64,9 @@ export class TypeGraphComponent implements OnInit {
       return;
     }
 
+    // Add entry to patients
+    this.addPatientToOptions( name );
+
     // Clone and add uploaded datapoint
     const hpvPatientData = this.hpvPatientData.slice(0);
     hpvPatientData.push(dataPoint);
@@ -93,10 +76,64 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
+   *  Handles toggling of select box of patients
+   */
+  public handlePatientToggle(name: string): void {
+    if( !this.patientMap.has(name) ) return;
+
+    this.patientMap.get(name).toggle();   // Toggle option
+    this.results = this.filterOnSelectedPatients();
+    this.handlePatientDataUpdates(this.results);
+  }
+
+  /**
+   * Handles event emitted by select box
+   */
+  public handleDateToggle(toggleOpt: DateOpt): void {
+    const currOpt = this.getSelectedTimeOption();
+    if( toggleOpt === currOpt ) return;
+
+    // Have all patients selected so that their dates are reformatted
+    this.togglePatientOptionsToSelected();
+
+    this.changeTimeSelector(toggleOpt, currOpt);
+    this.handlePatientDataUpdates();
+  }
+
+  /**
+   * Toggles global time selector map so that previous opt is toggled off and input timeselector is toggled on.
+   */
+  public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
+    this.dataSelectors[  currOpt  ][ 'selected' ] = false;
+    this.dataSelectors[ toggleOpt ][ 'selected' ] = true ;
+  }
+
+  /**
+   * Adds option for patient if it doesn't already exist
+   */
+  private addPatientToOptions(name: string): void {
+    if( this.patientMap.has(name) ) return;
+
+    // Create a new patient option and toggle to true
+    const opt: PatientOption = new PatientOption( name, true );
+    this.patientMap.set(name, opt);
+  }
+
+  /**
+   * Toggles all patients to be selected
+   */
+  private togglePatientOptionsToSelected(): void {
+    function toggle(value, key, map) {
+      value.toggle(true)
+    }
+    this.patientMap.forEach(toggle);
+  }
+
+  /**
    * Called on data being added or needing to reformat
    */
-  private handlePatientDataUpdates(): void {
-    this.results = this.reformatArray();
+  private handlePatientDataUpdates(source?: Object[]): void {
+    this.results = this.reformatArray(source);
     this.calculateTicks();
     this.reAssignTickFormatter()
     this.aggregateDataPoints();
@@ -265,9 +302,22 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
+   * Removes all patients that aren't selected by the filters
+   */
+  private filterOnSelectedPatients(): Object[] {
+    const patientFilter = function( entry: Object ){
+      const name: string = entry[ 'name' ] || '';
+      return this.patientMap.get(name).isSelected();
+    }
+
+    const newData = this.hpvPatientData.filter( patientFilter, this );
+    return newData;
+  }
+
+  /**
    *  Reformats hpvPatientData w/ new date values using hpvPatientData
    */
-  private reformatArray(): Object[] {
+  private reformatArray(source?: Object[]): Object[] {
     const dateFormatter = function( entry: Object ) {
       const series = entry[ 'series' ] || {};
       const date = entry['date'];
@@ -281,7 +331,8 @@ export class TypeGraphComponent implements OnInit {
       return entry;
     }
 
-    const newData = this.hpvPatientData.map(dateFormatter, this)
+    if( source === undefined ) source = this.hpvPatientData;
+    const newData = source.map(dateFormatter, this)
     return newData;
   }
 
