@@ -23,20 +23,23 @@ export class TypeGraphComponent implements OnInit {
     [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false,  enabled: true }
   };
 
+
   // Graph Options
-  view: any[] = [750, 400];
-  showXAxis = true;
-  showYAxis = true;
-  showLegend = false;
-  showXAxisLabel = true;
-  xAxisLabel = 'Date';
-  showYAxisLabel = true;
-  yAxisLabel = 'Hpv Variant';
-  colorScheme = {domain: ['#5AA454', '#A10A28', '#C7B42C']};
-  xScaleMin = this.getXScaleMin();
-  xScaleMax = this.getXScaleMax();
-  xAxisTicks = [];
-  xAxisTickFormater = this.getTickFormatter();
+  public view: any[] = [750, 400];
+  public width: string = `${this.view[0]}px`;
+  public height: string = `${this.view[1]}px`;
+  public showXAxis = true;
+  public showYAxis = true;
+  public showLegend = false;
+  public showXAxisLabel = true;
+  public xAxisLabel = 'Date';
+  public showYAxisLabel = true;
+  public yAxisLabel = 'Hpv Variant';
+  public colorScheme = {domain: ['#5AA454', '#A10A28', '#C7B42C']};
+  public xScaleMin = this.getXScaleMin();
+  public xScaleMax = this.getXScaleMax();
+  public xAxisTicks = [];
+  public xAxisTickFormater = this.getTickFormatter();
 
   constructor(private hpvDataService: HpvDataService) {
     this.init();

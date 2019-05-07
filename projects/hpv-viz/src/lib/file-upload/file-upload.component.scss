@@ -6,12 +6,17 @@
   color: #ffffff !important;
 }
 
-.box {
-  border-color: #cce2ff;
-  border-style: solid;
-  border-radius: 1px;
-  background-color: #ffffff;
-  color: #039be5;
+.upload-prompt{
+  text-align: vertical;
+}
+
+.upload-container {
   margin: 20px;
+}
+
+.drop-container {
+  border-color: gray;
+  border-style: dotted;
+  background-color: #ffffff;
   border-radius: 15px;
 }

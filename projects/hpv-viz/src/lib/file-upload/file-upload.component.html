@@ -1,9 +1,13 @@
-<div class="box fill-width fill-height vert-align-parent"
-     fileDrop
-     (filesDropped)="handleDrop($event)"
-     (filesHovered)="dropzoneState($event)"
-     [ngClass]="{'active': dropzoneActive}">
-  <div class="vert-align-child text-align-center">
-    <p class="font-22px">Drop HPV files</p>
+<div class="fill-height fill-width">
+  <div><p class="font-20px">VCF Upload</p></div>
+  <div class="drop-container vert-align-parent width-95per margin-left-5per"
+       fileDrop
+       (filesDropped)="handleDrop($event)"
+       (filesHovered)="dropzoneState($event)"
+       [ngClass]="{'active': dropzoneActive}">
+    <div class="vert-align-child upload-prompt vert-align-child text-align-center">
+      <p class="gray font-36px margin-25px"><i class="fa fa-upload margin-right-15px"></i> Drop files here</p>
+    </div>
   </div>
 </div>
+

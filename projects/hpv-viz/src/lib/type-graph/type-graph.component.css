@@ -1,5 +1,11 @@
 @import '../styles/common.scss';
 
+.selectors-container {
+}
+
+.upload-container {
+}
+
 .date-selector-container {
   width: 275px;
   padding-left: 45px;
