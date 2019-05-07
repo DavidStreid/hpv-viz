@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['hpv-viz.component.scss']
 })
 export class HpvVizComponent implements OnInit {
+  public title: string = "VCF Visualization";
 
   constructor() { }
 
