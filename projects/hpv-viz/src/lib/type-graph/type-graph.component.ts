@@ -4,9 +4,9 @@ import { DateOpt }            from './graph-options.enums';
 import { PatientOption }      from './patient-option.class';
 
 @Component({
-  selector:      'app-type-graph',
+  selector:      'app-type-graph', // tslint:disable-line
   templateUrl:  './type-graph.component.html',
-  styleUrls:    ['./type-graph.component.css'],
+  styleUrls:    ['./type-graph.component.scss'],
   providers:    [ HpvDataService ]
 })
 export class TypeGraphComponent implements OnInit {
@@ -15,7 +15,7 @@ export class TypeGraphComponent implements OnInit {
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
 
   // Map that tracks what date selectors to show
-  public dataSelectors: Object = {
+  public dataSelectors: any = {
     [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false,  enabled: false },
     [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false,  enabled: false },
     [DateOpt.DAY]:      { label: 'Day',   selector: DateOpt.DAY,      selected: true,   enabled: true },
@@ -26,8 +26,8 @@ export class TypeGraphComponent implements OnInit {
 
   // Graph Options
   public view: any[] = [750, 400];
-  public width: string = `${this.view[0]}px`;
-  public height: string = `${this.view[1]}px`;
+  public width = `${this.view[0]}px`;
+  public height = `${this.view[1]}px`;
   public showXAxis = true;
   public showYAxis = true;
   public showLegend = false;
@@ -50,6 +50,20 @@ export class TypeGraphComponent implements OnInit {
     this.hpvPatientData = [];
     this.results = [];
     this.patientMap = new Map();
+
+    /*
+    // FOR TESTING PURPOSES
+    const evtTemplate: Object = {
+      name: 'P1',
+      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
+      hpvTypes: new Set(['C1', 'C2', 'C3', 'C4', 'C5']),
+    };
+    for( var i = 0; i<4; i++ ) {
+      const evt = Object.assign({}, evtTemplate);
+      evt[ 'name' ] = `P${i+1}`;
+      this.addVcfUpload( evt );
+    }
+    */
   }
 
   /**
@@ -62,7 +76,7 @@ export class TypeGraphComponent implements OnInit {
 
     const dataPoint = this.formatForVisualization( name, date, hpvTypes );
 
-    if( !this.isValidDataPoint( dataPoint) ){
+    if ( !this.isValidDataPoint( dataPoint) ) {
       console.error( 'Invalid upload' );
       return;
     }
@@ -82,7 +96,7 @@ export class TypeGraphComponent implements OnInit {
    *  Handles toggling of select box of patients
    */
   public handlePatientToggle(name: string): void {
-    if( !this.patientMap.has(name) ) return;
+    if ( !this.patientMap.has(name) ) { return; }
 
     this.patientMap.get(name).toggle();   // Toggle option
     this.results = this.filterOnSelectedPatients();
@@ -94,7 +108,7 @@ export class TypeGraphComponent implements OnInit {
    */
   public handleDateToggle(toggleOpt: DateOpt): void {
     const currOpt = this.getSelectedTimeOption();
-    if( toggleOpt === currOpt ) return;
+    if ( toggleOpt === currOpt ) { return; }
 
     // Have all patients selected so that their dates are reformatted
     this.togglePatientOptionsToSelected();
@@ -115,7 +129,7 @@ export class TypeGraphComponent implements OnInit {
    * Adds option for patient if it doesn't already exist
    */
   private addPatientToOptions(name: string): void {
-    if( this.patientMap.has(name) ) return;
+    if ( this.patientMap.has(name) ) { return; }
 
     // Create a new patient option and toggle to true
     const opt: PatientOption = new PatientOption( name, true );
@@ -127,7 +141,7 @@ export class TypeGraphComponent implements OnInit {
    */
   private togglePatientOptionsToSelected(): void {
     function toggle(value, key, map) {
-      value.toggle(true)
+      value.toggle(true);
     }
     this.patientMap.forEach(toggle);
   }
@@ -138,7 +152,7 @@ export class TypeGraphComponent implements OnInit {
   private handlePatientDataUpdates(source?: Object[]): void {
     this.results = this.reformatArray(source);
     this.calculateTicks();
-    this.reAssignTickFormatter()
+    this.reAssignTickFormatter();
     this.aggregateDataPoints();
   }
 
@@ -146,10 +160,12 @@ export class TypeGraphComponent implements OnInit {
    * Returns the selected time option from the global map. Package private for tests
    */
   getSelectedTimeOption(): DateOpt {
-    for( var key in this.dataSelectors ){
-      const opt = this.dataSelectors[key] || {};
-      if( opt[ 'selected' ] ){
-        return opt['selector'];
+    for ( const key in this.dataSelectors ) {
+      if (this.dataSelectors.hasOwnProperty(key)) {
+        const opt = this.dataSelectors[key] || {};
+        if ( opt[ 'selected' ] ) {
+          return opt['selector'];
+        }
       }
     }
     console.error('NO DATE SELECTOR SELECTED');
@@ -164,14 +180,14 @@ export class TypeGraphComponent implements OnInit {
     const formatObject: Object[] = this.getFormatOrder(dateOpt);
 
     return function (date: Date) {
-      var tick = '';
-      for( var o of formatObject ){
-        for( var f of o[ 'funcs' ] ){
-          tick = `${tick}${date[f]()}${o['delimiter']}`
+      let tick = '';
+      for ( const o of formatObject ) {
+        for ( const f of o[ 'funcs' ] ) {
+          tick = `${tick}${date[f]()}${o['delimiter']}`;
         }
       }
       return tick;
-    }
+    };
   }
 
   /**
@@ -192,7 +208,7 @@ export class TypeGraphComponent implements OnInit {
    *                  that should be called on an input date object to determine the right values to extract
    *    }
    */
-  private createFormatObject(dateOpt: DateOpt, delimiter: string, funcs: string[]){
+  private createFormatObject(dateOpt: DateOpt, delimiter: string, funcs: string[]) {
     return { dateOpt, delimiter, funcs };
   }
 
@@ -202,26 +218,26 @@ export class TypeGraphComponent implements OnInit {
    */
   private getFormatOrder(dateOpt: DateOpt): Object[] {
     const formatOrder: Object[] = [
-      this.createFormatObject( DateOpt.MIN_SEC,':',['getSeconds', 'getMinutes']),
-      this.createFormatObject( DateOpt.HOUR,' ',['getHours']),
-      this.createFormatObject( DateOpt.DAY,'/',['getDate']),
-      this.createFormatObject( DateOpt.MONTH,'/',['getMonth']),
-      this.createFormatObject( DateOpt.YEAR,'',['getFullYear'])
+      this.createFormatObject( DateOpt.MIN_SEC, ':', ['getSeconds', 'getMinutes']),
+      this.createFormatObject( DateOpt.HOUR, ' ', ['getHours']),
+      this.createFormatObject( DateOpt.DAY, '/', ['getDate']),
+      this.createFormatObject( DateOpt.MONTH, '/', ['getMonth']),
+      this.createFormatObject( DateOpt.YEAR, '', ['getFullYear'])
     ];
 
     // Return the slice of objects that should be used for formatting the date
     const numObjs = formatOrder.length;
-    for( var i = 0; i<numObjs; i++ ){
-      if( formatOrder[i]['dateOpt'] === dateOpt ){
-        return formatOrder.slice(i,numObjs);
+    for ( let i = 0; i < numObjs; i++ ) {
+      if ( formatOrder[i]['dateOpt'] === dateOpt ) {
+        return formatOrder.slice(i, numObjs);
       }
     }
 
     // Chooose the last object - should be the date field that can stand alone (E.g. YEAR)
-    return formatOrder.slice(numObjs-1,numObjs);
+    return formatOrder.slice(numObjs - 1, numObjs);
   }
 
-  private formatForVisualization(name: string, date: Date, hpvTypes: Set<string>){
+  private formatForVisualization(name: string, date: Date, hpvTypes: Set<string>) {
     const series = [];
 
     hpvTypes.forEach( function(type) {
@@ -230,7 +246,7 @@ export class TypeGraphComponent implements OnInit {
         y: type,
         x: date,
         r: 1
-      }
+      };
       series.push(o1);
     });
 
@@ -256,7 +272,7 @@ export class TypeGraphComponent implements OnInit {
    * Public for testing
    */
   public getTimeFields(): DateOpt[] {
-    const selectors = Object.values(DateOpt)
+    const selectors = Object.keys(DateOpt).map(key => DateOpt[key]);
     const i = selectors.indexOf(this.getSelectedTimeOption());
     return selectors.slice(i, selectors.length);
   }
@@ -273,8 +289,8 @@ export class TypeGraphComponent implements OnInit {
     [ sec, min, hour, day, month, year ] = [ 0, 0, 0, 1, 0, 0 ];
 
     // timeFields will be a
-    for( var selector of timeFields ){
-      switch( selector ) {
+    for ( const selector of timeFields ) {
+      switch ( selector ) {
         case DateOpt.YEAR: {
           year = date.getFullYear();
           break;
@@ -308,10 +324,10 @@ export class TypeGraphComponent implements OnInit {
    * Removes all patients that aren't selected by the filters
    */
   private filterOnSelectedPatients(): Object[] {
-    const patientFilter = function( entry: Object ){
+    const patientFilter = function( entry: Object ) {
       const name: string = entry[ 'name' ] || '';
       return this.patientMap.get(name).isSelected();
-    }
+    };
 
     const newData = this.hpvPatientData.filter( patientFilter, this );
     return newData;
@@ -332,10 +348,10 @@ export class TypeGraphComponent implements OnInit {
       }, date, timeFields);
       entry[ 'series' ] = updatedSeries;
       return entry;
-    }
+    };
 
-    if( source === undefined ) source = this.hpvPatientData;
-    const newData = source.map(dateFormatter, this)
+    if ( source === undefined ) { source = this.hpvPatientData; }
+    const newData = source.map(dateFormatter, this);
     return newData;
   }
 
@@ -345,18 +361,18 @@ export class TypeGraphComponent implements OnInit {
    *  - Should go after new data being uploaded
    */
   private aggregateDataPoints(): void {
-    this.results.sort( (p1,p2)=> {
+    this.results.sort( (p1, p2) => {
       return p1['date'] - p2['date'];
     });
-    const dateMap: Object = {}
+    const dateMap: Object = {};
 
-    for( var dp of this.results ) {
+    for ( const dp of this.results ) {
       const series = dp['series'] || [];
-      if( series.length === 0 ) continue;
+      if ( series.length === 0 ) { continue; }
       const formattedDate: Date = series[0]['x'];
-      const key: number = formattedDate.getTime()
+      const key: number = formattedDate.getTime();
 
-      if( key in dateMap ){
+      if ( key in dateMap ) {
         dateMap[ key ].push( dp );
       } else {
         dateMap[ key ] = [ dp ];
@@ -364,8 +380,10 @@ export class TypeGraphComponent implements OnInit {
     }
 
     const newResults: Object[] = [];
-    for( var date in dateMap ){
-      newResults.push( this.combineEntries( parseInt(date), dateMap[ date ] ) );
+    for ( const date in dateMap ) {
+      if (dateMap.hasOwnProperty(date)) {
+        newResults.push( this.combineEntries( parseInt(date, 10), dateMap[ date ] ) );
+      }
     }
 
     this.results = newResults;
@@ -380,14 +398,14 @@ export class TypeGraphComponent implements OnInit {
     const hpvMap = {};
 
     // Aggregate all hpv types recorded
-    for( var e of entries ){
+    for ( const e of entries ) {
       const n = e[ 'name' ];
       names.push( n );
 
-      const series = e[ 'series' ] || [];
-      for( var dp of series ){
+      const dataPoints: Object[] = e[ 'series' ] || [];
+      for ( const dp of dataPoints ) {
         const hpv = dp[ 'y' ];
-        if( hpv in hpvMap ){
+        if ( hpv in hpvMap ) {
           hpvMap[ hpv ] += 1;
         } else {
           hpvMap[ hpv ] = 1;
@@ -404,14 +422,16 @@ export class TypeGraphComponent implements OnInit {
 
   private createSeriesFromMap(hpvMap: Object, date: Date): Object[] {
     const series = [];
-    for( var k in hpvMap ){
-      const dp = {
-        name: k,
-        y: k,
-        x: date,
-        r: hpvMap[k]
+    for ( const k in hpvMap ) {
+      if ( hpvMap.hasOwnProperty(k) ) {
+        const dp = {
+          name: k,
+          y: k,
+          x: date,
+          r: hpvMap[k]
+        };
+        series.push(dp);
       }
-      series.push(dp);
     }
     return series;
   }
@@ -421,24 +441,24 @@ export class TypeGraphComponent implements OnInit {
    */
   private isValidDataPoint(dataPoint: any): boolean {
     // Verify type
-    if( dataPoint === null || typeof dataPoint !== 'object' ) {
+    if ( dataPoint === null || typeof dataPoint !== 'object' ) {
       return false;
     }
 
     // Verify fields are present
-    if( dataPoint[ 'name' ] === null ){
+    if ( dataPoint[ 'name' ] === null ) {
       return false;
     }
-    if( dataPoint[ 'series' ] === null || dataPoint[ 'series' ].length === 0 ) {
+    if ( dataPoint[ 'series' ] === null || dataPoint[ 'series' ].length === 0 ) {
       return false;
     }
 
     // Verify datapoint has a non-empty series
-    for( var point of dataPoint[ 'series' ] ){
-      var fields: string[] = [ 'name', 'x', 'y', 'r' ];
+    for ( const point of dataPoint[ 'series' ] ) {
+      const fields: string[] = [ 'name', 'x', 'y', 'r' ];
 
-      for( let f of fields ){
-        if( point[ f ] === undefined ){
+      for ( const f of fields ) {
+        if ( point[ f ] === undefined ) {
           return false;
         }
       }
@@ -458,7 +478,7 @@ export class TypeGraphComponent implements OnInit {
 
   // Calclates floor of the x view in graph. This will be a determined buffer level lower than the earliest date
   getXScaleMin(): Date {
-    if( this.results === undefined || this.results.length === 0 ){ return null; }
+    if ( this.results === undefined || this.results.length === 0 ) { return null; }
 
     const xTicks = this.getSortedDates();
     const buffer = this.getBuffer( xTicks );
@@ -471,12 +491,12 @@ export class TypeGraphComponent implements OnInit {
 
   // Calclates ceiling of the x view in graph. This will be a determined buffer level higher than the earliest date
   getXScaleMax(): Date {
-    if( this.results === undefined || this.results.length === 0 ){ return null; }
+    if ( this.results === undefined || this.results.length === 0 ) { return null; }
 
     const xTicks = this.getSortedDates();
     const buffer = this.getBuffer( xTicks );
 
-    const ceilDate = new Date(xTicks[xTicks.length-1].getTime());
+    const ceilDate = new Date(xTicks[xTicks.length - 1].getTime());
     ceilDate.setTime( ceilDate.getTime() + buffer );
 
     return ceilDate;
@@ -485,15 +505,15 @@ export class TypeGraphComponent implements OnInit {
   // Determines the buffer around the data points
   private getBuffer(xTicks: Date[]): number {
     const minDate = xTicks[0];
-    const maxDate = xTicks[xTicks.length-1];
-    const range   = Number(maxDate)-Number(minDate);
+    const maxDate = xTicks[xTicks.length - 1];
+    const range   = Number(maxDate) - Number(minDate);
 
     // Case of 1 data point/no difference (e.g. if the user selects "year"). We just need a non-zero
-    if( range === 0 ){
+    if ( range === 0 ) {
       return 1;
     }
 
-    return range/xTicks.length;
+    return range / xTicks.length;
   }
 
   /**
@@ -509,9 +529,9 @@ export class TypeGraphComponent implements OnInit {
     const dateValues = this.results.map( (d) => {
       return d['series'][0]['x'];
     });
-    dateValues.sort((a,b)=> a-b)
+    dateValues.sort((a, b) => a - b);
     const uniqueDates = dateValues
-                          .map(function (date) { return date.getTime() })
+                          .map(function (date) { return date.getTime(); })
                           .filter(function (date, i, array) {
                             return array.indexOf(date) === i;
                           })

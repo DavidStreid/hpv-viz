@@ -49,4 +49,4 @@ export const TEST_FILES: object = {
       ]
     }
   }
-}
+};

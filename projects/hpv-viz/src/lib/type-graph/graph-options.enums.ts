@@ -9,9 +9,9 @@
 *       - Important for GUI. Component maintains time-options in map, which *ngFor lists in alphabetical order
 */
 export enum DateOpt {
-  MIN_SEC = "0_MS",
-  HOUR    = "1_H",
-  DAY     = "2_D",
-  MONTH   = "3_M",
-  YEAR    = "4_Y"
-};
+  MIN_SEC = '0_MS',
+  HOUR    = '1_H',
+  DAY     = '2_D',
+  MONTH   = '3_M',
+  YEAR    = '4_Y'
+}

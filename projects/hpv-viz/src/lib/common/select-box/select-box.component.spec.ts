@@ -25,8 +25,8 @@ describe('SelectBoxComponent', () => {
   });
 
   it('On Changes triggers internal & external state to toggle', () => {
-    var notSelectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-square-o'));
-    var selectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-check-square-o'));
+    let notSelectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-square-o'));
+    let selectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-check-square-o'));
     expect( notSelectedClass ).not.toBeNull();
     expect( selectedClass ).toBeNull();
 

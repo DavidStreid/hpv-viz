@@ -8,7 +8,7 @@ import { FileDropDirective }          from './file-drop.directive';
                 (filesDropped)='handleDrop($event)'
                 (filesHovered)='handleHover($event)'></div>`
 })
-class TestFileDropComponent{
+class TestFileDropComponent {
   public handleDrop($event): void {}
   public handleHover($event): void {}
 }
@@ -50,7 +50,7 @@ describe('Directive', () => {
     spyOn(component, 'handleHover');
     spyOn(component, 'handleDrop');
 
-    const files = 'MOCK'
+    const files = 'MOCK';
     const evt: Event = new Event('dropEvent', {});
     evt[ 'dataTransfer' ] = { files } ;
 

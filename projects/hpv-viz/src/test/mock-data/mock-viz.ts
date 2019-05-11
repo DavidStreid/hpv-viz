@@ -1,4 +1,4 @@
-import { DateOpt } from '../../hpv-viz/src/lib/type-graph/graph-options.enums';
+import { DateOpt } from '../../lib/type-graph/graph-options.enums';
 
 /**
  * NOTE - Run tests before committing changes to this file as many tests use it
@@ -31,7 +31,7 @@ export const X_AXIS: Object = {
       x_min: null,
       x_max: null
     }
-}
+};
 
 export const YEAR_TRANSFORM_DATES: Object = {
   'P1': new Date('2011-01-01T00:00:00'),
@@ -73,7 +73,7 @@ export const INIT_DATA_POINTS_EVENTS: Object[] = [
     date: new Date('2011-02-13T10:20:00'),
     hpvTypes: new Set(['C1', 'C2', 'C3', 'C4', 'C5']),
   }
-]
+];
 
 export const INIT_DATA_POINTS: Object[] =
   [
@@ -293,4 +293,4 @@ export const INIT_DATA_POINTS: Object[] =
         }
       ]
     }
-  ]
+  ];

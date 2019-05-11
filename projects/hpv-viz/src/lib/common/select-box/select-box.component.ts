@@ -16,9 +16,9 @@ import {  Component,
 
 
 @Component({
-  selector: 'select-box',
-  templateUrl: './select-box.component.html',
-  styleUrls: ['./select-box.component.css']
+  selector:     'select-box', // tslint:disable-line
+  templateUrl:  './select-box.component.html',
+  styleUrls:    ['./select-box.component.css']
 })
 export class SelectBoxComponent implements OnInit, OnChanges {
   @Output()
@@ -27,9 +27,10 @@ export class SelectBoxComponent implements OnInit, OnChanges {
   @Input()
   private selected: boolean;
 
-  private class: string;
-  private SELECTED_CLASS: string = 'fa checkbox fa-check-square-o';
-  private NOT_SELECTED_CLASS: string = 'fa checkbox fa-square-o';
+  // Data-bound css class
+  public class: string;
+  private SELECTED_CLASS = 'fa checkbox fa-check-square-o';
+  private NOT_SELECTED_CLASS = 'fa checkbox fa-square-o';
 
   constructor() {
     // Default to unselected
@@ -47,7 +48,7 @@ export class SelectBoxComponent implements OnInit, OnChanges {
     const change = input.selected;
 
     // Ignore change fired before initialization
-    if( change.firstChange ) return;
+    if ( change.firstChange ) { return; }
 
     const selected: boolean = change.currentValue;
     this.selected = selected;

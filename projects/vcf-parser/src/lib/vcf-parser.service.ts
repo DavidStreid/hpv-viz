@@ -18,19 +18,19 @@ export class VcfParserService {
   }
 
   extractDate( vcfFile: string): Date {
-    if( this.isInvalidVCF(vcfFile) ){
+    if ( this.isInvalidVCF(vcfFile) ) {
       console.error('VCF File not detected');
       return;
     }
 
     const lines = vcfFile.split('\n');
-    for( let line of lines ){
+    for ( const line of lines ) {
       // Searching for '##fileDate=DATE' line
-      if( line.includes(UTC_TIME) ){
+      if ( line.includes(UTC_TIME) ) {
         const equalsSplit = line.split(EQUALS);
         const dateString = equalsSplit[1];
         const date = new Date(dateString);
-        if( date instanceof Date ){
+        if ( date instanceof Date ) {
           return date;
         }
       }
@@ -40,7 +40,7 @@ export class VcfParserService {
   }
 
   extractChromosomes(vcfFile: string): Set<string> {
-    if( this.isInvalidVCF(vcfFile) ){
+    if ( this.isInvalidVCF(vcfFile) ) {
       console.error('VCF File not detected');
       return;
     }
@@ -56,10 +56,10 @@ export class VcfParserService {
     const data = lines.filter(isNotHeaderLine);
 
     // Parse through lines of data and return
-    for( let line of data ){
-      let columns = line.split(DELIMITER);
-      if( columns.length > 1 ){
-        let chr = columns[0]
+    for ( const line of data ) {
+      const columns = line.split(DELIMITER);
+      if ( columns.length > 1 ) {
+        const chr = columns[0];
         chromosomes.add(chr);
       }
     }

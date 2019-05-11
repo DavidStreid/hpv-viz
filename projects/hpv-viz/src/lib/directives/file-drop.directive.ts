@@ -2,7 +2,7 @@ import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
 
 // REF - https://www.youtube.com/watch?v=OVnrL4we2NM&feature=youtu.be
 @Directive({
-  selector: '[fileDrop]'
+  selector: '[fileDrop]' // tslint:disable-line
 })
 export class FileDropDirective {
   @Output()

@@ -1,6 +1,7 @@
-@import './styles/common.scss';
+@import '../styles';
 
-#viz-body {
-  width: 800px;
-  height: 600px;
+@media (min-width: 800px) {
+  #viz-body {
+    width: 800px;
+  }
 }

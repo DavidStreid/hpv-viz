@@ -1,5 +1,5 @@
 // IMPORTANT - Copy text file exactly as is and left-align (tabs matter)
-export const P1_MOCK: string =
+export const P1_MOCK =
 `##fileformat=VCFv4.1
 ##fileDate=20110213
 ##fileUTCtime=2011-02-13T10:38:12

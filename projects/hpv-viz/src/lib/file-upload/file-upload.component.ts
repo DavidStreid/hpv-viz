@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
-import { VcfParserService } from '../../../../vcf-parser/src/lib/vcf-parser.service';
+import { VcfParserService } from 'vcf-parser';
 
 @Component({
-  selector: 'app-file-upload',
+  selector: 'app-file-upload', // tslint:disable-line
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss']
 })
@@ -12,7 +12,7 @@ export class FileUploadComponent implements OnInit {
 
   currentUpload: Object;
   chromosomes: any = {};
-  dropzoneActive: boolean = false;
+  dropzoneActive = false;
 
   constructor(private vcfParserService: VcfParserService) { }
 
@@ -23,7 +23,7 @@ export class FileUploadComponent implements OnInit {
   }
 
   public handleDrop(fileList: FileList) {
-    for( var i = 0; i<fileList.length; i++ ){
+    for ( let i = 0; i < fileList.length; i++ ) {
       this.readFile(fileList[i]);
     }
   }
@@ -39,23 +39,23 @@ export class FileUploadComponent implements OnInit {
     const NAME_DELIMITER = '_';
 
     const splitName = name.split(NAME_DELIMITER);
-    if( splitName.length > 1 ){
+    if ( splitName.length > 1 ) {
       return splitName[0];
     }
 
-    return 'NO_NAME'
+    return 'NO_NAME';
   }
 
   private readFile(file: File) {
       const fileName = file['name'] || 'NO_NAME';
       const name = this.getPatientFromFileName( fileName );
-      var reader = new FileReader();
+      const reader = new FileReader();
 
       reader.onload = () => {
         const hpvTypes = this.getHpvTypes(reader.result);
         const date = this.vcfParserService.extractDate(reader.result);
         this.vcfUpload.emit( {name, date, hpvTypes});
       };
-      var contents = reader.readAsText(file);
+      const contents = reader.readAsText(file);
   }
 }

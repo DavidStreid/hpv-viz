@@ -7,8 +7,8 @@ import {  NO_ERRORS_SCHEMA,
           DebugElement }          from '@angular/core';
 import {  INIT_DATA_POINTS,
           INIT_DATA_POINTS_EVENTS,
-          YEAR_TRANSFORM_DATES }  from '../../../../tests/mock-data/mock-viz';
-import {  TEST_FILES }            from '../../../../tests/mock-data/vcf-files';
+          YEAR_TRANSFORM_DATES }  from '../../test/mock-data/mock-viz';
+import {  TEST_FILES }            from '../../test/mock-data/vcf-files';
 import { PatientOption }          from './patient-option.class';
 import { By }                     from '@angular/platform-browser';
 
@@ -43,10 +43,10 @@ describe('TypeGraphComponent', () => {
       [ DateOpt.DAY,     new Date('Sat Apr 06 2019 00:00:00 GMT-0400') ],
       [ DateOpt.MONTH,   new Date('Mon Apr 01 2019 00:00:00 GMT-0400') ],
       [ DateOpt.YEAR,    new Date('Tue Jan 01 2019 00:00:00 GMT-0500') ]
-    ]
+    ];
 
-    var currOpt = DateOpt.MIN_SEC;
-    for( var test of testCases ){
+    const currOpt = DateOpt.MIN_SEC;
+    for ( const test of testCases ) {
       const timeSelect = test[ 0 ];
       const expectedDate = <Date>test[ 1 ];
 
@@ -67,8 +67,8 @@ describe('TypeGraphComponent', () => {
     component.hpvPatientData = INIT_DATA_POINTS;
 
     // NOTE - TimeSelect should be initialized to DAY
-    var oldToggle: DateOpt = DateOpt.DAY;
-    var newToggle: DateOpt = DateOpt.YEAR;
+    let oldToggle: DateOpt = DateOpt.DAY;
+    let newToggle: DateOpt = DateOpt.YEAR;
 
     // Shouldn't do anything
     expect( component.dataSelectors[ oldToggle ][ 'selected' ] ).toBeTruthy();
@@ -79,7 +79,7 @@ describe('TypeGraphComponent', () => {
     expect( component.dataSelectors[ newToggle ][ 'selected' ] ).toBeFalsy();
 
     const values: DateOpt[] = Object.values(DateOpt);
-    for( var v of values ) {
+    for ( const v of values ) {
       newToggle = v;
       expect( component.dataSelectors[ oldToggle ][ 'selected' ] ).toBeTruthy();
       expect( component.dataSelectors[ newToggle ][ 'selected' ] ).toBeFalsy();
@@ -101,16 +101,16 @@ describe('TypeGraphComponent', () => {
     component.handleDateToggle( DateOpt.YEAR );
 
     // Makes sure all datapoints get tested
-    var numDataPoints = INIT_DATA_POINTS.length;
+    let numDataPoints = INIT_DATA_POINTS.length;
 
-    for( var entry of component.hpvPatientData ){
+    for ( const entry of component.hpvPatientData ) {
       numDataPoints -= 1;
 
       const name    = entry[ 'name' ];
       const series  = entry[ 'series' ];
-      const date    = YEAR_TRANSFORM_DATES[ name ]
+      const date    = YEAR_TRANSFORM_DATES[ name ];
 
-      for( var dp of series ){
+      for ( const dp of series ) {
         expect( dp[ 'x' ].getTime() ).toBe( date.getTime() );
       }
     }
@@ -120,10 +120,10 @@ describe('TypeGraphComponent', () => {
 
   // TODO - Maybe make this more finer-grained once a design is approved
   it( 'x-axis variables are changed with a min and max value outside the range of xAxisTicks', () => {
-    var xScaleMin, xScaleMax, xAxisTicks;
+    let xScaleMin, xScaleMax, xAxisTicks;
     component.hpvPatientData = INIT_DATA_POINTS;
     const values: DateOpt[] = Object.values(DateOpt);
-    for( var v of values ) {
+    for ( const v of values ) {
       component.handleDateToggle( v );
       xScaleMin   = component.xScaleMin;
       xScaleMax   = component.xScaleMax;
@@ -133,7 +133,7 @@ describe('TypeGraphComponent', () => {
       expect( xScaleMax ).not.toBeNull();
       expect( xAxisTicks.length ).not.toBe(0);
 
-      var xView = xAxisTicks;
+      const xView = xAxisTicks;
       xView.push( xScaleMax );
       xView.unshift( xScaleMin );
 
@@ -141,26 +141,28 @@ describe('TypeGraphComponent', () => {
       expect( xView.length > 2 );
 
       // Verify ascending order (implicitly checks there's a buffer on each side of the datapoints
-      for( var i = 0; i<xView.length-1; i++ ){
-        expect( xView[i] < xView[i+1] ).toBeTruthy();
+      for ( let i = 0; i < xView.length - 1; i++ ) {
+        expect( xView[i] < xView[i + 1] ).toBeTruthy();
       }
     }
   });
 
   it( 'When addVcfUpload handler receives an event, it correctly parses it into a datapoint', () => {
-    for( var fileName in TEST_FILES ) {
-      const event = TEST_FILES[ fileName ]['event'];
-      component.addVcfUpload(event);
+    for ( const fileName in TEST_FILES ) {
+      if (TEST_FILES.hasOwnProperty(fileName)) {
+        const event = TEST_FILES[ fileName ]['event'];
+        component.addVcfUpload(event);
 
-      const patientData = component.hpvPatientData;
+        const patientData = component.hpvPatientData;
 
-      const expected = TEST_FILES[ fileName ]['datapoint'];
-      const actual = patientData[patientData.length-1];
+        const expected = TEST_FILES[ fileName ]['datapoint'];
+        const actual = patientData[patientData.length - 1];
 
-      expect( actual['name'] ).toBe( expected['name'] );
-      expect( actual['date'].toDateString() ).toBe( expected['date'].toDateString() );
-      // NOTE - To test the series, comparing by date string isn't going to give the expected equality
-      expect( actual['series'] ).not.toBeNull();
+        expect( actual['name'] ).toBe( expected['name'] );
+        expect( actual['date'].toDateString() ).toBe( expected['date'].toDateString() );
+        // NOTE - To test the series, comparing by date string isn't going to give the expected equality
+        expect( actual['series'] ).not.toBeNull();
+      }
     }
   });
 
@@ -170,19 +172,21 @@ describe('TypeGraphComponent', () => {
     expect( fixture.debugElement.query(By.css('.patient-opt')) ).toBeNull();
     expect( component.patientMap.size ).toBe( 0 );
 
-    for( var fileName in TEST_FILES ) {
-      const event = TEST_FILES[ fileName ]['event'];
-      const name = event['name'];
+    for ( const fileName in TEST_FILES ) {
+      if (TEST_FILES.hasOwnProperty(fileName)) {
+        const event = TEST_FILES[ fileName ]['event'];
+        const name = event['name'];
 
-      component.addVcfUpload(event);
+        component.addVcfUpload(event);
 
-      // Patient Map is updated w/ a patient option
-      const patientOpt: PatientOption = component.patientMap.get(name);
-      expect( patientOpt.getName() ).toBe( name );
-      expect( patientOpt.isSelected() ).toBeTruthy();
+        // Patient Map is updated w/ a patient option
+        const patientOpt: PatientOption = component.patientMap.get(name);
+        expect( patientOpt.getName() ).toBe( name );
+        expect( patientOpt.isSelected() ).toBeTruthy();
 
-      fixture.detectChanges();
-      expect( fixture.debugElement.query(By.css('.patient-opt')) ).not.toBeNull();
+        fixture.detectChanges();
+        expect( fixture.debugElement.query(By.css('.patient-opt')) ).not.toBeNull();
+      }
     }
   });
 
@@ -190,7 +194,7 @@ describe('TypeGraphComponent', () => {
     const date = new Date('Mon Apr 29 2019 21:33:16 GMT-0400');
 
     // On initialization, the date formatter should go to day
-    var formatter = component.xAxisTickFormater;
+    let formatter = component.xAxisTickFormater;
     expect( formatter(date) ).toBe( '29/3/2019' );
 
     // Toggling to year should change the formatter to only return the year
@@ -208,14 +212,14 @@ describe('TypeGraphComponent', () => {
     component.handleDateToggle(DateOpt.MIN_SEC);
 
     // Initialize component w/ selected patients - all selected
-    for( var evt of INIT_DATA_POINTS_EVENTS ){
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) {
       component.addVcfUpload(evt);
     }
 
     // All patient options should remain toggled on a bad name
-    var numPatientsSelected = 0;
+    let numPatientsSelected = 0;
     component.handlePatientToggle( 'bad_name' );
-    component.patientMap.forEach((opt: PatientOption, name: string) => {
+    component.patientMap.forEach((opt: PatientOption) => {
       expect( opt.isSelected() ).toBeTruthy();
       numPatientsSelected += 1;
     });

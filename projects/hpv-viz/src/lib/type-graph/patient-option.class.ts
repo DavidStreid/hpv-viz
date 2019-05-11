@@ -5,7 +5,7 @@ export class PatientOption {
   private selected;
   private name;
 
-  constructor(name: string, selected: boolean){
+  constructor(name: string, selected: boolean) {
     this.selected = selected;
     this.name = name;
   }
@@ -19,7 +19,7 @@ export class PatientOption {
   }
 
   public toggle(selected?: boolean): void {
-    if( selected === undefined ) {
+    if ( selected === undefined ) {
       this.selected = !this.selected;
     } else {
       this.selected = selected;
