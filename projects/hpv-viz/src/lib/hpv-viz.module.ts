@@ -1,5 +1,10 @@
-import { NgModule } from '@angular/core';
-import { NgxChartsModule }       from '@swimlane/ngx-charts';
+import { NgModule }                from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule }         from '@swimlane/ngx-charts';
+
+// LOCAL DEPENDENCIES - Remove when deployed
+const LOCAL_MODULES = [ BrowserAnimationsModule ];
+// const LOCAL_MODULES = [ ];
 
 // COMPONENTS
 import { HpvVizComponent } from './hpv-viz.component';
@@ -18,7 +23,8 @@ const SERVICES = [ HpvDataService ];
 
 @NgModule({
   imports: [
-    NgxChartsModule
+    NgxChartsModule,
+    LOCAL_MODULES
   ],
   declarations: [ HpvVizComponent, FileDropDirective, CHILD_COMPONENTS ],
   exports: [HpvVizComponent],
