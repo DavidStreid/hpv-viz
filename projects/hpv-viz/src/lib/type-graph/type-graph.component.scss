@@ -1,17 +1,13 @@
 @import '../../styles.scss';
 
-.selectors-container {
-}
-
-.upload-container {
+.patient-button {
+  width: 100px;
+  height: 30px;
 }
 
 .date-selector-container {
   width: 275px;
   padding-left: 45px;
-}
-.opt-label {
-  width: 100px;
 }
 .opt-container {
   width: 400px;
@@ -22,6 +18,6 @@
     width: 25%;
   }
   .opt-container {
-    width: 75%;
+    width: 100%;
   }
 }

@@ -1,61 +1,70 @@
 <div class="fill-width fill-height">
-  <div class="fill-width">
-    <div class="ngx-container margin-hor-auto"
+  <div class="type-graph-container"
+       [style.width]="typeGraphContainerWidth"
+       [style.height]="height">
+    <div class="ngx-container margin-hor-auto inline-block"
          [style.width]="width"
          [style.height]="height">
-      <ngx-charts-bubble-chart
-        [view]="view"
-        [scheme]="colorScheme"
-        [results]="results"
-        [legend]="showLegend"
-        [xAxis]="showXAxis"
-        [yAxis]="showYAxis"
-        [xAxisTicks]="xAxisTicks"
-        [showXAxisLabel]="showXAxisLabel"
-        [showYAxisLabel]="showYAxisLabel"
-        [xAxisLabel]="xAxisLabel"
-        [yAxisLabel]="yAxisLabel"
-        [xAxisTickFormatting]="xAxisTickFormater"
-        [xScaleMin]="xScaleMin"
-        [xScaleMax]="xScaleMax">
-      </ngx-charts-bubble-chart>
+      <div class="inline-block">
+        <ngx-charts-bubble-chart
+          [view]="view"
+          [scheme]="colorScheme"
+          [results]="results"
+          [legend]="showLegend"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [xAxisTicks]="xAxisTicks"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          [xAxisLabel]="xAxisLabel"
+          [yAxisLabel]="yAxisLabel"
+          [xAxisTickFormatting]="xAxisTickFormater"
+          [xScaleMin]="xScaleMin"
+          [xScaleMax]="xScaleMax">
+        </ngx-charts-bubble-chart>
+      </div>
     </div>
-    <div class="width-90per padding-left-5per padding-bottom-25px">
-      <div class="selectors-container fill-width padding-top-15px vertical-align-top">
-        <div>
-          <p class="font-20px">Options</p>
-          <div class="margin-left-5per">
-            <div class="block">
-              <div class="opt-label vertical-align-top inline-block">
-                <p>Date</p>
-              </div>
-              <div class="inline-block opt-container">
-                <div class="selector flex-center">
-                  <div class="inline-block date-opt" *ngFor="let ds of dataSelectors | keyvalue">
-                    <div *ngIf="ds.value['enabled']">
-                      <div class="inline-block margin-right-10px"><p>{{ ds.value['label'] }}</p></div>
-                      <div class="inline-block">
-                        <select-box (toggle)="handleDateToggle(ds.value['selector'])"
-                                    [selected]="ds.value['selected']">
-                        </select-box>
-                      </div>
-                    </div>
+    <div class="inline-block fill-height"
+         [style.width]="sideSelectorWidth">
+      <div class="vert-align-parent fill-height">
+        <div class="vert-align-child">
+          <div class="text-align-center fill-width">
+            <p>Date Selector</p>
+          </div>
+          <div class="inline-block fill-width">
+            <div class="selector">
+              <div class="date-opt padding-left-5 inline-block fill-width"
+                   *ngFor="let ds of enabledDateSelectors | keyvalue">
+                  <div class="inline-block width-80per"><p>{{ ds.value['label'] }}</p></div>
+                  <div class="inline-block width-20per">
+                    <select-box (toggle)="handleDateToggle(ds.value['selector'])"
+                                [selected]="ds.value['selected']">
+                    </select-box>
                   </div>
-                </div>
               </div>
             </div>
-            <div class="block">
-              <div class="opt-label vertical-align-top inline-block">
-                <p>Patient</p>
-              </div>
-              <div class="inline-block opt-container">
-                <div class="selector flex-center">
-                  <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
-                    <div class="inline-block margin-right-10px"><p>{{ patient.key }}</p></div>
-                    <div class="inline-block">
-                      <select-box (toggle)="handlePatientToggle(patient.key)"
-                                  [selected]="patient.value.isSelected()">
-                      </select-box>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="width-95per padding-left-5per padding-bottom-25px">
+    <div class="selectors-container fill-width padding-top-15px vertical-align-top"
+         *ngIf="patientMap.size > 0">
+      <div>
+        <p class="font-20px">Patients</p>
+        <div class="margin-left-5per">
+          <div class="block">
+            <div class="inline-block opt-container">
+              <div class="selector flex-center">
+                <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
+                  <div class="inline-block">
+                    <div class="app-button patient-button vert-align-parent margin-right-15px"
+                         (click)="handlePatientToggle(patient.key)"
+                         [class.app-button-selected]="patient.value.isSelected()">
+                      <div class="vert-align-child">
+                        <p>{{patient.key}}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -64,9 +73,9 @@
           </div>
         </div>
       </div>
-      <div class="upload-container vertical-align-top padding-top-15px fill-height fill-width">
-        <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
-      </div>
+    </div>
+    <div class="upload-container vertical-align-top padding-top-15px fill-height fill-width">
+      <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
     </div>
   </div>
 </div>

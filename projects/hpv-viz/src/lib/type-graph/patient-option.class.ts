@@ -18,6 +18,13 @@ export class PatientOption {
     return this.name;
   }
 
+  public setSelected(selected: boolean): void {
+    this.selected = selected;
+  }
+
+  /**
+   * Flips the selected field of the PatientOption
+   */
   public toggle(selected?: boolean): void {
     if ( selected === undefined ) {
       this.selected = !this.selected;

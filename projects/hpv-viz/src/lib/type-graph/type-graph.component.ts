@@ -14,15 +14,29 @@ export class TypeGraphComponent implements OnInit {
   public results: Object[];                       // MUTABLE - Modified or replaced on formatting changes and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
 
+  public datesOptionsEnabled: object = {
+    [DateOpt.MIN_SEC]:  false,
+    [DateOpt.HOUR]:     false,
+    [DateOpt.DAY]:      true,
+    [DateOpt.MONTH]:    true,
+    [DateOpt.YEAR]:     true
+  }
+
   // Map that tracks what date selectors to show
-  public dataSelectors: any = {
-    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false,  enabled: false },
-    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false,  enabled: false },
-    [DateOpt.DAY]:      { label: 'Day',   selector: DateOpt.DAY,      selected: true,   enabled: true },
-    [DateOpt.MONTH]:    { label: 'Month', selector: DateOpt.MONTH,    selected: false,  enabled: true },
-    [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false,  enabled: true }
+  public dateSelectors: object = {
+    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false },
+    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false },
+    [DateOpt.DAY]:      { label: 'Day',   selector: DateOpt.DAY,      selected: true },
+    [DateOpt.MONTH]:    { label: 'Month', selector: DateOpt.MONTH,    selected: false },
+    [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false }
   };
 
+  // Shoudl be of type "any" so that "keyvalue" pipe can be used in the view
+  public enabledDateSelectors: any = {};
+
+  // Side Selector width
+  private sideSelectorWidthNum: number = 120;
+  public sideSelectorWidth: string = `${this.sideSelectorWidthNum}px`;
 
   // Graph Options
   public view: any[] = [750, 400];
@@ -35,21 +49,42 @@ export class TypeGraphComponent implements OnInit {
   public xAxisLabel = 'Date';
   public showYAxisLabel = true;
   public yAxisLabel = 'Hpv Variant';
-  public colorScheme = {domain: ['#5AA454', '#A10A28', '#C7B42C']};
+  public colorScheme = {domain: ['#8585ad', '#7575a3', '#666699']};
   public xScaleMin = this.getXScaleMin();
   public xScaleMax = this.getXScaleMax();
   public xAxisTicks = [];
   public xAxisTickFormater = this.getTickFormatter();
+
+  // TypeGraphContainer
+  public typeGraphContainerWidth: string = `${this.sideSelectorWidthNum + this.view[0]}px`;
 
   constructor(private hpvDataService: HpvDataService) {
     this.init();
   }
   ngOnInit() {}
 
+  /**
+   * Removes any dateSelectors that haven't been enabled. We do this because when rendering the page,
+   * the date selectors that aren't enabled wiil still give a little bit of unwanted white space
+   */
+  public initDateSelectors(): any {
+    this.enabledDateSelectors = Object.assign({}, this.dateSelectors);
+    const dateEntries: string[] =  Object.keys(this.datesOptionsEnabled);
+
+    for( const key of dateEntries ){
+      const enabled = this.datesOptionsEnabled[key] || false;
+
+      if( ! enabled ){
+        delete this.enabledDateSelectors[key];
+      }
+    }
+  }
+
   init(): void {
     this.hpvPatientData = [];
     this.results = [];
     this.patientMap = new Map();
+    this.initDateSelectors();
 
     /*
     // FOR TESTING PURPOSES
@@ -98,9 +133,35 @@ export class TypeGraphComponent implements OnInit {
   public handlePatientToggle(name: string): void {
     if ( !this.patientMap.has(name) ) { return; }
 
+    // Flip all patients to false and then toggle the input patient name
+    this.deselectAllPatients();
     this.patientMap.get(name).toggle();   // Toggle option
+
     this.results = this.filterOnSelectedPatients();
     this.handlePatientDataUpdates(this.results);
+  }
+
+  private deselectAllPatients(): void {
+    this.patientMap.forEach((patientOpt: PatientOption) => {
+      patientOpt.setSelected(false);
+    });
+  }
+
+  /**
+   * Adds option for patient if it doesn't already exist
+   *    *Toggles selected field of patient Map so that only uploaded one is selected
+   */
+  private addPatientToOptions(name: string): void {
+    // Toggle all other patients to false. Should only be one, but for readability, do for all
+    this.deselectAllPatients();
+
+    if ( !this.patientMap.has(name) ) {
+      // Create a new patient option and toggle to true
+      const opt: PatientOption = new PatientOption( name, true );
+      this.patientMap.set(name, opt);
+    } else {
+      this.patientMap.get(name).setSelected(true);
+    }
   }
 
   /**
@@ -121,19 +182,8 @@ export class TypeGraphComponent implements OnInit {
    * Toggles global time selector map so that previous opt is toggled off and input timeselector is toggled on.
    */
   public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
-    this.dataSelectors[  currOpt  ][ 'selected' ] = false;
-    this.dataSelectors[ toggleOpt ][ 'selected' ] = true ;
-  }
-
-  /**
-   * Adds option for patient if it doesn't already exist
-   */
-  private addPatientToOptions(name: string): void {
-    if ( this.patientMap.has(name) ) { return; }
-
-    // Create a new patient option and toggle to true
-    const opt: PatientOption = new PatientOption( name, true );
-    this.patientMap.set(name, opt);
+    this.enabledDateSelectors[  currOpt  ][ 'selected' ] = false;
+    this.enabledDateSelectors[ toggleOpt ][ 'selected' ] = true ;
   }
 
   /**
@@ -160,15 +210,14 @@ export class TypeGraphComponent implements OnInit {
    * Returns the selected time option from the global map. Package private for tests
    */
   getSelectedTimeOption(): DateOpt {
-    for ( const key in this.dataSelectors ) {
-      if (this.dataSelectors.hasOwnProperty(key)) {
-        const opt = this.dataSelectors[key] || {};
+    for ( const key in this.enabledDateSelectors ) {
+      if (this.enabledDateSelectors.hasOwnProperty(key)) {
+        const opt = this.enabledDateSelectors[key] || {};
         if ( opt[ 'selected' ] ) {
           return opt['selector'];
         }
       }
     }
-    console.error('NO DATE SELECTOR SELECTED');
     return null;
   }
 
@@ -194,8 +243,9 @@ export class TypeGraphComponent implements OnInit {
    * Re-assigns the xAxistTickFormatter. This must be done b/c ngx-charts evaluates all data-bound inputs only on
    * initialization
    *    - NOTE: This function requires a helper function to call it
+   *    - Public for tests
    */
-  private reAssignTickFormatter(): void {
+  public reAssignTickFormatter(): void {
     this.xAxisTickFormater = this.getTickFormatter();
   }
 
