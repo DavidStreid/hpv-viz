@@ -171,9 +171,6 @@ export class TypeGraphComponent implements OnInit {
     const currOpt = this.getSelectedTimeOption();
     if ( toggleOpt === currOpt ) { return; }
 
-    // Have all patients selected so that their dates are reformatted
-    this.togglePatientOptionsToSelected();
-
     this.changeTimeSelector(toggleOpt, currOpt);
     this.handlePatientDataUpdates();
   }
@@ -184,16 +181,6 @@ export class TypeGraphComponent implements OnInit {
   public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
     this.enabledDateSelectors[  currOpt  ][ 'selected' ] = false;
     this.enabledDateSelectors[ toggleOpt ][ 'selected' ] = true ;
-  }
-
-  /**
-   * Toggles all patients to be selected
-   */
-  private togglePatientOptionsToSelected(): void {
-    function toggle(value, key, map) {
-      value.toggle(true);
-    }
-    this.patientMap.forEach(toggle);
   }
 
   /**
