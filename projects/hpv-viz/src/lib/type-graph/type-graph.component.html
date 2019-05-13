@@ -36,7 +36,7 @@
               <div class="date-opt padding-left-5 inline-block fill-width"
                    *ngFor="let ds of enabledDateSelectors | keyvalue">
                   <div class="inline-block width-80per"><p>{{ ds.value['label'] }}</p></div>
-                  <div class="inline-block width-20per">
+                  <div class="inline-block width-15per">
                     <select-box (toggle)="handleDateToggle(ds.value['selector'])"
                                 [selected]="ds.value['selected']">
                     </select-box>

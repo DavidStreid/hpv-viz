@@ -55,8 +55,8 @@ export class TypeGraphComponent implements OnInit {
   public xAxisTicks = [];
   public xAxisTickFormater = this.getTickFormatter();
 
-  // TypeGraphContainer
-  public typeGraphContainerWidth: string = `${this.sideSelectorWidthNum + this.view[0]}px`;
+  // TypeGraphContainer - Add 5 for a buffer
+  public typeGraphContainerWidth: string = `${this.sideSelectorWidthNum + this.view[0]+5}px`;
 
   constructor(private hpvDataService: HpvDataService) {
     this.init();
