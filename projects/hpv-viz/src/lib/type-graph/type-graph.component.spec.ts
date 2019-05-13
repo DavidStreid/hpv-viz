@@ -29,7 +29,11 @@ describe('TypeGraphComponent', () => {
     component = fixture.componentInstance;
 
     // For these tests, we'll enable all dateOptions
-    for( var key in component.datesOptionsEnabled ) component.datesOptionsEnabled[key] = true;
+    for( const key in component.datesOptionsEnabled ) {
+      if(component.datesOptionsEnabled.hasOwnProperty(key)){
+        component.datesOptionsEnabled[key] = true;
+      }
+    }
     component.initDateSelectors();
 
     fixture.detectChanges();
@@ -67,8 +71,14 @@ describe('TypeGraphComponent', () => {
   });
 
   it( 'Date selection fields (dataSelectors/timeSelect) change on toggle (handleDateToggle)', () => {
-    // Mock Data
-    component.hpvPatientData = INIT_DATA_POINTS;
+    // Mock data w/ patient map
+    // TODO - Put this into a private method
+    for ( const fileName in TEST_FILES ) {
+      if (TEST_FILES.hasOwnProperty(fileName)) {
+        const event = TEST_FILES[ fileName ]['event'];
+        component.addVcfUpload(event);
+      }
+    }
 
     // NOTE - TimeSelect should be initialized to DAY
     let oldToggle: DateOpt = DateOpt.DAY;
@@ -98,14 +108,19 @@ describe('TypeGraphComponent', () => {
   });
 
   it( 'Toggling the date option should transforms hpvPatientData', () => {
-    // Mock Data
-    component.hpvPatientData = INIT_DATA_POINTS;
+    // TODO - Put this into a private method
+    for ( const fileName in TEST_FILES ) {
+      if (TEST_FILES.hasOwnProperty(fileName)) {
+        const event = TEST_FILES[ fileName ]['event'];
+        component.addVcfUpload(event);
+      }
+    }
 
     // NOTE - TimeSelect should be initialized to DAY
     component.handleDateToggle( DateOpt.YEAR );
 
-    // Makes sure all datapoints get tested
-    let numDataPoints = INIT_DATA_POINTS.length;
+    // Makes sure all data-points get tested
+    let numDataPoints = component.hpvPatientData.length;
 
     for ( const entry of component.hpvPatientData ) {
       numDataPoints -= 1;
@@ -125,7 +140,13 @@ describe('TypeGraphComponent', () => {
   // TODO - Maybe make this more finer-grained once a design is approved
   it( 'x-axis variables are changed with a min and max value outside the range of xAxisTicks', () => {
     let xScaleMin, xScaleMax, xAxisTicks;
-    component.hpvPatientData = INIT_DATA_POINTS;
+    // TODO - Put this into a private method
+    for ( const fileName in TEST_FILES ) {
+      if (TEST_FILES.hasOwnProperty(fileName)) {
+        const event = TEST_FILES[ fileName ]['event'];
+        component.addVcfUpload(event);
+      }
+    }
     const values: DateOpt[] = Object.values(DateOpt);
     for ( const v of values ) {
       component.handleDateToggle( v );
@@ -198,9 +219,9 @@ describe('TypeGraphComponent', () => {
     const date = new Date('Mon Apr 29 2019 21:33:16 GMT-0400');
 
     // On initialization, the date formatter should go to day
-    component.reAssignTickFormatter();
+    component.reAssignXTickFormatter();
     let formatter = component.xAxisTickFormater;
-    expect( formatter(date) ).toBe( '29/3/2019' );
+    expect( formatter(date) ).toBe( '29/4/2019' );
 
     // Toggling to year should change the formatter to only return the year
     component.handleDateToggle(DateOpt.YEAR);
@@ -209,7 +230,7 @@ describe('TypeGraphComponent', () => {
 
     component.handleDateToggle(DateOpt.DAY);
     formatter = component.xAxisTickFormater;
-    expect( formatter(date) ).toBe( '29/3/2019' );
+    expect( formatter(date) ).toBe( '29/4/2019' );
   });
 
   it( 'Uploading multiple patient data should toggle the selected patient to the most recently uploaded', () => {
@@ -238,4 +259,6 @@ describe('TypeGraphComponent', () => {
     expect( component.patientMap.get(name).isSelected() ).toBeTruthy();
     expect(component.results.length).toBe( 1);
   });
+
+  // TOOD - Test where multiple patients are present and there's another upload. Only data points of the most recently uploaded should be selected
 });

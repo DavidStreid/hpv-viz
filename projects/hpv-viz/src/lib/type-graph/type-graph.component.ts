@@ -116,15 +116,16 @@ export class TypeGraphComponent implements OnInit {
       return;
     }
 
-    // Add entry to patients
-    this.addPatientToOptions( name );
-
     // Clone and add uploaded datapoint
     const hpvPatientData = this.hpvPatientData.slice(0);
     hpvPatientData.push(dataPoint);
     this.hpvPatientData = hpvPatientData;
 
-    this.handlePatientDataUpdates();
+    // Since a new vcf upload can change the selected patient, we need to refilter
+    this.addPatientToOptions( name );
+
+    this.results = this.filterOnSelectedPatients(this.hpvPatientData);
+    this.updateXAxisAndValues(this.results);
   }
 
   /**
@@ -137,8 +138,8 @@ export class TypeGraphComponent implements OnInit {
     this.deselectAllPatients();
     this.patientMap.get(name).toggle();   // Toggle option
 
-    this.results = this.filterOnSelectedPatients();
-    this.handlePatientDataUpdates(this.results);
+    const filteredResults: Object[] = this.filterOnSelectedPatients(this.hpvPatientData);
+    this.updateXAxisAndValues(filteredResults);
   }
 
   private deselectAllPatients(): void {
@@ -172,7 +173,9 @@ export class TypeGraphComponent implements OnInit {
     if ( toggleOpt === currOpt ) { return; }
 
     this.changeTimeSelector(toggleOpt, currOpt);
-    this.handlePatientDataUpdates();
+
+    this.results = this.filterOnSelectedPatients(this.hpvPatientData);
+    this.updateXAxisAndValues(this.results);
   }
 
   /**
@@ -184,13 +187,27 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Called on data being added or needing to reformat
+   * Toggles all patients to be selected
    */
-  private handlePatientDataUpdates(source?: Object[]): void {
-    this.results = this.reformatArray(source);
-    this.calculateTicks();
-    this.reAssignTickFormatter();
-    this.aggregateDataPoints();
+  private togglePatientOptionsToSelected(): void {
+    function toggle(value, key, map) {
+      value.toggle(true);
+    }
+    this.patientMap.forEach(toggle);
+  }
+
+  /**
+   * Called to update the x-axis & data-point along the x-axis
+   * TODO - comment on side-effects
+   */
+  private updateXAxisAndValues(source: Object[]): void {
+    const xValues = this.calculateXValues(source);   // Recalculate X-Axis values for each datapoint
+    const aggregatedSeries: Object[] = this.aggregateSeriesOnXValues(xValues);
+
+    this.results = aggregatedSeries;
+
+    this.calculateXTicks();                         // Recalculate X-Axis ticks to show (E.g. min/max)
+    this.reAssignXTickFormatter();                  // Recalculate X-Axis tick-formatter for displaying values on x-axis
   }
 
   /**
@@ -219,7 +236,12 @@ export class TypeGraphComponent implements OnInit {
       let tick = '';
       for ( const o of formatObject ) {
         for ( const f of o[ 'funcs' ] ) {
-          tick = `${tick}${date[f]()}${o['delimiter']}`;
+          var val = date[f]();
+          if( f === 'getMonth' ) {
+            // Months are 0-indexed
+            val += 1;
+          }
+          tick = `${tick}${val}${o['delimiter']}`;
         }
       }
       return tick;
@@ -232,7 +254,7 @@ export class TypeGraphComponent implements OnInit {
    *    - NOTE: This function requires a helper function to call it
    *    - Public for tests
    */
-  public reAssignTickFormatter(): void {
+  public reAssignXTickFormatter(): void {
     this.xAxisTickFormater = this.getTickFormatter();
   }
 
@@ -337,7 +359,7 @@ export class TypeGraphComponent implements OnInit {
           break;
         }
         case DateOpt.DAY: {
-          day = date.getDay();
+          day = date.getDate();
           break;
         }
         case DateOpt.HOUR: {
@@ -360,20 +382,43 @@ export class TypeGraphComponent implements OnInit {
   /**
    * Removes all patients that aren't selected by the filters
    */
-  private filterOnSelectedPatients(): Object[] {
+  private filterOnSelectedPatients(source: Object[]): Object[] {
     const patientFilter = function( entry: Object ) {
       const name: string = entry[ 'name' ] || '';
       return this.patientMap.get(name).isSelected();
     };
 
-    const newData = this.hpvPatientData.filter( patientFilter, this );
+    const newData = source.filter( patientFilter, this );
     return newData;
   }
 
   /**
-   *  Reformats hpvPatientData w/ new date values using hpvPatientData
+   *  Reformats x positions of source data to reflect changes to the date selector.
+   *    Modified field - Obj[ 'series' ][ i ][ 'x' ]
+   *
+   *  {
+   *    "name":"ZH8972",
+   *    "date":"2017-06-29T17:05:23.000Z
+   *    "series":[
+   *      {
+   *        "name":"2017-06-29T17:05:23.000Z",
+   *        "y":"HPV39_Ref",
+   *        "x":"2017-06-04T04:00:00.000Z",
+   *        "r":1},
+   *      ...] }
+   *
+   *  {
+   *    "name":"ZH8972",
+   *    "date":"2017-06-29T17:05:23.000Z"
+   *    "series":[
+   *      {
+   *        "name":"2017-06-29T17:05:23.000Z",
+   *        "y":"HPV39_Ref",
+   *        "x":"2017-06-04T04:00:00.000Z",       <- DIFFERENT
+   *        "r":1
+   *      },...], }
    */
-  private reformatArray(source?: Object[]): Object[] {
+  private calculateXValues(source: Object[]): Object[] {
     const dateFormatter = function( entry: Object ) {
       const series = entry[ 'series' ] || {};
       const date = entry['date'];
@@ -387,23 +432,22 @@ export class TypeGraphComponent implements OnInit {
       return entry;
     };
 
-    if ( source === undefined ) { source = this.hpvPatientData; }
     const newData = source.map(dateFormatter, this);
     return newData;
   }
 
   /**
-   * Aggregates data points at the same tick and places into result array
+   * Combines datapoints that belong to the same x-value (Obj['series']['x']) in the results
    *  - Should go after all formatting options
    *  - Should go after new data being uploaded
    */
-  private aggregateDataPoints(): void {
-    this.results.sort( (p1, p2) => {
+  private aggregateSeriesOnXValues(source: Object[]): Object[] {
+    source.sort( (p1, p2) => {
       return p1['date'] - p2['date'];
     });
     const dateMap: Object = {};
 
-    for ( const dp of this.results ) {
+    for ( const dp of source ) {
       const series = dp['series'] || [];
       if ( series.length === 0 ) { continue; }
       const formattedDate: Date = series[0]['x'];
@@ -423,7 +467,7 @@ export class TypeGraphComponent implements OnInit {
       }
     }
 
-    this.results = newResults;
+    return newResults;
   }
 
   /**
@@ -505,7 +549,10 @@ export class TypeGraphComponent implements OnInit {
     return true;
   }
 
-  private calculateTicks(): void {
+  /**
+   * Calculates x-axis ticks
+   */
+  private calculateXTicks(): void {
     this.xScaleMin  = this.getXScaleMin();
     this.xScaleMax  = this.getXScaleMax();
     this.xAxisTicks = this.getSortedDates();
