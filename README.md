@@ -11,3 +11,7 @@ $ npm run start # App should now be started at localhost:4200
 
 ## Technologies
 This uses the ngx-charts library.
+
+## Demo
+To check out this project, check out http://davidstreid.com/#/data/vcf
+![alt text](documentation/v1.png "Current Version")

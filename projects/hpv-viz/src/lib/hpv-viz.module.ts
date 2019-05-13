@@ -3,8 +3,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxChartsModule }         from '@swimlane/ngx-charts';
 
 // LOCAL DEPENDENCIES - Remove when deployed
-const LOCAL_MODULES = [ BrowserAnimationsModule ];
-// const LOCAL_MODULES = [ ];
+// const LOCAL_MODULES = [ BrowserAnimationsModule ];
+const LOCAL_MODULES = [ ];
 
 // COMPONENTS
 import { HpvVizComponent } from './hpv-viz.component';
