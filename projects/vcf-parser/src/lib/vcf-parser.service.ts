@@ -118,13 +118,25 @@ export class VcfParserService {
   }
 
   /**
+   * Performs any cleaning of the vcf file
+   *
+   * @param vcfFile, string - contents of vcf file
+   */
+  cleanVcf(vcfFile: string){
+    // Remove white space (including new lines)
+    return vcfFile.trim();
+  }
+
+  /**
    * Extracts enriched mutation objects from the vcf file
    *
    * @param vcfFile - string contents of a vcf file
    */
   extractVariantInfo(vcfFile: string): Object[] {
-    const data = this.getVariantLines(vcfFile);
-    const columns: string[] = this.getColumns(vcfFile);
+    const cleanVcf = this.cleanVcf(vcfFile);
+
+    const data = this.getVariantLines(cleanVcf):
+    const columns: string[] = this.getColumns(cleanVcf);
 
     const mutationInfo: Object[] = [];
 
