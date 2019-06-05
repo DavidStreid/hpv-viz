@@ -1,20 +1,32 @@
 import {  async,
           ComponentFixture,
           TestBed }               from '@angular/core/testing';
-import {  DateOpt }               from './graph-options.enums';
+import {  DateOpt }               from './models/graph-options.enums';
 import {  TypeGraphComponent }    from './type-graph.component';
-import {  NO_ERRORS_SCHEMA,
-          DebugElement }          from '@angular/core';
+import {  NO_ERRORS_SCHEMA }      from '@angular/core';
 import {  INIT_DATA_POINTS,
           INIT_DATA_POINTS_EVENTS,
           YEAR_TRANSFORM_DATES }  from '../../test/mock-data/mock-viz';
 import {  TEST_FILES }            from '../../test/mock-data/vcf-files';
-import { PatientOption }          from './patient-option.class';
+import { PatientOption }          from './models/patient-option.class';
 import { By }                     from '@angular/platform-browser';
 
 describe('TypeGraphComponent', () => {
   let component: TypeGraphComponent;
   let fixture: ComponentFixture<TypeGraphComponent>;
+
+  /**
+   * This method is a sanity check on what we expect the results to be. It should be used WHENEVER componetn.vcfupload
+   * is called
+   *
+   * @param results, Object[] - the "results" field of the component
+   */
+  function verifyResults(results: Object[]) {
+    expect(results.length > 0).toBeTruthy();
+    for( const r of results ){
+      expect(r['name'] === r['x']);
+    }
+  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -29,8 +41,8 @@ describe('TypeGraphComponent', () => {
     component = fixture.componentInstance;
 
     // For these tests, we'll enable all dateOptions
-    for( const key in component.datesOptionsEnabled ) {
-      if(component.datesOptionsEnabled.hasOwnProperty(key)){
+    for ( const key in component.datesOptionsEnabled ) {
+      if (component.datesOptionsEnabled.hasOwnProperty(key)) {
         component.datesOptionsEnabled[key] = true;
       }
     }
@@ -147,6 +159,7 @@ describe('TypeGraphComponent', () => {
         component.addVcfUpload(event);
       }
     }
+
     const values: DateOpt[] = Object.values(DateOpt);
     for ( const v of values ) {
       component.handleDateToggle( v );
@@ -242,23 +255,123 @@ describe('TypeGraphComponent', () => {
 
       let numPatientsSelected = 0;
       component.patientMap.forEach((opt: PatientOption) => {
-        if( opt.isSelected() ) numPatientsSelected += 1;
+        if ( opt.isSelected() ) { numPatientsSelected += 1; }
       });
       expect( numPatientsSelected ).toBe( 1 );
       expect( component.patientMap.get(evt['name']).isSelected()).toBeTruthy();
     }
+
+    verifyResults(component.results);
+  });
+
+  it( 'Correct data transformation on upload of vcf', () => {
+    // Toggle date selector to be the most granular so there is no name joining
+    component.handleDateToggle(DateOpt.MIN_SEC);
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) { component.addVcfUpload(evt); }
+    expect(component.hpvPatientData).toEqual(INIT_DATA_POINTS);
+    verifyResults(component.results);
+  });
+
+  it( 'Data upload of vcf should update to the vcf map', () => {
+    // Toggle date selector to be the most granular so there is no name joining
+    component.handleDateToggle(DateOpt.MIN_SEC);
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) { component.addVcfUpload(evt); }
+
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) {
+      for ( const vi of evt['variantInfo']) {
+        const chr = vi['CHROM'];
+        const date = evt['date'];
+        const name = evt['name'];
+
+        const $event: Object = {
+          series: name,
+          name: date,
+          value: chr
+        };
+
+        // TODO - this is temporary to see that saved data of a vcf can be queried
+        const data: Object[] = component.onClick($event);
+        expect(data.length > 0).toBeTruthy();
+        expect(data[0]['CHROM']).toBe(chr);
+      }
+    }
+
+    verifyResults(component.results);
+  });
+
+  it( 'Date toggle should modify the vcf map and return data successfully', () => {
+    // Toggle date selector to be the most granular so there is no name joining
+    component.handleDateToggle(DateOpt.MIN_SEC);
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) { component.addVcfUpload(evt); }
+    verifyResults(component.results);
+
+    const selectedSubject = 'P1';
+    const selectedDateOpt: DateOpt = DateOpt.YEAR;
+
+    /**
+     * The chromosomes in this set should be aggregated by toggling the date, i.e. After date-toggle, the component's
+     * "results" array should have two entries from multiple date entries of the original INIT_DATA_POINTS_EVENTS
+     */
+    const aggregatedChromosomes: Set<string> = new Set(['C3', 'C4']);
+
+    // Here we check that the 'selectedSubject' of the input events has multiple date entries
+    expect(aggregatedChromosomes.size > 0).toBeTruthy();
+    const chromosomes = INIT_DATA_POINTS_EVENTS
+      .filter( evt => evt['name'] === selectedSubject ) // filter out only selectedPatient
+      .map( evt => evt['variantInfo' ])                 // { variantInfo: { CHROM: 'C1' } } -> { CHROM: 'C1' }
+      .map( vi => vi.map(o => o['CHROM']))              // { CHROM: 'C1' }, { CHROM: 'C1' } -> [ 'C1', 'C2' ]
+      .reduce( (accumulator, curr) => accumulator.concat(curr) ); // ['C1','C2'],['C3'] -> ['C1','C2','C3' ]
+    aggregatedChromosomes.forEach( (a) => {
+      expect(chromosomes.filter((c) => a === c ).length > 1).toBeTruthy();
+    });
+
+    // Choose a patient with multiple different date entries, e.g. 'P1'
+    component.handlePatientToggle(name);
+
+    // Aggregate all data points to one date
+    component.handleDateToggle(selectedDateOpt);
+
+    const patientDataPoints: Object[] = INIT_DATA_POINTS_EVENTS.filter(evt => evt['name'] === selectedSubject);
+    for ( const dp of patientDataPoints ) {
+      const series: string = dp['name'];
+      const name: Date = component.formatDate(dp['date'], component.getTimeFields());
+      const variantInfo: Object[] = dp['variantInfo'];
+
+      for ( const vi of variantInfo ) {
+        const value: string = vi['CHROM'];
+        const evt: Object = { series, name, value };
+        const vals: Object[] = component.onClick(evt);
+
+        if ( aggregatedChromosomes.has(value) ) {
+          // Check that the expected chromosomes are aggregated
+          expect(vals.length > 1).toBeTruthy();
+        } else {
+          // If not aggregated, the length should still be 1
+          expect(vals.length).toBe(1);
+        }
+      }
+    }
+    verifyResults(component.results);
   });
 
   it( 'Changing the patient selection should fitler results to only the toggled patient', () => {
     // Toggle date selector to be the most granular so there is no name joining
     component.handleDateToggle(DateOpt.MIN_SEC);
-    for ( const evt of INIT_DATA_POINTS_EVENTS ) component.addVcfUpload(evt);
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) { component.addVcfUpload(evt); }
 
-    const name = INIT_DATA_POINTS_EVENTS[0]['name'];
+    // Choose an entry that has a unique 'name' field (e.g. not 'P1')
+    const name = INIT_DATA_POINTS_EVENTS[1]['name'];
     component.handlePatientToggle( name );
     expect( component.patientMap.get(name).isSelected() ).toBeTruthy();
     expect(component.results.length).toBe( 1);
+
+    verifyResults(component.results);
   });
 
-  // TOOD - Test where multiple patients are present and there's another upload. Only data points of the most recently uploaded should be selected
+  /**
+   * TOOD - Test where multiple patients are present and there's another upload. Only data points of the most recently
+   * uploaded should be selected
+   */
+
+
 });

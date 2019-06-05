@@ -1,7 +1,8 @@
 import { Component, OnInit }  from '@angular/core';
 import { HpvDataService }     from '../services/hpv-data-service';
-import { DateOpt }            from './graph-options.enums';
-import { PatientOption }      from './patient-option.class';
+import { DateOpt }            from './models/graph-options.enums';
+import { PatientOption }      from './models/patient-option.class';
+import { VcfMap }             from './models/vcfMap.class';
 
 @Component({
   selector:      'app-type-graph', // tslint:disable-line
@@ -13,6 +14,7 @@ export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
   public results: Object[];                       // MUTABLE - Modified or replaced on formatting changes and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
+  private vcfMap: VcfMap;
 
   public datesOptionsEnabled: object = {
     [DateOpt.MIN_SEC]:  false,
@@ -20,7 +22,7 @@ export class TypeGraphComponent implements OnInit {
     [DateOpt.DAY]:      true,
     [DateOpt.MONTH]:    true,
     [DateOpt.YEAR]:     true
-  }
+  };
 
   // Map that tracks what date selectors to show
   public dateSelectors: object = {
@@ -35,8 +37,8 @@ export class TypeGraphComponent implements OnInit {
   public enabledDateSelectors: any = {};
 
   // Side Selector width
-  private sideSelectorWidthNum: number = 120;
-  public sideSelectorWidth: string = `${this.sideSelectorWidthNum}px`;
+  private sideSelectorWidthNum = 120;
+  public sideSelectorWidth = `${this.sideSelectorWidthNum}px`;
 
   // Graph Options
   public view: any[] = [750, 400];
@@ -56,7 +58,7 @@ export class TypeGraphComponent implements OnInit {
   public xAxisTickFormater = this.getTickFormatter();
 
   // TypeGraphContainer - Add 5 for a buffer
-  public typeGraphContainerWidth: string = `${this.sideSelectorWidthNum + this.view[0]+5}px`;
+  public typeGraphContainerWidth = `${this.sideSelectorWidthNum + this.view[0] + 5}px`;
 
   constructor(private hpvDataService: HpvDataService) {
     this.init();
@@ -71,10 +73,10 @@ export class TypeGraphComponent implements OnInit {
     this.enabledDateSelectors = Object.assign({}, this.dateSelectors);
     const dateEntries: string[] =  Object.keys(this.datesOptionsEnabled);
 
-    for( const key of dateEntries ){
+    for ( const key of dateEntries ) {
       const enabled = this.datesOptionsEnabled[key] || false;
 
-      if( ! enabled ){
+      if ( ! enabled ) {
         delete this.enabledDateSelectors[key];
       }
     }
@@ -84,10 +86,11 @@ export class TypeGraphComponent implements OnInit {
     this.hpvPatientData = [];
     this.results = [];
     this.patientMap = new Map();
+    this.vcfMap = new VcfMap();
     this.initDateSelectors();
 
-    /*
     // FOR TESTING PURPOSES
+    /*
     const evtTemplate: Object = {
       name: 'P1',
       date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
@@ -102,14 +105,18 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Handler for uplaod event, which should be formatted as a datapoint
+   * Handler for uplaod event, which should be formatted as a datapoint.
+   *    - Updates component's hpvPatientData
+   *    - Updates component's results (updateXAxisAndValues)
+   *
+   * @param $event, Object[] - list of enriched objects containing variant info
    */
   public addVcfUpload($event: Object): void {
     const name = $event[ 'name' ] || '';
     const date = $event[ 'date' ] || null;
-    const hpvTypes = $event[ 'hpvTypes' ] || new Set();
+    const variantInfo = $event[ 'variantInfo' ] || [];
 
-    const dataPoint = this.formatForVisualization( name, date, hpvTypes );
+    const dataPoint = this.formatForVisualization( name, date, variantInfo );
 
     if ( !this.isValidDataPoint( dataPoint) ) {
       console.error( 'Invalid upload' );
@@ -124,8 +131,8 @@ export class TypeGraphComponent implements OnInit {
     // Since a new vcf upload can change the selected patient, we need to refilter
     this.addPatientToOptions( name );
 
-    this.results = this.filterOnSelectedPatients(this.hpvPatientData);
-    this.updateXAxisAndValues(this.results);
+    const filteredResults: Object[] = this.filterOnSelectedPatients(this.hpvPatientData);
+    this.updateXAxisAndValues(filteredResults);
   }
 
   /**
@@ -169,13 +176,16 @@ export class TypeGraphComponent implements OnInit {
    * Handles event emitted by select box
    */
   public handleDateToggle(toggleOpt: DateOpt): void {
+    // Since date is a key of the vcfmap, we need to clear it
+    this.vcfMap.clear();
+
     const currOpt = this.getSelectedTimeOption();
     if ( toggleOpt === currOpt ) { return; }
 
     this.changeTimeSelector(toggleOpt, currOpt);
 
-    this.results = this.filterOnSelectedPatients(this.hpvPatientData);
-    this.updateXAxisAndValues(this.results);
+    const filteredResults: Object[] = this.filterOnSelectedPatients(this.hpvPatientData);
+    this.updateXAxisAndValues(filteredResults);
   }
 
   /**
@@ -194,20 +204,6 @@ export class TypeGraphComponent implements OnInit {
       value.toggle(true);
     }
     this.patientMap.forEach(toggle);
-  }
-
-  /**
-   * Called to update the x-axis & data-point along the x-axis
-   * TODO - comment on side-effects
-   */
-  private updateXAxisAndValues(source: Object[]): void {
-    const xValues = this.calculateXValues(source);   // Recalculate X-Axis values for each datapoint
-    const aggregatedSeries: Object[] = this.aggregateSeriesOnXValues(xValues);
-
-    this.results = aggregatedSeries;
-
-    this.calculateXTicks();                         // Recalculate X-Axis ticks to show (E.g. min/max)
-    this.reAssignXTickFormatter();                  // Recalculate X-Axis tick-formatter for displaying values on x-axis
   }
 
   /**
@@ -236,8 +232,8 @@ export class TypeGraphComponent implements OnInit {
       let tick = '';
       for ( const o of formatObject ) {
         for ( const f of o[ 'funcs' ] ) {
-          var val = date[f]();
-          if( f === 'getMonth' ) {
+          let val = date[f]();
+          if ( f === 'getMonth' ) {
             // Months are 0-indexed
             val += 1;
           }
@@ -296,20 +292,72 @@ export class TypeGraphComponent implements OnInit {
     return formatOrder.slice(numObjs - 1, numObjs);
   }
 
-  private formatForVisualization(name: string, date: Date, hpvTypes: Set<string>) {
+  // TODO - Right now extraction isn't the safest. Add constants? Add a dedicated type?
+  private extractChromosomeInfo(variantInfo: Object) {
+    return variantInfo['CHROM'] || '';
+  }
+
+  /**
+   * Formats incoming vcf file into a datpoint for the visualization.
+   * Datapoint notes:
+   *    Radius, r - Data point size. We treat each line as one point (r=1). This can be aggregated by
+   *                  - Multiple variants of a chromosome in a file
+   *                  - Aggregation of vcfs, e.g. combining all vcfs from a year
+   *    Date, x   - Date will be the x axis to show variant change over time
+   *
+   * @param name, string - Name of the subject the vcf is of
+   * @param date, Date - Date the vcf was taken
+   * @param variantInfo, Object[] - List of enriched objects representing variant information
+   *
+   * @return, Object[] - List of objects, where each object contains the data for a specific variant type, indicated by
+   *                     name
+   *
+   *                     e.g. {
+   *                         name: 'S1',
+   *                         date: '',
+   *                         series: [
+   *                          {
+   *
+   *                          },
+   *                          ...
+   *                         ]
+   *                     }
+   */
+  private formatForVisualization(name: string, date: Date, variantInfo: Object[]) {
     const series = [];
 
-    hpvTypes.forEach( function(type) {
-      const o1 = {
+    for ( const vi of variantInfo ) {
+      const dp = {
         name: date,
-        y: type,
+        y: this.extractChromosomeInfo(vi),
         x: date,
-        r: 1
+        r: 1,
+        data: vi
       };
-      series.push(o1);
-    });
+      series.push(dp);
+    }
 
     return { name, series, date };
+  }
+
+  /**
+   * Fires when user clicks on datapoint in the graph
+   *
+   * @param $event, object - Object containing x,y values of the clicked on datapoint
+   *        e.g. [{
+   *                name: Thu Jun 2 2019 00:00:00 GMT-0400 (Eastern Daylight Time),
+   *                value: "CHROM1",
+   *                series: "PATIENT"
+   *              }]
+   */
+  public onClick($event): Object[] {
+    const sample: string = $event.series;
+    const date: Date = $event.name;
+    const chr: string = $event.value;
+
+    // TODO - trigger modal
+    const obj = this.vcfMap.get(sample, date, chr);
+    return obj;
   }
 
   /**
@@ -380,7 +428,9 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Removes all patients that aren't selected by the filters
+   * Removes all patients that aren't selected by the filters. This filtering does not require transforming
+   * the dataset, however, if filters are already being applied on fields that require transformation (e.g. date,
+   * chromsome type, mutation tepe), then transformations will need to happen after this method.
    */
   private filterOnSelectedPatients(source: Object[]): Object[] {
     const patientFilter = function( entry: Object ) {
@@ -393,13 +443,34 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
+   * Called to update the x-axis & data-point along the x-axis based on the input set of results.
+   *    NOTE - This will modify the following state of the component
+   *              results - Datapoints on the same date will be aggregated
+   *              xScaleMin,xScaleMax, & xAxisTicks - Will change based on the potentially new x-values
+   *              xAxisTickFormater - Will change based on the current date selection
+   *    @source - Set of datapoints that will determine the x-axis & values
+   */
+  private updateXAxisAndValues(source: Object[]): void {
+    const xValues = this.calculateXValues(source);   // Recalculate X-Axis values for each datapoint
+    const aggregatedSeries: Object[] = this.aggregateSeriesOnXValues(xValues);
+
+    this.results = aggregatedSeries;
+
+    this.calculateXTicks();                         // Recalculate X-Axis ticks to show (E.g. min/max)
+    this.reAssignXTickFormatter();                  // Recalculate X-Axis tick-formatter for displaying values on x-axis
+  }
+
+  /**
    *  Reformats x positions of source data to reflect changes to the date selector.
    *    Modified field - Obj[ 'series' ][ i ][ 'x' ]
+   *
+   *    NOTE -  Each datapoint will have an x & name value. x determines its position on the x-axis. However,
+   *            during the onClick event, the 'name' NOT the 'x' is passed. So we want these two fields to match
    *
    *  {
    *    "name":"ZH8972",
    *    "date":"2017-06-29T17:05:23.000Z
-   *    "series":[
+   *    "series":[                                      <- Array of datapoints
    *      {
    *        "name":"2017-06-29T17:05:23.000Z",
    *        "y":"HPV39_Ref",
@@ -426,6 +497,7 @@ export class TypeGraphComponent implements OnInit {
       const updatedSeries = series.map( (datapoint: Object) => {
         const updatedDate = this.formatDate(date, timeFields);
         datapoint[ 'x' ] = updatedDate;
+        datapoint[ 'name' ] = updatedDate;
         return datapoint;
       }, date, timeFields);
       entry[ 'series' ] = updatedSeries;
@@ -463,7 +535,8 @@ export class TypeGraphComponent implements OnInit {
     const newResults: Object[] = [];
     for ( const date in dateMap ) {
       if (dateMap.hasOwnProperty(date)) {
-        newResults.push( this.combineEntries( parseInt(date, 10), dateMap[ date ] ) );
+        const entry = this.combineEntries( parseInt(date, 10), dateMap[ date ] );
+        newResults.push( entry );
       }
     }
 
@@ -471,49 +544,45 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Combines the HPV entries for multiple data points into one
+   * Combines the HPV entries for multiple data points into one. Since this can affect the names and combine
+   * values, we need to clear and re-compute the vcfMap
+   *
    *    [ { hpv1: 1, hpv2: 1}, { hpv1: 1, hpv3: 1 }, ... ] => { hpv1: 2, hpv2: 1, hpv3: 1 }
    */
   private combineEntries( dateVal: number, entries: Object[] ): Object {
-    const names: string[] = [];
-    const hpvMap = {};
+    const names: Set<string> = new Set();
 
     // Aggregate all hpv types recorded
     for ( const e of entries ) {
       const n = e[ 'name' ];
-      names.push( n );
+      names.add( n );
 
       const dataPoints: Object[] = e[ 'series' ] || [];
       for ( const dp of dataPoints ) {
-        const hpv = dp[ 'y' ];
-        if ( hpv in hpvMap ) {
-          hpvMap[ hpv ] += 1;
-        } else {
-          hpvMap[ hpv ] = 1;
-        }
+        this.vcfMap.add(n, dp);
       }
     }
 
-    const name    = names.join('-');
+
+    const name    = Array.from(names.values()).join('-');
     const date    = new Date(dateVal);
-    const series  = this.createSeriesFromMap(hpvMap, date);
+    const series  = this.createSeriesFromMap(this.vcfMap, date);
 
     return { name, series, date };
   }
 
-  private createSeriesFromMap(hpvMap: Object, date: Date): Object[] {
+  private createSeriesFromMap(vcfMap: VcfMap, date: Date): Object[] {
     const series = [];
-    for ( const k in hpvMap ) {
-      if ( hpvMap.hasOwnProperty(k) ) {
-        const dp = {
-          name: k,
-          y: k,
-          x: date,
-          r: hpvMap[k]
-        };
-        series.push(dp);
-      }
+    for ( const chr of vcfMap.keys() ) {
+      const dp = {
+        name: date,
+        y: chr,
+        x: date,
+        r: vcfMap.numEntries(chr)
+      };
+      series.push(dp);
     }
+
     return series;
   }
 

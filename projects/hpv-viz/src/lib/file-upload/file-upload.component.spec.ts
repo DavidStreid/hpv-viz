@@ -55,8 +55,20 @@ describe('FileUploadComponent', () => {
           item: (index: number) => file
         };
 
+        // Subscribe to emitted event and test output
         component.vcfUpload.subscribe($event => {
-          expect($event).toEqual(event);
+
+          const strictTests = [ 'name', 'date' ];
+          const lazyTests = [ 'variantInfo' ];
+
+          for ( const field of strictTests ) {
+            expect( $event[field] ).toEqual( event[field] );
+          }
+          for ( const field of lazyTests ) {
+            expect( field in $event ).toBeTruthy();
+          }
+
+
           done();
         });
         component.handleDrop(fileList);

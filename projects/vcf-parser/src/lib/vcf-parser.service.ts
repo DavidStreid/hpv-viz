@@ -63,7 +63,7 @@ export class VcfParserService {
     if (columnLines.length !== 1) { return []; }
 
     // Remove any headers and split
-    return columnLines[0].replace('#', '').split(/\s+/);
+    return columnLines[0].replace(COLUMN_START, '').split(/\s+/);
   }
 
   /**
@@ -122,7 +122,7 @@ export class VcfParserService {
    *
    * @param vcfFile, string - contents of vcf file
    */
-  cleanVcf(vcfFile: string){
+  cleanVcf(vcfFile: string) {
     // Remove white space (including new lines)
     return vcfFile.trim();
   }
@@ -135,7 +135,7 @@ export class VcfParserService {
   extractVariantInfo(vcfFile: string): Object[] {
     const cleanVcf = this.cleanVcf(vcfFile);
 
-    const data = this.getVariantLines(cleanVcf):
+    const data = this.getVariantLines(cleanVcf);
     const columns: string[] = this.getColumns(cleanVcf);
 
     const mutationInfo: Object[] = [];
@@ -162,12 +162,10 @@ export class VcfParserService {
    */
   extractChromosomes(vcfFile: string): Set<string> {
     const chromosomes = new Set();
-
     const data = this.getVariantLines(vcfFile);
 
     // Parse through lines of data and return
     for ( const line of data ) {
-
       const columns = line.split(/\s+/);
       if ( columns.length > 1 ) {
         const chr = columns[0];

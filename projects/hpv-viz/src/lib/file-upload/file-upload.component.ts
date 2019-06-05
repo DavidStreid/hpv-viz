@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
-import { VcfParserService } from 'vcf-parser';
+import { VcfParserService } from '../../../../vcf-parser/src/lib/vcf-parser.service';
+// import { VcfParserService } from 'vcf-parser';
 
 @Component({
   selector: 'app-file-upload', // tslint:disable-line
@@ -9,10 +10,7 @@ import { VcfParserService } from 'vcf-parser';
 export class FileUploadComponent implements OnInit {
   @Output()
   public vcfUpload = new EventEmitter<Object>();
-
-  currentUpload: Object;
-  chromosomes: any = {};
-  dropzoneActive = false;
+  public dropzoneActive = false;
 
   constructor(private vcfParserService: VcfParserService) { }
 
@@ -28,12 +26,21 @@ export class FileUploadComponent implements OnInit {
     }
   }
 
-  // The hpv variants are denoted by the label on the chromosome field of the vcf
-  private getHpvTypes(file: string): Set<string> {
-    return this.vcfParserService.extractChromosomes(file);
+  /**
+   * Returns a list of objects containing the column values of
+   * each line of the vcf file
+   *
+   * @param file, string - string contents of vcf file
+   */
+  private getVariantInfo(file: string): Object[] {
+    return this.vcfParserService.extractVariantInfo(file);
   }
 
-  // 'P1_MOCK.ann.vcf' -> 'P1'
+  /**
+   * 'P1_MOCK.ann.vcf' -> 'P1'
+   *
+   * @param name, string - file name
+   */
   private getPatientFromFileName(name: string): string {
     // TODO - constant file?
     const NAME_DELIMITER = '_';
@@ -48,13 +55,14 @@ export class FileUploadComponent implements OnInit {
 
   private readFile(file: File) {
       const fileName = file['name'] || 'NO_NAME';
+      // TODO - should change
       const name = this.getPatientFromFileName( fileName );
       const reader = new FileReader();
 
       reader.onload = () => {
-        const hpvTypes = this.getHpvTypes(reader.result);
+        const variantInfo = this.getVariantInfo(reader.result);
         const date = this.vcfParserService.extractDate(reader.result);
-        this.vcfUpload.emit( {name, date, hpvTypes});
+        this.vcfUpload.emit( {name, date, variantInfo });
       };
       const contents = reader.readAsText(file);
   }

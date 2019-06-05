@@ -9,41 +9,41 @@ export const TEST_FILES: object = {
     contents: P1_MOCK,
     event: {
       name: 'P1',
-      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
-      hpvTypes: new Set(['C1', 'C2', 'C3', 'C4', 'C5']),
+      date: new Date( 'Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)' ),
+      variantInfo: [{'CHROM': 'TEST_CHROM'}]
     },
     datapoint: {
       name: 'P1',
-      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
+      date: new Date( 'Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)' ),
       series: [
         {
-          name: new Date('2011-02-13T10:38:12'),
+          name: new Date('2011-02-13T00:00:00'),
           y: 'C1',
-          x: new Date('2011-02-13T10:38:12'),
+          x: new Date('2011-02-13T00:00:00'),
           r: 1
         },
         {
-          name: new Date('2011-02-13T10:38:12'),
+          name: new Date('2011-02-13T00:00:00'),
           y: 'C2',
-          x: new Date('2011-02-13T10:38:12'),
+          x: new Date('2011-02-13T00:00:00'),
           r: 1
         },
         {
-          name: new Date('2011-02-13T10:38:12'),
+          name: new Date('2011-02-13T00:00:00'),
           y: 'C3',
-          x: new Date('2011-02-13T10:38:12'),
+          x: new Date('2011-02-13T00:00:00'),
           r: 1
         },
         {
-          name: new Date('2011-02-13T10:38:12'),
+          name: new Date('2011-02-13T00:00:00'),
           y: 'C4',
-          x: new Date('2011-02-13T10:38:12'),
+          x: new Date('2011-02-13T00:00:00'),
           r: 1
         },
         {
-          name: new Date('2011-02-13T10:38:12'),
+          name: new Date('2011-02-13T00:00:00'),
           y: 'C5',
-          x: new Date('2011-02-13T10:38:12'),
+          x: new Date('2011-02-13T00:00:00'),
           r: 1
         }
       ]

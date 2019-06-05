@@ -24,8 +24,8 @@ describe('VcfMap', () => {
     /**
      * Convoluted way of adding 5 entries for c1, 10 entries for c2, & 15 entries fo r c3
      */
-    for ( const i = 0; i < chromosomes.length; i++) {
-      for ( const j = 0; j < (i + 1) * 5; j++) {
+    for ( let i = 0; i < chromosomes.length; i++) {
+      for ( let j = 0; j < (i + 1) * 5; j++) {
         const e = JSON.parse(JSON.stringify(entry)); // Need a deep copy since entry is used throughout test file
         e['data']['CHROM'] = chromosomes[i];
         e['name'] = new Date(e['name']);
@@ -34,7 +34,7 @@ describe('VcfMap', () => {
     }
 
     // Testing for correct amounts
-    for ( const i = 0; i < chromosomes.length; i++) {
+    for ( let i = 0; i < chromosomes.length; i++) {
       expect(vcfMap.numEntries(chromosomes[i])).toBe((i + 1) * 5);
     }
 
