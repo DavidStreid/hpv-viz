@@ -8,8 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "hpv-viz": "ng build hpv-viz",
-    "vcf-parser": "ng build vcf-parser"
+    "hpv-viz": "npm install npm install projects/hpv-viz && ng build hpv-viz",
+    "vcf-parser": "npm install projects/vcf-parser && projects/ng build vcf-parser"
   },
   "private": true,
   "dependencies": {
@@ -25,7 +25,9 @@
     "@swimlane/ngx-charts": "^10.1.0",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
+    "hpv-viz": "file:projects/hpv-viz",
     "rxjs": "~6.2.0",
+    "vcf-parser": "file:projects/vcf-parser",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
