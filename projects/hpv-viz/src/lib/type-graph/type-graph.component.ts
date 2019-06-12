@@ -16,6 +16,12 @@ export class TypeGraphComponent implements OnInit {
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   private vcfMap: VcfMap;
 
+  // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
+  public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
+  public modalTitle: string;
+  public headers: string[];
+  public selectedVariant: Object[] = [];
+
   public datesOptionsEnabled: object = {
     [DateOpt.MIN_SEC]:  false,
     [DateOpt.HOUR]:     false,
@@ -33,7 +39,7 @@ export class TypeGraphComponent implements OnInit {
     [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false }
   };
 
-  // Shoudl be of type "any" so that "keyvalue" pipe can be used in the view
+  // Shoudl be of type 'any" so that "keyvalue" pipe can be used in the view
   public enabledDateSelectors: any = {};
 
   // Side Selector width
@@ -60,10 +66,34 @@ export class TypeGraphComponent implements OnInit {
   // TypeGraphContainer - Add 5 for a buffer
   public typeGraphContainerWidth = `${this.sideSelectorWidthNum + this.view[0] + 5}px`;
 
+  ngOnInit() {}
+
   constructor(private hpvDataService: HpvDataService) {
     this.init();
   }
-  ngOnInit() {}
+
+  init(): void {
+    this.hpvPatientData = [];
+    this.results = [];
+    this.patientMap = new Map();
+    this.vcfMap = new VcfMap();
+    this.initDateSelectors();
+
+    // FOR TESTING PURPOSES
+    /*
+    this.getHeaders(this.selectedVariant);
+    const evtTemplate: Object = {
+      name: 'P1',
+      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
+      hpvTypes: new Set(['C1', 'C2', 'C3', 'C4', 'C5']),
+    };
+    for( var i = 0; i<4; i++ ) {
+      const evt = Object.assign({}, evtTemplate);
+      evt[ 'name' ] = `P${i+1}`;
+      this.addVcfUpload( evt );
+    }
+    */
+  }
 
   /**
    * Removes any dateSelectors that haven't been enabled. We do this because when rendering the page,
@@ -82,32 +112,10 @@ export class TypeGraphComponent implements OnInit {
     }
   }
 
-  init(): void {
-    this.hpvPatientData = [];
-    this.results = [];
-    this.patientMap = new Map();
-    this.vcfMap = new VcfMap();
-    this.initDateSelectors();
-
-    // FOR TESTING PURPOSES
-    /*
-    const evtTemplate: Object = {
-      name: 'P1',
-      date: new Date( 'Sun Feb 13 2011 10:38:12 GMT-0500 (Eastern Standard Time)' ),
-      hpvTypes: new Set(['C1', 'C2', 'C3', 'C4', 'C5']),
-    };
-    for( var i = 0; i<4; i++ ) {
-      const evt = Object.assign({}, evtTemplate);
-      evt[ 'name' ] = `P${i+1}`;
-      this.addVcfUpload( evt );
-    }
-    */
-  }
-
   /**
    * Handler for uplaod event, which should be formatted as a datapoint.
    *    - Updates component's hpvPatientData
-   *    - Updates component's results (updateXAxisAndValues)
+   *    - Updates component's results (updateViewOnFiltered)
    *
    * @param $event, Object[] - list of enriched objects containing variant info
    */
@@ -131,8 +139,8 @@ export class TypeGraphComponent implements OnInit {
     // Since a new vcf upload can change the selected patient, we need to refilter
     this.addPatientToOptions( name );
 
-    const filteredResults: Object[] = this.filterOnSelectedPatients(this.hpvPatientData);
-    this.updateXAxisAndValues(filteredResults);
+    const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
+    this.updateViewOnFiltered(filteredResults);
   }
 
   /**
@@ -145,8 +153,8 @@ export class TypeGraphComponent implements OnInit {
     this.deselectAllPatients();
     this.patientMap.get(name).toggle();   // Toggle option
 
-    const filteredResults: Object[] = this.filterOnSelectedPatients(this.hpvPatientData);
-    this.updateXAxisAndValues(filteredResults);
+    const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
+    this.updateViewOnFiltered(filteredResults);
   }
 
   private deselectAllPatients(): void {
@@ -176,16 +184,13 @@ export class TypeGraphComponent implements OnInit {
    * Handles event emitted by select box
    */
   public handleDateToggle(toggleOpt: DateOpt): void {
-    // Since date is a key of the vcfmap, we need to clear it
-    this.vcfMap.clear();
-
     const currOpt = this.getSelectedTimeOption();
     if ( toggleOpt === currOpt ) { return; }
 
     this.changeTimeSelector(toggleOpt, currOpt);
 
-    const filteredResults: Object[] = this.filterOnSelectedPatients(this.hpvPatientData);
-    this.updateXAxisAndValues(filteredResults);
+    const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
+    this.updateViewOnFiltered(filteredResults);
   }
 
   /**
@@ -355,9 +360,84 @@ export class TypeGraphComponent implements OnInit {
     const date: Date = $event.name;
     const chr: string = $event.value;
 
-    // TODO - trigger modal
-    const obj = this.vcfMap.get(sample, date, chr);
-    return obj;
+    const variantInfo: Object[] = this.vcfMap.get(sample, date, chr);
+    this.setModalinformation(variantInfo);
+
+    // Return for testing purposes
+    return variantInfo;
+  }
+
+  /**
+   * Closes Modal. Does this by clearing all modal fields, specifically, selectedVariant
+   *
+   * @param $event, boolean - event passed to initialize close modal
+   */
+  public closeModal($event: boolean) {
+    this.selectedVariant = [];
+    this.headers = [];
+    this.modalTitle = '';
+  }
+
+  /**
+   * Sets modal information based on the variantInfo array passed to the method
+   *
+   * @param variantInfo, Object[] - Array of variant objects
+   */
+  private setModalinformation(variantInfo: Object[]): void {
+      // Sort variantInfo on the position
+    const sortedOnPos: Object[] = variantInfo.sort(function(o1, o2) {
+      const pos1Str = o1['POS'] || 0;
+      const pos2Str = o2['POS'] || 0;
+
+
+      const pos1: number = parseInt(pos1Str, 10);
+      const pos2: number = parseInt(pos1Str, 10);
+
+      if ( isNaN(pos1) || isNaN(pos2) ) { return 0; }
+
+      return pos1 - pos2;
+    });
+
+    this.selectedVariant = sortedOnPos;
+    this.headers = this.getHeaders(this.selectedVariant);
+    this.modalTitle = this.getModalTitle(this.selectedVariant);
+  }
+
+  /**
+   * Returns modal title given the input data
+   *
+   * @param data, Object[] - VariantInfo data taken from the vcfMap for that chromosome/time
+   */
+  private getModalTitle(data: Object[]): string {
+    if ( data.length === 0 ) { return; }
+
+    // Take a look at the first entry to determine the chromosome
+    const entry: Object = data[0];
+    const chr: string = entry['CHROM'] || 'Chromosome';
+
+    return `Variants for ${chr}, ${data.length} variants`;
+  }
+
+  /**
+   * Returns headers to display in the modal given the input data
+   *
+   * @param data, Object[] - VariantInfo data taken from the vcfMap for that chromosome/time
+   */
+  private getHeaders(data: Object[]): string[] {
+    if ( data.length === 0 ) { return; }
+
+    // Take a look at the first entry to determine all the header values
+    const entry: Object = data[0];
+    const keys: string[] = Object.keys(entry);
+
+    function includeHeader(includedHeaders) {
+        return function(element) {
+          return includedHeaders.has(element.toUpperCase());
+        };
+    }
+
+    // Only take the headers we would like to show
+    return keys.filter(includeHeader(this.includeInModal));
   }
 
   /**
@@ -427,6 +507,12 @@ export class TypeGraphComponent implements OnInit {
     return new Date(year, month, day, hour, min, sec);
   }
 
+  private getFilteredResults(variants: Object[]): Object[] {
+    const filteredPatients: Object[] = this.filterOnSelectedPatients(variants);
+
+    return filteredPatients;
+  }
+
   /**
    * Removes all patients that aren't selected by the filters. This filtering does not require transforming
    * the dataset, however, if filters are already being applied on fields that require transformation (e.g. date,
@@ -443,14 +529,17 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Called to update the x-axis & data-point along the x-axis based on the input set of results.
-   *    NOTE - This will modify the following state of the component
-   *              results - Datapoints on the same date will be aggregated
-   *              xScaleMin,xScaleMax, & xAxisTicks - Will change based on the potentially new x-values
-   *              xAxisTickFormater - Will change based on the current date selection
+   * Called to update the view based on input data. All view state fields should be updated -
+   *    View State:
+   *      - results: dataPoints, which can be modified by the patient-filter or aggregated by date
+   *      - x-axis Ticks: xScaleMin, xScaleMax, xAxisTicks - Change based on potentially new x-values
+   *      - xAxisTickFormater: Formatter of x-axis (dates), which is based on the date filters selected
    *    @source - Set of datapoints that will determine the x-axis & values
    */
-  private updateXAxisAndValues(source: Object[]): void {
+  private updateViewOnFiltered(source: Object[]): void {
+    // Clear the vcfMap so that the vcfMap can be populated by the input source
+    this.vcfMap.clear();
+
     const xValues = this.calculateXValues(source);   // Recalculate X-Axis values for each datapoint
     const aggregatedSeries: Object[] = this.aggregateSeriesOnXValues(xValues);
 

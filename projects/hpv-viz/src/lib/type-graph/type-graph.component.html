@@ -1,4 +1,9 @@
 <div class="fill-width fill-height">
+  <table-modal [hidden]="selectedVariant.length === 0"
+               [data]="selectedVariant"
+               [headers]="headers"
+               [title]="modalTitle"
+               (closeModal)="closeModal($event)"></table-modal>
   <div class="type-graph-container"
        [style.width]="typeGraphContainerWidth"
        [style.height]="height">
@@ -20,7 +25,7 @@
           [yAxisLabel]="yAxisLabel"
           [xAxisTickFormatting]="xAxisTickFormater"
           [xScaleMin]="xScaleMin"
-          [xScaleMax]="xScaleMax">
+          [xScaleMax]="xScaleMax"
           (select)="onClick($event)">
         </ngx-charts-bubble-chart>
       </div>

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
-import { VcfParserService } from '../../../../vcf-parser/src/lib/vcf-parser.service';
-// import { VcfParserService } from 'vcf-parser';
+// Note - use "ng build vcf-parser --watch"
+import { VcfParserService } from 'vcf-parser';
 
 @Component({
   selector: 'app-file-upload', // tslint:disable-line

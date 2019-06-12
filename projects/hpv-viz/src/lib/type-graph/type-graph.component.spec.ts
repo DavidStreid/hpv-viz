@@ -3,6 +3,7 @@ import {  async,
           TestBed }               from '@angular/core/testing';
 import {  DateOpt }               from './models/graph-options.enums';
 import {  TypeGraphComponent }    from './type-graph.component';
+import { TableModalComponent }    from '../common/modal/table-modal.component';
 import {  NO_ERRORS_SCHEMA }      from '@angular/core';
 import {  INIT_DATA_POINTS,
           INIT_DATA_POINTS_EVENTS,
@@ -23,14 +24,14 @@ describe('TypeGraphComponent', () => {
    */
   function verifyResults(results: Object[]) {
     expect(results.length > 0).toBeTruthy();
-    for( const r of results ){
+    for ( const r of results ) {
       expect(r['name'] === r['x']);
     }
   }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TypeGraphComponent ],
+      declarations: [ TypeGraphComponent, TableModalComponent ],
       schemas:      [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
@@ -275,9 +276,10 @@ describe('TypeGraphComponent', () => {
   it( 'Data upload of vcf should update to the vcf map', () => {
     // Toggle date selector to be the most granular so there is no name joining
     component.handleDateToggle(DateOpt.MIN_SEC);
-    for ( const evt of INIT_DATA_POINTS_EVENTS ) { component.addVcfUpload(evt); }
 
     for ( const evt of INIT_DATA_POINTS_EVENTS ) {
+      // Upload event, then simulate clicking on the variantInfo entry visualized in the map
+      component.addVcfUpload(evt);
       for ( const vi of evt['variantInfo']) {
         const chr = vi['CHROM'];
         const date = evt['date'];
@@ -289,7 +291,6 @@ describe('TypeGraphComponent', () => {
           value: chr
         };
 
-        // TODO - this is temporary to see that saved data of a vcf can be queried
         const data: Object[] = component.onClick($event);
         expect(data.length > 0).toBeTruthy();
         expect(data[0]['CHROM']).toBe(chr);
@@ -357,10 +358,12 @@ describe('TypeGraphComponent', () => {
   it( 'Changing the patient selection should fitler results to only the toggled patient', () => {
     // Toggle date selector to be the most granular so there is no name joining
     component.handleDateToggle(DateOpt.MIN_SEC);
-    for ( const evt of INIT_DATA_POINTS_EVENTS ) { component.addVcfUpload(evt); }
 
     // Choose an entry that has a unique 'name' field (e.g. not 'P1')
-    const name = INIT_DATA_POINTS_EVENTS[1]['name'];
+    const selectedDataPoint: Object = INIT_DATA_POINTS_EVENTS[1];
+    component.addVcfUpload(selectedDataPoint);
+
+    const name = selectedDataPoint['name'];
     component.handlePatientToggle( name );
     expect( component.patientMap.get(name).isSelected() ).toBeTruthy();
     expect(component.results.length).toBe( 1);
@@ -373,5 +376,72 @@ describe('TypeGraphComponent', () => {
    * uploaded should be selected
    */
 
+  it( 'includeInModal contains only upper-case strings', () => {
+    component.includeInModal.forEach(function(header) {
+      expect(header).toEqual(header.toUpperCase());
+    });
+  });
 
+  it('Should have modal when onClick fires and it should be removed when closeModal', () => {
+    component.handleDateToggle(DateOpt.MIN_SEC);
+
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) {
+      component.addVcfUpload(evt);
+      for ( const vi of evt['variantInfo']) {
+        const chr = vi['CHROM'];
+        const date = evt['date'];
+        const name = evt['name'];
+
+        const $event: Object = {
+          series: name,
+          name: date,
+          value: chr
+        };
+
+        component.onClick($event);
+        fixture.detectChanges();
+
+        const modalContainer = fixture.debugElement.nativeElement.querySelector('.modal-container');
+        expect(modalContainer).not.toBeNull();
+
+        expect(window.getComputedStyle(modalContainer).display).toBe('block');
+        expect(component.selectedVariant.length > 0).toBeTruthy();
+        expect(component.headers.length > 0).toBeTruthy();
+        expect(component.modalTitle).not.toEqual('');
+
+        // Fire closeModal
+        component.closeModal(true);
+        fixture.detectChanges();
+
+        expect(window.getComputedStyle(modalContainer).display).toBe('none');
+        expect(component.selectedVariant.length === 0).toBeTruthy();
+        expect(component.headers.length === 0).toBeTruthy();
+        expect(component.modalTitle).toEqual('');
+      }
+    }
+  } );
+
+  it('Should set modal information when onClick is called', () => {
+    component.handleDateToggle(DateOpt.MIN_SEC);
+
+    for ( const evt of INIT_DATA_POINTS_EVENTS ) {
+      component.addVcfUpload(evt);
+      for (const vi of evt['variantInfo']) {
+        const chr = vi['CHROM'];
+        const date = evt['date'];
+        const name = evt['name'];
+
+        const $event: Object = {
+          series: name,
+          name: date,
+          value: chr
+        };
+
+        component.onClick($event);
+        expect(component.selectedVariant.length > 0).toBeTruthy();
+        expect(component.headers).toEqual(['CHROM']);
+        expect(component.modalTitle.includes(chr)).toBeTruthy();
+      }
+    }
+  } );
 });

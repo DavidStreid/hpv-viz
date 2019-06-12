@@ -1,0 +1,20 @@
+<div  [style.display]="hidden ? 'none' : 'block'"
+      class="modal-container app-border-medium padding-top-15px padding-bottom-15px">
+  <div class="block text-align-center">
+    <p class="font-20px">{{title}}</p>
+  </div>
+  <div class="close-button">
+    <i class="fa fa-window-close" aria-hidden="true"
+       (click)="onClick()"></i>
+  </div>
+  <table class="data-table flex-center">
+    <tr>
+      <th *ngFor="let column of headers"
+          class="text-align-center app-border-light padding-hor-10"><p>{{column}}</p></th>
+    </tr>
+    <tr *ngFor="let entry of data">
+      <td *ngFor="let column of headers"
+          class="text-align-center app-border-light padding-hor-10"><p>{{entry[column]}}</p></td>
+    </tr>
+  </table>
+</div>

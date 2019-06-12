@@ -8,8 +8,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "hpv-viz": "npm install npm install projects/hpv-viz && ng build hpv-viz",
-    "vcf-parser": "npm install projects/vcf-parser && projects/ng build vcf-parser"
+    "hpv-viz": "npm install projects/hpv-viz && ng build hpv-viz",
+    "vcf-parser": "npm install projects/vcf-parser && ng build vcf-parser",
+    "hpv-viz-full": "npm run vcf-parser && cp -rf dist/vcf-parser node_modules && npm run hpv-viz"
   },
   "private": true,
   "dependencies": {

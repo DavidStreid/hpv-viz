@@ -3,7 +3,8 @@ import {  HEADER_START,
           COLUMN_START,
           FILE_DATE,
           EQUALS }          from './vcf-constants';
-import * as moment from 'moment';
+import * as moment_ from 'moment';
+const moment = moment_;
 
 @Injectable({
   providedIn: 'root'
