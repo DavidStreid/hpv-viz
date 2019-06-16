@@ -37,17 +37,20 @@ export class FileUploadComponent implements OnInit {
   }
 
   /**
-   * 'P1_MOCK.ann.vcf' -> 'P1'
+   * Cycles through list of delimiters and attempts to extract a file name
+   * 'P1_MOCK.ann.vcf'  -> 'P1'
+   * 'P1.ann.vcf'       -> 'P1'
    *
    * @param name, string - file name
    */
   private getPatientFromFileName(name: string): string {
-    // TODO - constant file?
-    const NAME_DELIMITER = '_';
+    const DELIMITERS: string[] = ['_', '.'];
 
-    const splitName = name.split(NAME_DELIMITER);
-    if ( splitName.length > 1 ) {
-      return splitName[0];
+    for( const delimiter of DELIMITERS ){
+      const splitName = name.split(delimiter);
+      if ( splitName.length > 1 ) {
+        return splitName[0];
+      }
     }
 
     return 'NO_NAME';
