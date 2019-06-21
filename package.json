@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "npm run link && ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
+    "link": "cd projects/hpv-viz/node_modules && npm link ../../../dist/vcf-parser && cd -",
     "e2e": "ng e2e",
     "hpv-viz": "npm install projects/hpv-viz && ng build hpv-viz",
     "vcf-parser": "npm install projects/vcf-parser && ng build vcf-parser",
