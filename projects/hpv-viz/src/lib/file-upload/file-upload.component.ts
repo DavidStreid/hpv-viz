@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 // Note - use "ng build vcf-parser --watch"
 import { VcfParserService } from 'vcf-parser';
+import DateParserUtil from '../utils/date-parser.util';
 
 @Component({
   selector: 'app-file-upload', // tslint:disable-line
@@ -11,10 +12,13 @@ export class FileUploadComponent implements OnInit {
   @Output()
   public vcfUpload = new EventEmitter<Object>();
   public dropzoneActive = false;
+  private dateParserUtil: DateParserUtil;
 
   constructor(private vcfParserService: VcfParserService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.dateParserUtil = new DateParserUtil();
+  }
 
   public dropzoneState($event: boolean) {
     this.dropzoneActive = $event;
@@ -46,7 +50,7 @@ export class FileUploadComponent implements OnInit {
   private getPatientFromFileName(name: string): string {
     const DELIMITERS: string[] = ['_', '.'];
 
-    for( const delimiter of DELIMITERS ){
+    for ( const delimiter of DELIMITERS ) {
       const splitName = name.split(delimiter);
       if ( splitName.length > 1 ) {
         return splitName[0];
@@ -58,14 +62,23 @@ export class FileUploadComponent implements OnInit {
 
   private readFile(file: File) {
       const fileName = file['name'] || 'NO_NAME';
-      // TODO - should change
       const name = this.getPatientFromFileName( fileName );
-      const reader = new FileReader();
 
+      // Check name for whether a valid date can be parsed
+      const tempDate = this.dateParserUtil.getDateFromFileName( fileName );
+
+      const reader = new FileReader();
       reader.onload = () => {
         const variantInfo = this.getVariantInfo(reader.result);
-        const date = this.vcfParserService.extractDate(reader.result);
-        this.vcfUpload.emit( {name, date, variantInfo });
+
+        // Use the name from the date if available, if not, grab from the time in the file
+        if (tempDate !== null) {
+          this.vcfUpload.emit( {name, date: tempDate, variantInfo });
+        } else {
+          const date = this.vcfParserService.extractDate(reader.result);
+          this.vcfUpload.emit( {name, date, variantInfo });
+        }
+
       };
       const contents = reader.readAsText(file);
   }
