@@ -16,9 +16,24 @@ export class FileDropDirective {
   @HostListener('drop', ['$event'])
   onDrop($event) {
     $event.preventDefault();            // prevent re-direct to localUrl of that file
-
     const transfer = $event.dataTransfer;
-    this.filesDropped.emit(transfer.files);
+
+    let files = transfer.files;
+
+    // ONLY DO THIS FOR DEMO MODE - Re-assign files w/ mock data
+    if ( transfer !== null && transfer.getData && transfer.getData('isCustom') === 'true' ) {
+      const data = transfer.getData('data');
+      const lines = data.split('\r\n');
+      const fileName = transfer.getData('fileName');
+      const f = new File(lines, fileName, { type: 'text/plain' });
+      const fileList = {
+        0: f,
+        length: 1,
+        item: (index: number) => f
+      };
+      files = fileList;
+    }
+    this.filesDropped.emit(files);
     this.filesHovered.emit(false);      // On drop, user is no longer hovering
   }
 
