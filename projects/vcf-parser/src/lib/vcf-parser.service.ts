@@ -191,7 +191,6 @@ export class VcfParserService {
         const strippedLine = line.replace(HEADER_START, '');
 
         const inlineSplit = strippedLine.split(';');
-        console.log(inlineSplit);
         for(const inlineVal of inlineSplit){
           const kv = inlineVal.split(EQUALS);
           if(kv.length === 2){

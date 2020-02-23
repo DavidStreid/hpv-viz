@@ -34,6 +34,9 @@ p {
 .fill-height {
   height: 100%;
 }
+.height-inherit {
+  height: inherit;
+}
 .vertical-align-top {
   vertical-align: top;
 }
@@ -48,6 +51,9 @@ p {
 }
 .block {
   display: block;
+}
+.none {
+  display: none;
 }
 .padding-top-15px {
   padding-top: 15px;
@@ -79,6 +85,9 @@ p {
   margin-top: 30px;
   margin-bottom: 30px;
 }
+.pos-rel {
+  position: relative;
+}
 /* Complex Styling */
 .vert-align-parent {
   display: table;
@@ -86,6 +95,12 @@ p {
 .vert-align-child {
   display: table-cell;
   vertical-align: middle;
+}
+
+.vert-align {
+  position: absolute;
+  top: 50%;
+  transform: translate(0%, -50%);
 }
 
 /* APP SCHEMA */

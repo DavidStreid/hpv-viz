@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {VcfInfoModel} from '../VcfInfoModel.class';
 import {SAMPLE_NAME} from '../../../common/app.const';
 @Component({
@@ -23,7 +23,10 @@ export class VcfFileSelectorComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const modelUpdate = changes['vcfInfoModel'].currentValue;
-    this.getSampleName(modelUpdate);
+    const infoModel = changes['vcfInfoModel'];
+    if(infoModel){
+      const modelUpdate = infoModel.currentValue;
+      this.getSampleName(modelUpdate);
+    }
   }
 }

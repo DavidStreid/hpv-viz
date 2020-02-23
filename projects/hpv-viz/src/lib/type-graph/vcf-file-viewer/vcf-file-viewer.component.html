@@ -1,7 +1,22 @@
-<div *ngFor="let model of vcfFileModels"
-     class="info-viewer">
-  <div>
-    <VcfFileSelector [vcfInfoModel]="model"
-                     [isSelected]="model === selectedModel"></VcfFileSelector>
+<div class="pos-rel vcf-file-viewer-container height-inherit">
+  <div class="selector-container-outer container-height">
+    <div class="selector-container-inner vert-align">
+      <div *ngFor="let model of vcfFileModels"
+           class="info-viewer">
+        <div>
+          <VcfFileSelector [vcfInfoModel]="model"
+                           [isSelected]="model === selectedModel"
+                           (click)="toggleSelection(model)"></VcfFileSelector>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content-container container-height">
+    <div class="vert-align">
+      <div *ngFor="let model of vcfFileModels"
+           class="info-viewer">
+        <VcfInfo *ngIf="model === selectedModel" [model]="model"></VcfInfo>
+      </div>
+    </div>
   </div>
 </div>

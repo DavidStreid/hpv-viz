@@ -136,7 +136,10 @@ export class TypeGraphComponent implements OnInit {
 
     // Add to VcfFileMap
     if(this.vcfFileMap.has(name)){
-      this.vcfFileMap.get(name).push(metaData);
+      // Clone the VcfFileMap so that change detection occurs for child components
+      const currentMap = this.vcfFileMap.get(name).slice(0);
+      currentMap.push(metaData);
+      this.vcfFileMap.set(name, currentMap);
     } else {
       this.vcfFileMap.set(name, [metaData]);
     }

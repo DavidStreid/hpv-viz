@@ -12,7 +12,11 @@
 .opt-container {
   width: 400px;
 }
-
+.info-content-container {
+  height: 310px;
+  overflow-y: scroll;
+  border: 2px solid #999;
+}
 @media (min-width: 500px) {
   .opt-label {
     width: 25%;

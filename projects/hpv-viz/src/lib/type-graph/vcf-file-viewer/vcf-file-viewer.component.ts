@@ -11,10 +11,15 @@ export class VcfFileViewerComponent implements OnChanges {
   public vcfFileInfo: Object[];
 
   public vcfFileModels: VcfInfoModel[] = [];
-
   public selectedModel: VcfInfoModel;
 
+  public toggleSelection(toggled: VcfInfoModel): void {
+    if (toggled === this.selectedModel) return;
+    this.selectedModel = toggled;
+  }
+
   ngOnChanges(changes: SimpleChanges) {
+    this.vcfFileModels = [];
     const fileUpdate = changes['vcfFileInfo'].currentValue;
     for(const update of fileUpdate){
       const model: VcfInfoModel = new VcfInfoModel(update);
