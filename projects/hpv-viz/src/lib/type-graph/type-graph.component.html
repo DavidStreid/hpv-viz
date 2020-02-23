@@ -80,6 +80,32 @@
         </div>
       </div>
     </div>
+    <div class="selectors-container fill-width padding-top-15px vertical-align-top"
+         *ngIf="patientMap.size > 0">
+      <div>
+        <p class="font-20px">Upload Data</p>
+        <div class="margin-left-5per">
+          <div class="block">
+            <div class="inline-block opt-container">
+              <div class="selector flex-center">
+                <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
+                  <div class="inline-block">
+                    <div *ngIf="patient.value.isSelected()">
+                      <div *ngFor="let entry of vcfFileMap.get(patient.key)">
+                        <div *ngFor="let metaData of entry | keyvalue">
+                          <p class="bold inline">{{metaData.key}}</p>
+                          <p class="inline">: {{metaData.value}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="upload-container vertical-align-top padding-top-15px fill-height fill-width">
       <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
     </div>

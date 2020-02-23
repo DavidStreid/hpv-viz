@@ -40,6 +40,10 @@ export class FileUploadComponent implements OnInit {
     return this.vcfParserService.extractVariantInfo(file);
   }
 
+  private getMetadata(file: string): Object {
+    return this.vcfParserService.extractMetadata(file);
+  }
+
   /**
    * Cycles through list of delimiters and attempts to extract a file name
    * 'P1_MOCK.ann.vcf'  -> 'P1'
@@ -69,14 +73,16 @@ export class FileUploadComponent implements OnInit {
 
       const reader = new FileReader();
       reader.onload = () => {
-        const variantInfo = this.getVariantInfo(reader.result);
+        const result = reader.result;
+        const variantInfo = this.getVariantInfo(result);
+        const metaData: Object = this.getMetadata(result);
 
         // Use the name from the date if available, if not, grab from the time in the file
         if (tempDate !== null) {
-          this.vcfUpload.emit( {name, date: tempDate, variantInfo });
+          this.vcfUpload.emit( {name, date: tempDate, variantInfo, metaData });
         } else {
           const date = this.vcfParserService.extractDate(reader.result);
-          this.vcfUpload.emit( {name, date, variantInfo });
+          this.vcfUpload.emit( {name, date, variantInfo, metaData });
         }
 
       };

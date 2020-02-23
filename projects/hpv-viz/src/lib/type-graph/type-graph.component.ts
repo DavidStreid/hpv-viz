@@ -14,6 +14,7 @@ export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
   public results: Object[];                       // MUTABLE - Modified or replaced on formatting changes and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
+  public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
   private vcfMap: VcfMap;
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
@@ -77,6 +78,7 @@ export class TypeGraphComponent implements OnInit {
     this.results = [];
     this.patientMap = new Map();
     this.vcfMap = new VcfMap();
+    this.vcfFileMap = new Map();
     this.initDateSelectors();
 
     // FOR TESTING PURPOSES
@@ -123,6 +125,7 @@ export class TypeGraphComponent implements OnInit {
     const name = $event[ 'name' ] || '';
     const date = $event[ 'date' ] || null;
     const variantInfo = $event[ 'variantInfo' ] || [];
+    const metaData = $event[ 'metaData' ] || {};
 
     const dataPoint = this.formatForVisualization( name, date, variantInfo );
 
@@ -130,6 +133,15 @@ export class TypeGraphComponent implements OnInit {
       console.error( 'Invalid upload' );
       return;
     }
+
+    // Add to VcfFileMap
+    if(this.vcfFileMap.has(name)){
+      this.vcfFileMap.get(name).push(metaData);
+    } else {
+      this.vcfFileMap.set(name, [metaData]);
+    }
+
+    console.log(this.vcfFileMap);
 
     // Clone and add uploaded datapoint
     const hpvPatientData = this.hpvPatientData.slice(0);
