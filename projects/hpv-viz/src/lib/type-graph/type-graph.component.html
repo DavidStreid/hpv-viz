@@ -83,7 +83,7 @@
     <div class="selectors-container fill-width padding-top-15px vertical-align-top"
          *ngIf="patientMap.size > 0">
       <div>
-        <p class="font-20px">Upload Data</p>
+        <p class="font-20px">VCF Uploads</p>
         <div class="margin-left-5per">
           <div class="block">
             <div class="inline-block opt-container">
@@ -92,7 +92,7 @@
                      class="inline-block patient-opt inherit-width" >
                   <div class="inline-block inherit-width">
                     <div *ngIf="patient.value.isSelected()">
-                      <VcfInfo [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfInfo>
+                      <VcfFileViewer [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfFileViewer>
                     </div>
                   </div>
                 </div>

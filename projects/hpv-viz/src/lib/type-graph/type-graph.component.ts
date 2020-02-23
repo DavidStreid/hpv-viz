@@ -141,8 +141,6 @@ export class TypeGraphComponent implements OnInit {
       this.vcfFileMap.set(name, [metaData]);
     }
 
-    console.log(this.vcfFileMap);
-
     // Clone and add uploaded datapoint
     const hpvPatientData = this.hpvPatientData.slice(0);
     hpvPatientData.push(dataPoint);

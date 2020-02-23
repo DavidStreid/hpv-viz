@@ -9,6 +9,10 @@ export class VcfInfoModel {
     return key.trim().toLocaleLowerCase().includes('date');
   }
 
+  private isSampleDate(key: string): boolean{
+    return key.trim().toLocaleLowerCase().includes('sampledate');
+  }
+
   private isCommand(key: string): boolean{
     return key.trim().toLocaleLowerCase().includes('command');
   }
@@ -16,7 +20,7 @@ export class VcfInfoModel {
   public isSelectedCommand(cmd: string): boolean {
     return this.selectedCommand === cmd;
   }
-  
+
   public setSelectedCommand(cmd: string): void {
     this.selectedCommand = cmd;
   }
@@ -27,7 +31,11 @@ export class VcfInfoModel {
     for(const key of infoFields){
       if(this.isDate(key)){
         // get date field (e.g. "Date")
-        this.fileCreatedDate = info[key];
+        if(this.isSampleDate(key)){
+          this.sampleDate = info[key];
+        } else {
+          this.fileCreatedDate = info[key];
+        }
       } else if (this.isCommand(key)){
         // Command Fields (e.g. "bcftoolsCommand", "bcftools_callCommand")
         this.commands[key] = info[key];
@@ -48,6 +56,9 @@ export class VcfInfoModel {
     return this.metaData;
   }
   public getSampleDate(): Date {
+    return this.sampleDate;
+  }
+  public getFileCreationDate(): Date {
     return this.fileCreatedDate;
   }
 }

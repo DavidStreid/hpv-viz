@@ -1,0 +1,7 @@
+<div *ngFor="let model of vcfFileModels"
+     class="info-viewer">
+  <div>
+    <VcfFileSelector [vcfInfoModel]="model"
+                     [isSelected]="model === selectedModel"></VcfFileSelector>
+  </div>
+</div>

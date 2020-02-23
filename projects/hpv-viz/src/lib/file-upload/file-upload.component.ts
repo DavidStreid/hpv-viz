@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 // Note - use "ng build vcf-parser --watch"
 import { VcfParserService } from 'vcf-parser';
 import DateParserUtil from '../utils/date-parser.util';
+import {SAMPLE_DATE, SAMPLE_NAME} from '../common/app.const';
 
 @Component({
   selector: 'app-file-upload', // tslint:disable-line
@@ -75,10 +76,13 @@ export class FileUploadComponent implements OnInit {
       reader.onload = () => {
         const result = reader.result;
         const variantInfo = this.getVariantInfo(result);
+
         const metaData: Object = this.getMetadata(result);
+        metaData[SAMPLE_NAME] = name;
 
         // Use the name from the date if available, if not, grab from the time in the file
         if (tempDate !== null) {
+          metaData[SAMPLE_DATE] = tempDate;
           this.vcfUpload.emit( {name, date: tempDate, variantInfo, metaData });
         } else {
           const date = this.vcfParserService.extractDate(reader.result);
