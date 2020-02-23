@@ -87,16 +87,12 @@
         <div class="margin-left-5per">
           <div class="block">
             <div class="inline-block opt-container">
-              <div class="selector flex-center">
-                <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
-                  <div class="inline-block">
+              <div class="selector flex-center inherit-width">
+                <div *ngFor="let patient of patientMap | keyvalue"
+                     class="inline-block patient-opt inherit-width" >
+                  <div class="inline-block inherit-width">
                     <div *ngIf="patient.value.isSelected()">
-                      <div *ngFor="let entry of vcfFileMap.get(patient.key)">
-                        <div *ngFor="let metaData of entry | keyvalue">
-                          <p class="bold inline">{{metaData.key}}</p>
-                          <p class="inline">: {{metaData.value}}</p>
-                        </div>
-                      </div>
+                      <VcfInfo [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfInfo>
                     </div>
                   </div>
                 </div>

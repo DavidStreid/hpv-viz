@@ -1,0 +1,31 @@
+<div *ngFor="let model of vcfFileModels"
+     class="info-viewer">
+  <div>
+    <div>
+      <p>Commands</p>
+      <div class="command-header">
+        <div *ngFor="let commands of model.getCommands() | keyvalue"
+             (click)="model.setSelectedCommand(commands.key)"
+             class="command-header-tab hover">
+          <p>{{commands.key}}</p>
+        </div>
+      </div>
+      <div *ngFor="let commands of model.getCommands() | keyvalue">
+        <code *ngIf="model.isSelectedCommand(commands.key)">
+          <p>$ {{commands.value}}</p>
+        </code>
+      </div>
+    </div>
+    <div>
+      <p>MetaData</p>
+      <div *ngFor="let commands of model.getMetaData() | keyvalue">
+        <p>{{commands.key}}</p>
+        <p>{{commands.value}}</p>
+      </div>
+      <div>
+        <p>Date Created</p>
+        <p>{{model.getSampleDate()}}</p>
+      </div>
+    </div>
+  </div>
+</div>

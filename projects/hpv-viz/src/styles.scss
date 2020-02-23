@@ -13,9 +13,14 @@ p {
 .gray {
   color: #c6c6c6;
 }
-
+.hover:hover {
+  cursor: pointer;
+}
 .fill-width {
   width: 100%;
+}
+.inherit-width{
+  width: inherit;
 }
 .width-95per {
   width: 95%;

@@ -12,6 +12,7 @@ import { TypeGraphComponent } from './type-graph/type-graph.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { SelectBoxComponent } from './common/select-box/select-box.component';
 import { TableModalComponent } from './common/modal/table-modal.component';
+import {VcfInfoComponent} from './type-graph/vcf-info/vcf-info.component';
 
 // SERVICES
 import { HpvDataService } from './services/hpv-data-service';
@@ -19,7 +20,7 @@ import { HpvDataService } from './services/hpv-data-service';
 // DIRECTIVES
 import { FileDropDirective } from './directives/file-drop.directive';
 
-const CHILD_COMPONENTS = [ TypeGraphComponent, FileUploadComponent, SelectBoxComponent, TableModalComponent ];
+const CHILD_COMPONENTS = [ TypeGraphComponent, FileUploadComponent, SelectBoxComponent, TableModalComponent, VcfInfoComponent ];
 const SERVICES = [ HpvDataService ];
 
 @NgModule({
