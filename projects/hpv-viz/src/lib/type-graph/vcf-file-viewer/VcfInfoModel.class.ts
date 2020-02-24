@@ -1,6 +1,6 @@
 export class VcfInfoModel {
   private metaData: Object = {};
-  private commands: Object = {};
+  private commands: Map<String, String> = new Map<String, String>();
   private fileCreatedDate: Date;   // Date file was created (taken from VCF headers)
   private sampleDate: Date;    // Date sample was taken (optional)
   private selectedCommand: string;
@@ -38,18 +38,18 @@ export class VcfInfoModel {
         }
       } else if (this.isCommand(key)){
         // Command Fields (e.g. "bcftoolsCommand", "bcftools_callCommand")
-        this.commands[key] = info[key];
+        this.commands.set(key, info[key]);
 
         // Selected command to be shown in the UI (will just be the last command parsed)
         this.selectedCommand = key;
       } else {
         // Other fields considered metadata (e.g. "fileformat", "bcftoolsVersion", "reference", "bcftools_callVersion")
-        this.metaData[key] = info[key]
+        this.metaData[key] = info[key];
       }
     }
   }
 
-  public getCommands(): Object {
+  public getCommands(): Map<String, String> {
     return this.commands;
   }
   public getMetaData(): Object {

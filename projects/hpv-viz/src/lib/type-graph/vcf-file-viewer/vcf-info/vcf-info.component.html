@@ -8,9 +8,10 @@
       </div>
     </div>
     <div *ngFor="let commands of model.getCommands() | keyvalue">
-      <code *ngIf="model.isSelectedCommand(commands.key)">
+      <div *ngIf="model.isSelectedCommand(commands.key)"
+           class="code">
         <p>$ {{commands.value}}</p>
-      </code>
+      </div>
     </div>
   </div>
   <div>

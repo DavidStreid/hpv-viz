@@ -1,6 +1,6 @@
 @import '../../../../styles.scss';
 
-code {
+.code {
   width: inherit;
   margin: auto;
   background-color: #eee;
@@ -28,7 +28,7 @@ code {
   color: white;
 }
 
-code p {
+.code p {
   word-wrap: break-word;
   white-space: normal;
   font-family: calibri;
