@@ -87,6 +87,12 @@
     </div>
     <div *ngIf="patientMap.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">
+        <type-summary
+          [typesMap]="vcfTypes">
+        </type-summary>
+    </div>
+    <div *ngIf="patientMap.size > 0"
+         class="selectors-container fill-width padding-top-15px vertical-align-top">
       <div>
         <p class="font-20px">VCF File Information</p>
         <div class="margin-left-5per info-content-container height-inherit">

@@ -27,7 +27,8 @@ const CHILD_COMPONENTS = [
   VcfFileViewerComponent,
   VcfInfoComponent,
   VcfFileSelectorComponent,
-  TypeToggleComponent
+  TypeToggleComponent,
+  TypeSummaryComponent
 ];
 const SERVICES = [HpvDataService];
 

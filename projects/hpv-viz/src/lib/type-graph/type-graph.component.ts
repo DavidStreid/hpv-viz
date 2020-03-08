@@ -37,7 +37,7 @@ export class TypeGraphComponent implements OnInit {
     [DateOpt.MONTH]: {label: 'Month', selector: DateOpt.MONTH, selected: false},
     [DateOpt.YEAR]: {label: 'Year', selector: DateOpt.YEAR, selected: false}
   };
-  
+
   // Should be of type 'any" so that "keyvalue" pipe can be used in the view
   public enabledDateSelectors: any = {};
   // Graph Options
@@ -132,7 +132,16 @@ export class TypeGraphComponent implements OnInit {
     // Update map and add any new type entries
     const vcfTypes: Map<string, PatientOption> = new Map(this.vcfTypes);
     for (const type of types) {
-      vcfTypes.set(type, new PatientOption(type, true));
+      let opt: PatientOption = new PatientOption(type, true);
+      if(vcfTypes.has(type)){
+         opt = vcfTypes.get(type);
+      }
+      vcfTypes.set(type, opt);
+
+      // Opt will keep track of all patients that have that type
+      const data = opt.getData();
+      data.add(name);
+      opt.setData(data);
     }
     this.vcfTypes = vcfTypes;
 
