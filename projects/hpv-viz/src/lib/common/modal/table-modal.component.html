@@ -1,11 +1,11 @@
-<div  [style.display]="hidden ? 'none' : 'block'"
-      class="modal-container app-border-medium padding-top-15px padding-bottom-15px">
+<div [style.display]="hidden ? 'none' : 'block'"
+     class="modal-container app-border-medium padding-top-15px padding-bottom-15px">
   <div class="block text-align-center">
     <p class="font-20px">{{title}}</p>
   </div>
   <div class="close-button">
-    <i class="fa fa-window-close" aria-hidden="true"
-       (click)="onClick()"></i>
+    <i (click)="onClick()" aria-hidden="true"
+       class="fa fa-window-close"></i>
   </div>
   <table class="data-table flex-center">
     <tr>

@@ -1,9 +1,9 @@
-import { Component, Input, Output, OnChanges, EventEmitter, SimpleChanges, SimpleChange } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChange, SimpleChanges} from '@angular/core';
 
 @Component({
-  selector:     'table-modal', // tslint:disable-line
-  templateUrl:  './table-modal.component.html',
-  styleUrls:    ['./table-modal.component.scss']
+  selector: 'table-modal', // tslint:disable-line
+  templateUrl: './table-modal.component.html',
+  styleUrls: ['./table-modal.component.scss']
 })
 export class TableModalComponent implements OnChanges {
   @Input()
@@ -29,6 +29,6 @@ export class TableModalComponent implements OnChanges {
    * @output - event to close modal
    */
   public onClick(): void {
-    this.closeModal.emit( true );
+    this.closeModal.emit(true);
   }
 }

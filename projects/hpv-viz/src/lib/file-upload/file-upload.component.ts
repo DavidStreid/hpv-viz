@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 // Note - use "ng build vcf-parser --watch"
-import { VcfParserService } from 'vcf-parser';
+import {VcfParserService} from 'vcf-parser';
 import DateParserUtil from '../utils/date-parser.util';
+import {SAMPLE_DATE, SAMPLE_NAME} from '../common/app.const';
 
 @Component({
   selector: 'app-file-upload', // tslint:disable-line
@@ -14,7 +15,8 @@ export class FileUploadComponent implements OnInit {
   public dropzoneActive = false;
   private dateParserUtil: DateParserUtil;
 
-  constructor(private vcfParserService: VcfParserService) { }
+  constructor(private vcfParserService: VcfParserService) {
+  }
 
   ngOnInit() {
     this.dateParserUtil = new DateParserUtil();
@@ -25,7 +27,7 @@ export class FileUploadComponent implements OnInit {
   }
 
   public handleDrop(fileList: FileList) {
-    for ( let i = 0; i < fileList.length; i++ ) {
+    for (let i = 0; i < fileList.length; i++) {
       this.readFile(fileList[i]);
     }
   }
@@ -40,6 +42,10 @@ export class FileUploadComponent implements OnInit {
     return this.vcfParserService.extractVariantInfo(file);
   }
 
+  private getMetadata(file: string): Object {
+    return this.vcfParserService.extractMetadata(file);
+  }
+
   /**
    * Cycles through list of delimiters and attempts to extract a file name
    * 'P1_MOCK.ann.vcf'  -> 'P1'
@@ -50,9 +56,9 @@ export class FileUploadComponent implements OnInit {
   private getPatientFromFileName(name: string): string {
     const DELIMITERS: string[] = ['_', '.'];
 
-    for ( const delimiter of DELIMITERS ) {
+    for (const delimiter of DELIMITERS) {
       const splitName = name.split(delimiter);
-      if ( splitName.length > 1 ) {
+      if (splitName.length > 1) {
         return splitName[0];
       }
     }
@@ -61,25 +67,30 @@ export class FileUploadComponent implements OnInit {
   }
 
   private readFile(file: File) {
-      const fileName = file['name'] || 'NO_NAME';
-      const name = this.getPatientFromFileName( fileName );
+    const fileName = file['name'] || 'NO_NAME';
+    const name = this.getPatientFromFileName(fileName);
 
-      // Check name for whether a valid date can be parsed
-      const tempDate = this.dateParserUtil.getDateFromFileName( fileName );
+    // Check name for whether a valid date can be parsed
+    const tempDate = this.dateParserUtil.getDateFromFileName(fileName);
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const variantInfo = this.getVariantInfo(reader.result);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const variantInfo = this.getVariantInfo(result);
 
-        // Use the name from the date if available, if not, grab from the time in the file
-        if (tempDate !== null) {
-          this.vcfUpload.emit( {name, date: tempDate, variantInfo });
-        } else {
-          const date = this.vcfParserService.extractDate(reader.result);
-          this.vcfUpload.emit( {name, date, variantInfo });
-        }
+      const metaData: Object = this.getMetadata(result);
+      metaData[SAMPLE_NAME] = name;
 
-      };
-      const contents = reader.readAsText(file);
+      // Use the name from the date if available, if not, grab from the time in the file
+      if (tempDate !== null) {
+        metaData[SAMPLE_DATE] = tempDate;
+        this.vcfUpload.emit({name, date: tempDate, variantInfo, metaData});
+      } else {
+        const date = this.vcfParserService.extractDate(reader.result);
+        this.vcfUpload.emit({name, date, variantInfo, metaData});
+      }
+
+    };
+    const contents = reader.readAsText(file);
   }
 }

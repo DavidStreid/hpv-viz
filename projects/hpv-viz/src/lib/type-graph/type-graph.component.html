@@ -1,37 +1,37 @@
 <div class="fill-width fill-height">
-  <table-modal [hidden]="selectedVariant.length === 0"
+  <table-modal (closeModal)="closeModal($event)"
                [data]="selectedVariant"
                [headers]="headers"
-               [title]="modalTitle"
-               (closeModal)="closeModal($event)"></table-modal>
-  <div class="type-graph-container"
+               [hidden]="selectedVariant.length === 0"
+               [title]="modalTitle"></table-modal>
+  <div [style.height]="height"
        [style.width]="typeGraphContainerWidth"
-       [style.height]="height">
-    <div class="ngx-container margin-hor-auto inline-block"
+       class="type-graph-container">
+    <div [style.height]="height"
          [style.width]="width"
-         [style.height]="height">
+         class="ngx-container margin-hor-auto inline-block">
       <div class="inline-block">
         <ngx-charts-bubble-chart
-          [view]="view"
-          [scheme]="colorScheme"
-          [results]="results"
+          (select)="onClick($event)"
           [legend]="showLegend"
-          [xAxis]="showXAxis"
-          [yAxis]="showYAxis"
-          [xAxisTicks]="xAxisTicks"
+          [results]="results"
+          [scheme]="colorScheme"
           [showXAxisLabel]="showXAxisLabel"
           [showYAxisLabel]="showYAxisLabel"
+          [view]="view"
           [xAxisLabel]="xAxisLabel"
-          [yAxisLabel]="yAxisLabel"
           [xAxisTickFormatting]="xAxisTickFormater"
-          [xScaleMin]="xScaleMin"
+          [xAxisTicks]="xAxisTicks"
+          [xAxis]="showXAxis"
           [xScaleMax]="xScaleMax"
-          (select)="onClick($event)">
+          [xScaleMin]="xScaleMin"
+          [yAxisLabel]="yAxisLabel"
+          [yAxis]="showYAxis">
         </ngx-charts-bubble-chart>
       </div>
     </div>
-    <div class="inline-block fill-height"
-         [style.width]="sideSelectorWidth">
+    <div [style.width]="sideSelectorWidth"
+         class="inline-block fill-height">
       <div class="vert-align-parent fill-height">
         <div class="vert-align-child">
           <div class="text-align-center fill-width">
@@ -39,14 +39,14 @@
           </div>
           <div class="inline-block fill-width">
             <div class="selector">
-              <div class="date-opt padding-left-5 inline-block fill-width"
-                   *ngFor="let ds of enabledDateSelectors | keyvalue">
-                  <div class="inline-block width-80per"><p>{{ ds.value['label'] }}</p></div>
-                  <div class="inline-block width-15per">
-                    <select-box (toggle)="handleDateToggle(ds.value['selector'])"
-                                [selected]="ds.value['selected']">
-                    </select-box>
-                  </div>
+              <div *ngFor="let ds of enabledDateSelectors | keyvalue"
+                   class="date-opt padding-left-5 inline-block fill-width">
+                <div class="inline-block width-80per"><p>{{ ds.value['label'] }}</p></div>
+                <div class="inline-block width-15per">
+                  <select-box (toggle)="handleDateToggle(ds.value['selector'])"
+                              [selected]="ds.value['selected']">
+                  </select-box>
+                </div>
               </div>
             </div>
           </div>
@@ -54,24 +54,57 @@
       </div>
     </div>
   </div>
+  <div class="width-95per padding-left-5per padding-bottom-25px"
+       *ngIf="patientMap.size > 0">
+    <type-toggle [typeMap]="vcfTypes"
+                 (toggleEvent)="updateFilter()"></type-toggle>
+  </div>
   <div class="width-95per padding-left-5per padding-bottom-25px">
-    <div class="selectors-container fill-width padding-top-15px vertical-align-top"
-         *ngIf="patientMap.size > 0">
+    <div *ngIf="patientMap.size > 0"
+         class="selectors-container fill-width padding-top-15px vertical-align-top">
       <div>
         <p class="font-20px">Patients</p>
         <div class="margin-left-5per">
           <div class="block">
             <div class="inline-block opt-container">
               <div class="selector flex-center">
-                <div class="inline-block patient-opt" *ngFor="let patient of patientMap | keyvalue">
+                <div *ngFor="let patient of patientMap | keyvalue" class="inline-block patient-opt">
                   <div class="inline-block">
-                    <div class="app-button patient-button vert-align-parent margin-right-15px"
-                         (click)="handlePatientToggle(patient.key)"
-                         [class.app-button-selected]="patient.value.isSelected()">
+                    <div (click)="handlePatientToggle(patient.key)"
+                         [class.app-button-selected]="patient.value.isSelected()"
+                         class="app-button patient-button vert-align-parent margin-right-15px">
                       <div class="vert-align-child">
                         <p>{{patient.key}}</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="patientMap.size > 0"
+         class="selectors-container fill-width padding-top-15px vertical-align-top">
+        <type-summary
+          [typesMap]="vcfTypes">
+        </type-summary>
+    </div>
+    <div *ngIf="patientMap.size > 0"
+         class="selectors-container fill-width padding-top-15px vertical-align-top">
+      <div>
+        <p class="font-20px">VCF File Information</p>
+        <div class="margin-left-5per info-content-container height-inherit">
+          <div class="block height-inherit">
+            <div class="inline-block opt-container height-inherit">
+              <div class="selector flex-center inherit-width height-inherit">
+                <div *ngFor="let patient of patientMap | keyvalue"
+                     [class.none]="!patient.value.isSelected()"
+                     class="block patient-opt fill-width height-inherit">
+                  <div *ngIf="patient.value.isSelected()"
+                       class="inline-block inherit-width height-inherit">
+                    <VcfFileViewer [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfFileViewer>
                   </div>
                 </div>
               </div>

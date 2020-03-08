@@ -86,6 +86,24 @@ export class VcfParserService {
   }
 
   /**
+   * Returns only the variant lines (not including the header) of the vcf file
+   *
+   * @param vcfFile - vcf contents as string
+   */
+  getMetadatLines(vcfFile: string): string[] {
+    if ( this.isInvalidVCF(vcfFile) ) {
+      console.error('VCF File not detected');
+      return;
+    }
+
+    // Read through lines and parse out non-header lines
+    const lines = vcfFile.split('\n');
+    const variantLines = lines.filter((line) => {return !this.isNotHeaderLine(line)});
+
+    return variantLines;
+  }
+
+  /**
    * Parses the date from the "fileDate" field of a vcf field. There are other date fields, but this is the common field
    *
    * @param vcfFile - string
@@ -141,6 +159,8 @@ export class VcfParserService {
 
     const mutationInfo: Object[] = [];
 
+    const vcfTypes: Set<string> = new Set<string>();
+
     // Parse through lines of data and create object of data
     for ( const line of data ) {
       const variantInfo = {};
@@ -150,10 +170,47 @@ export class VcfParserService {
         variantInfo[ columns[i] ] = lineSplit[i];
       }
 
+      // Extract unique type information
+      const chrom = variantInfo['CHROM'];
+      if(chrom) vcfTypes.add(chrom);
+
       mutationInfo.push(variantInfo);
     }
+    // TODO - constants
+    mutationInfo['types'] = [...vcfTypes];  // Return list of all unique types
 
     return mutationInfo;
+  }
+
+  /**
+   * Parses VCF metadata lines into an object
+   *
+   * @param vcfFile, string
+   */
+  public extractMetadata(vcfFile: string): Object {
+    const cleanVcf = this.cleanVcf(vcfFile);
+    const data = this.getMetadatLines(cleanVcf);
+
+    const metaData: Object = {};
+    // Parse through lines of data and create object of data
+    let key, value;
+    for ( const line of data ) {
+      if(line){
+        const strippedLine = line.replace(HEADER_START, '');
+
+        const inlineSplit = strippedLine.split(';');
+        for(const inlineVal of inlineSplit){
+          const kv = inlineVal.split(EQUALS);
+          if(kv.length === 2){
+            key = kv[0];
+            value = kv[1];
+            metaData[key] = value;
+          }
+        }
+      }
+    }
+
+    return metaData;
   }
 
   /**

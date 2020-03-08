@@ -1,4 +1,4 @@
-import { P1_MOCK } from './vcf-files/mock-vcfs';
+import {P1_MOCK} from './vcf-files/mock-vcfs';
 
 /**
  * IF MODIFIED, YOU NEED TO RE-RUN THE TESTS TO MAKE SURE THEY PASS
@@ -9,12 +9,12 @@ export const TEST_FILES: object = {
     contents: P1_MOCK,
     event: {
       name: 'P1',
-      date: new Date( 'Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)' ),
+      date: new Date('Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)'),
       variantInfo: [{'CHROM': 'TEST_CHROM'}]
     },
     datapoint: {
       name: 'P1',
-      date: new Date( 'Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)' ),
+      date: new Date('Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)'),
       series: [
         {
           name: new Date('2011-02-13T00:00:00'),

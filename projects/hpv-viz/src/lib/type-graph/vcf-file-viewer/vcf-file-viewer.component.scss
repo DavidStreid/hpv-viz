@@ -1,0 +1,31 @@
+@import '../../../styles.scss';
+
+.container-height {
+  height: 310px;
+}
+
+.info-viewer {
+  width: inherit;
+}
+
+.vcf-file-viewer-container {
+  margin-left: 20px;
+}
+
+.selector-container-outer {
+  width: 180px;
+  margin-right: 25px;
+  display: inline-block;
+  position: relative;
+}
+
+.selector-container-inner {
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.content-container {
+  display: inline-block;
+  max-width: 530px;
+}

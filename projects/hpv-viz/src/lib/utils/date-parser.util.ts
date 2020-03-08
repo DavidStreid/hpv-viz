@@ -1,4 +1,5 @@
 import * as moment_ from 'moment';
+
 const moment = moment_;
 
 export default class DateParserUtil {
@@ -15,7 +16,7 @@ export default class DateParserUtil {
     // 'P1_20190511.ann.vcf' -> '20190511.ann.vcf'
     const splitName: string = this.getSplit(name, NAME_DELIMITER, 1);
     // '20190511.ann.vcf' -> '20190511'
-    const dateString: string = this.getSplit( splitName, SUFFIX_DELIMITER, 0);
+    const dateString: string = this.getSplit(splitName, SUFFIX_DELIMITER, 0);
     const date = this.parseDateValue(dateString);
 
     return date;
@@ -30,17 +31,17 @@ export default class DateParserUtil {
    * @param index, number - index of the split string to return
    */
   private getSplit(toSplit: string, delimiter: string, index: number): string {
-    if ( toSplit === null ) {
+    if (toSplit === null) {
       return null;
     }
 
     const split = toSplit.split(delimiter);
     // Check if the string contained the delimiter to produce split elements
-    if ( split.length === 1 ) {
+    if (split.length === 1) {
       return null;
     }
     // Check if index is out of range of split
-    if ( split.length - 1 < index ) {
+    if (split.length - 1 < index) {
       return null;
     }
     return split[index];
@@ -52,7 +53,7 @@ export default class DateParserUtil {
    * @param dateString, string - Returns the Date value of a valid date string. null return on null input
    */
   private parseDateValue(dateString: string): Date {
-    if ( dateString === null ) {
+    if (dateString === null) {
       return null;
     }
 

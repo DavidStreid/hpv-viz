@@ -1,4 +1,4 @@
-import { PatientOption } from './patient-option.class';
+import {PatientOption} from './patient-option.class';
 
 describe('PatientOption ', () => {
   it('Should have valid constructor and getters', () => {

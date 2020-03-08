@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
+import {Directive, EventEmitter, HostListener, Output} from '@angular/core';
 
 // REF - https://www.youtube.com/watch?v=OVnrL4we2NM&feature=youtu.be
 @Directive({
@@ -11,7 +11,8 @@ export class FileDropDirective {
   @Output()
   filesHovered = new EventEmitter();
 
-  constructor() {}
+  constructor() {
+  }
 
   @HostListener('drop', ['$event'])
   onDrop($event) {
@@ -21,11 +22,11 @@ export class FileDropDirective {
     let files = transfer.files;
 
     // ONLY DO THIS FOR DEMO MODE - Re-assign files w/ mock data
-    if ( transfer !== null && transfer.getData && transfer.getData('isCustom') === 'true' ) {
+    if (transfer !== null && transfer.getData && transfer.getData('isCustom') === 'true') {
       const data = transfer.getData('data');
       const lines = data.split('\r\n');
       const fileName = transfer.getData('fileName');
-      const f = new File(lines, fileName, { type: 'text/plain' });
+      const f = new File(lines, fileName, {type: 'text/plain'});
       const fileList = {
         0: f,
         length: 1,

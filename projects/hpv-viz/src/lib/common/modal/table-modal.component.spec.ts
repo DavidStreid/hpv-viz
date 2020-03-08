@@ -1,7 +1,5 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By }                               from '@angular/platform-browser';
-import { TableModalComponent }               from './table-modal.component';
-import { DebugElement, SimpleChange }       from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {TableModalComponent} from './table-modal.component';
 
 describe('TableModalComponent', () => {
   let component: TableModalComponent;
@@ -9,9 +7,9 @@ describe('TableModalComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TableModalComponent ]
+      declarations: [TableModalComponent]
     })
-    .compileComponents().then(() => {
+      .compileComponents().then(() => {
       fixture = TestBed.createComponent(TableModalComponent);
       component = fixture.componentInstance;
     });

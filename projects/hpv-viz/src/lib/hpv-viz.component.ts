@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'lib-hpv-viz',
@@ -8,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 export class HpvVizComponent implements OnInit {
   public title = 'VCF Visualization';
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }

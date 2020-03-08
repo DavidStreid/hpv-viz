@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "npm run vcf-parser-watch && npm run link && ng serve",
+    "start": "npm run link && ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -11,7 +11,7 @@
     "e2e": "ng e2e",
     "hpv-viz": "npm install projects/hpv-viz && ng build hpv-viz",
     "vcf-parser": "npm install projects/vcf-parser && ng build vcf-parser",
-    "vcf-parser-watch": "npm install projects/vcf-parser && ng build vcf-parser",
+    "vcf-parser-watch": "npm install projects/vcf-parser && ng build vcf-parser --watch=true",
     "hpv-viz-full": "npm run vcf-parser && cp -rf dist/vcf-parser node_modules && npm run hpv-viz"
   },
   "private": true,
@@ -55,7 +55,7 @@
     "ts-node": "~7.0.0",
     "tsickle": ">=0.29.0",
     "tslib": "^1.9.0",
-    "tslint": "^5.11.0",
+    "tslint": "^5.20.1",
     "typescript": "^2.9.2"
   }
 }
