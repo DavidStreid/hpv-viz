@@ -1,5 +1,6 @@
-import {NgModule} from '@angular/core';
-import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { NgModule }                from '@angular/core';
+import { NgxChartsModule }         from '@swimlane/ngx-charts';
+
 // COMPONENTS
 import {HpvVizComponent} from './hpv-viz.component';
 import {TypeGraphComponent} from './type-graph/type-graph.component';
@@ -14,6 +15,7 @@ import {TypeToggleComponent} from './type-graph/toggles/type-toggle/type-toggle.
 import {HpvDataService} from './services/hpv-data-service';
 // DIRECTIVES
 import {FileDropDirective} from './directives/file-drop.directive';
+import {TypeSummaryComponent} from './type-graph/summary-view/type-summary.component';
 
 // LOCAL DEPENDENCIES - Remove when deployed
 // const LOCAL_MODULES = [ BrowserAnimationsModule ];
