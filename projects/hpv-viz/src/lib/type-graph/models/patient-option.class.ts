@@ -1,5 +1,7 @@
 /**
  * Class for Patient Option
+ *
+ * TODO - Refactor to more generic name
  */
 export class PatientOption {
   private selected;

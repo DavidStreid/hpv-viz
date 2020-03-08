@@ -15,6 +15,7 @@ export class TypeGraphComponent implements OnInit {
   public results: Object[];                       // MUTABLE: Modified/replaced on formatting and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
+  public vcfTypes: Map<string, PatientOption>;
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
   public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
@@ -75,6 +76,7 @@ export class TypeGraphComponent implements OnInit {
     this.patientMap = new Map();
     this.vcfMap = new VcfMap();
     this.vcfFileMap = new Map();
+    this.vcfTypes = new Map();
     this.initDateSelectors();
 
     // FOR TESTING PURPOSES
@@ -124,6 +126,12 @@ export class TypeGraphComponent implements OnInit {
     const metaData = $event['metaData'] || {};
 
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
+
+    const types: string[] = variantInfo['types'];
+
+    for(const type of types){
+      this.vcfTypes.set(type, new PatientOption(type, true));
+    }
 
     if (!this.isValidDataPoint(dataPoint)) {
       console.error('Invalid upload');
@@ -568,8 +576,9 @@ export class TypeGraphComponent implements OnInit {
 
   private getFilteredResults(variants: Object[]): Object[] {
     const filteredPatients: Object[] = this.filterOnSelectedPatients(variants);
+    const filteredTypes: Object[] = this.filterOnSelectedTypes(filteredPatients);
 
-    return filteredPatients;
+    return filteredTypes;
   }
 
   /**
@@ -585,6 +594,21 @@ export class TypeGraphComponent implements OnInit {
 
     const newData = source.filter(patientFilter, this);
     return newData;
+  }
+
+  /**
+   * Removes types from source that have been toggled by the user
+   *
+   * @param source
+   */
+  private filterOnSelectedTypes(source: Object[]): Object[] {
+    for(const vcfData of source){
+      // Only return points that are in the vcfTypes map
+      vcfData['series'] = vcfData['series'].filter(type => {
+        return this.vcfTypes.has(type['y']);
+      }, this);
+    }
+    return source;
   }
 
   /**

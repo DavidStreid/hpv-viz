@@ -54,6 +54,10 @@
       </div>
     </div>
   </div>
+  <div class="width-95per padding-left-5per padding-bottom-25px"
+       *ngIf="patientMap.size > 0">
+    <type-toggle [typeMap]="vcfTypes"></type-toggle>
+  </div>
   <div class="width-95per padding-left-5per padding-bottom-25px">
     <div *ngIf="patientMap.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">

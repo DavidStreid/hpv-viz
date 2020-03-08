@@ -159,6 +159,8 @@ export class VcfParserService {
 
     const mutationInfo: Object[] = [];
 
+    const vcfTypes: Set<string> = new Set<string>();
+
     // Parse through lines of data and create object of data
     for ( const line of data ) {
       const variantInfo = {};
@@ -168,8 +170,13 @@ export class VcfParserService {
         variantInfo[ columns[i] ] = lineSplit[i];
       }
 
+      // Extract unique type information
+      vcfTypes.add(variantInfo['CHROM']);
+
       mutationInfo.push(variantInfo);
     }
+    // TODO - constants
+    mutationInfo['types'] = [...vcfTypes];  // Return list of all unique types
 
     return mutationInfo;
   }
