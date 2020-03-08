@@ -1,7 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By }                               from '@angular/platform-browser';
-import { SelectBoxComponent }               from './select-box.component';
-import { DebugElement, SimpleChange }       from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {SelectBoxComponent} from './select-box.component';
+import {DebugElement, SimpleChange} from '@angular/core';
 
 describe('SelectBoxComponent', () => {
   let component: SelectBoxComponent;
@@ -9,9 +9,9 @@ describe('SelectBoxComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectBoxComponent ]
+      declarations: [SelectBoxComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -27,8 +27,8 @@ describe('SelectBoxComponent', () => {
   it('On Changes triggers internal & external state to toggle', () => {
     let notSelectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-square-o'));
     let selectedClass: DebugElement = fixture.debugElement.query(By.css('.fa-check-square-o'));
-    expect( notSelectedClass ).not.toBeNull();
-    expect( selectedClass ).toBeNull();
+    expect(notSelectedClass).not.toBeNull();
+    expect(selectedClass).toBeNull();
 
     const firstChange = new SimpleChange(false, true, true);
     component.ngOnChanges({selected: firstChange});
@@ -36,8 +36,8 @@ describe('SelectBoxComponent', () => {
 
     notSelectedClass = fixture.debugElement.query(By.css('.fa-square-o'));
     selectedClass = fixture.debugElement.query(By.css('.fa-check-square-o'));
-    expect( notSelectedClass ).not.toBeNull();
-    expect( selectedClass ).toBeNull();
+    expect(notSelectedClass).not.toBeNull();
+    expect(selectedClass).toBeNull();
 
     const userChange = new SimpleChange(false, true, false);
     component.ngOnChanges({selected: userChange});
@@ -45,7 +45,7 @@ describe('SelectBoxComponent', () => {
 
     notSelectedClass = fixture.debugElement.query(By.css('.fa-square-o'));
     selectedClass = fixture.debugElement.query(By.css('.fa-check-square-o'));
-    expect( notSelectedClass ).toBeNull();
-    expect( selectedClass ).not.toBeNull();
+    expect(notSelectedClass).toBeNull();
+    expect(selectedClass).not.toBeNull();
   });
 });

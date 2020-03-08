@@ -1,5 +1,5 @@
-import { Injectable }  from '@angular/core';
-import { INIT_DATA_POINTS }    from '../../test/mock-data/mock-viz';
+import {Injectable} from '@angular/core';
+import {INIT_DATA_POINTS} from '../../test/mock-data/mock-viz';
 
 @Injectable()
 export class HpvDataService {

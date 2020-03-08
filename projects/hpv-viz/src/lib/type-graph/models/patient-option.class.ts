@@ -1,6 +1,6 @@
 /**
-* Class for Patient Option
-*/
+ * Class for Patient Option
+ */
 export class PatientOption {
   private selected;
   private name;
@@ -26,7 +26,7 @@ export class PatientOption {
    * Flips the selected field of the PatientOption
    */
   public toggle(selected?: boolean): void {
-    if ( selected === undefined ) {
+    if (selected === undefined) {
       this.selected = !this.selected;
     } else {
       this.selected = selected;

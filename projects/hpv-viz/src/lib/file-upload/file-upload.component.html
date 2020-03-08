@@ -2,11 +2,11 @@
   <div>
     <p><span class="font-20px">Upload Data</span> - Upload .vcf files in the box below</p>
   </div>
-  <div id="info-content-container" class="drop-container vert-align-parent width-95per margin-left-5per"
+  <div (filesDropped)="handleDrop($event)" (filesHovered)="dropzoneState($event)"
+       [ngClass]="{'active': dropzoneActive}"
+       class="drop-container vert-align-parent width-95per margin-left-5per"
        fileDrop
-       (filesDropped)="handleDrop($event)"
-       (filesHovered)="dropzoneState($event)"
-       [ngClass]="{'active': dropzoneActive}">
+       id="info-content-container">
     <div class="vert-align-child upload-prompt vert-align-child text-align-center">
       <p class="gray font-36px margin-vert-30px"><i class="fa fa-upload margin-right-15px"></i> Drop files here</p>
     </div>

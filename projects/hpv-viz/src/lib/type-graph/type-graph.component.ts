@@ -1,52 +1,42 @@
-import { Component, OnInit }  from '@angular/core';
-import { HpvDataService }     from '../services/hpv-data-service';
-import { DateOpt }            from './models/graph-options.enums';
-import { PatientOption }      from './models/patient-option.class';
-import { VcfMap }             from './models/vcfMap.class';
+import {Component, OnInit} from '@angular/core';
+import {HpvDataService} from '../services/hpv-data-service';
+import {DateOpt} from './models/graph-options.enums';
+import {PatientOption} from './models/patient-option.class';
+import {VcfMap} from './models/vcfMap.class';
 
 @Component({
-  selector:      'app-type-graph', // tslint:disable-line
-  templateUrl:  './type-graph.component.html',
-  styleUrls:    ['./type-graph.component.scss'],
-  providers:    [ HpvDataService ]
+  selector: 'app-type-graph', // tslint:disable-line
+  templateUrl: './type-graph.component.html',
+  styleUrls: ['./type-graph.component.scss'],
+  providers: [HpvDataService]
 })
 export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
   public results: Object[];                       // MUTABLE - Modified or replaced on formatting changes and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
-  private vcfMap: VcfMap;
-
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
   public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
   public modalTitle: string;
   public headers: string[];
   public selectedVariant: Object[] = [];
-
   public datesOptionsEnabled: object = {
-    [DateOpt.MIN_SEC]:  false,
-    [DateOpt.HOUR]:     false,
-    [DateOpt.DAY]:      true,
-    [DateOpt.MONTH]:    true,
-    [DateOpt.YEAR]:     true
+    [DateOpt.MIN_SEC]: false,
+    [DateOpt.HOUR]: false,
+    [DateOpt.DAY]: true,
+    [DateOpt.MONTH]: true,
+    [DateOpt.YEAR]: true
   };
-
   // Map that tracks what date selectors to show
   public dateSelectors: object = {
-    [DateOpt.MIN_SEC]:  { label: 'Min',   selector: DateOpt.MIN_SEC,  selected: false },
-    [DateOpt.HOUR]:     { label: 'Hour',  selector: DateOpt.HOUR,     selected: false },
-    [DateOpt.DAY]:      { label: 'Day',   selector: DateOpt.DAY,      selected: true },
-    [DateOpt.MONTH]:    { label: 'Month', selector: DateOpt.MONTH,    selected: false },
-    [DateOpt.YEAR]:     { label: 'Year',  selector: DateOpt.YEAR,     selected: false }
+    [DateOpt.MIN_SEC]: {label: 'Min', selector: DateOpt.MIN_SEC, selected: false},
+    [DateOpt.HOUR]: {label: 'Hour', selector: DateOpt.HOUR, selected: false},
+    [DateOpt.DAY]: {label: 'Day', selector: DateOpt.DAY, selected: true},
+    [DateOpt.MONTH]: {label: 'Month', selector: DateOpt.MONTH, selected: false},
+    [DateOpt.YEAR]: {label: 'Year', selector: DateOpt.YEAR, selected: false}
   };
-
   // Shoudl be of type 'any" so that "keyvalue" pipe can be used in the view
   public enabledDateSelectors: any = {};
-
-  // Side Selector width
-  private sideSelectorWidthNum = 120;
-  public sideSelectorWidth = `${this.sideSelectorWidthNum}px`;
-
   // Graph Options
   public view: any[] = [750, 400];
   public width = `${this.view[0]}px`;
@@ -63,14 +53,18 @@ export class TypeGraphComponent implements OnInit {
   public xScaleMax = this.getXScaleMax();
   public xAxisTicks = [];
   public xAxisTickFormater = this.getTickFormatter();
-
+  private vcfMap: VcfMap;
+  // Side Selector width
+  private sideSelectorWidthNum = 120;
+  public sideSelectorWidth = `${this.sideSelectorWidthNum}px`;
   // TypeGraphContainer - Add 5 for a buffer
   public typeGraphContainerWidth = `${this.sideSelectorWidthNum + this.view[0] + 5}px`;
 
-  ngOnInit() {}
-
   constructor(private hpvDataService: HpvDataService) {
     this.init();
+  }
+
+  ngOnInit() {
   }
 
   init(): void {
@@ -103,12 +97,12 @@ export class TypeGraphComponent implements OnInit {
    */
   public initDateSelectors(): any {
     this.enabledDateSelectors = Object.assign({}, this.dateSelectors);
-    const dateEntries: string[] =  Object.keys(this.datesOptionsEnabled);
+    const dateEntries: string[] = Object.keys(this.datesOptionsEnabled);
 
-    for ( const key of dateEntries ) {
+    for (const key of dateEntries) {
       const enabled = this.datesOptionsEnabled[key] || false;
 
-      if ( ! enabled ) {
+      if (!enabled) {
         delete this.enabledDateSelectors[key];
       }
     }
@@ -122,20 +116,20 @@ export class TypeGraphComponent implements OnInit {
    * @param $event, Object[] - list of enriched objects containing variant info
    */
   public addVcfUpload($event: Object): void {
-    const name = $event[ 'name' ] || '';
-    const date = $event[ 'date' ] || null;
-    const variantInfo = $event[ 'variantInfo' ] || [];
-    const metaData = $event[ 'metaData' ] || {};
+    const name = $event['name'] || '';
+    const date = $event['date'] || null;
+    const variantInfo = $event['variantInfo'] || [];
+    const metaData = $event['metaData'] || {};
 
-    const dataPoint = this.formatForVisualization( name, date, variantInfo );
+    const dataPoint = this.formatForVisualization(name, date, variantInfo);
 
-    if ( !this.isValidDataPoint( dataPoint) ) {
-      console.error( 'Invalid upload' );
+    if (!this.isValidDataPoint(dataPoint)) {
+      console.error('Invalid upload');
       return;
     }
 
     // Add to VcfFileMap
-    if(this.vcfFileMap.has(name)){
+    if (this.vcfFileMap.has(name)) {
       // Clone the VcfFileMap so that change detection occurs for child components
       const currentMap = this.vcfFileMap.get(name).slice(0);
       currentMap.push(metaData);
@@ -150,7 +144,7 @@ export class TypeGraphComponent implements OnInit {
     this.hpvPatientData = hpvPatientData;
 
     // Since a new vcf upload can change the selected patient, we need to refilter
-    this.addPatientToOptions( name );
+    this.addPatientToOptions(name);
 
     const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
     this.updateViewOnFiltered(filteredResults);
@@ -160,7 +154,9 @@ export class TypeGraphComponent implements OnInit {
    *  Handles toggling of select box of patients
    */
   public handlePatientToggle(name: string): void {
-    if ( !this.patientMap.has(name) ) { return; }
+    if (!this.patientMap.has(name)) {
+      return;
+    }
 
     // Flip all patients to false and then toggle the input patient name
     this.deselectAllPatients();
@@ -168,6 +164,172 @@ export class TypeGraphComponent implements OnInit {
 
     const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
     this.updateViewOnFiltered(filteredResults);
+  }
+
+  /**
+   * Handles event emitted by select box
+   */
+  public handleDateToggle(toggleOpt: DateOpt): void {
+    const currOpt = this.getSelectedTimeOption();
+    if (toggleOpt === currOpt) {
+      return;
+    }
+
+    this.changeTimeSelector(toggleOpt, currOpt);
+
+    const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
+    this.updateViewOnFiltered(filteredResults);
+  }
+
+  /**
+   * Toggles global time selector map so that previous opt is toggled off and input timeselector is toggled on.
+   */
+  public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
+    this.enabledDateSelectors[currOpt]['selected'] = false;
+    this.enabledDateSelectors[toggleOpt]['selected'] = true;
+  }
+
+  /**
+   * Returns the selected time option from the global map. Package private for tests
+   */
+  getSelectedTimeOption(): DateOpt {
+    for (const key in this.enabledDateSelectors) {
+      if (this.enabledDateSelectors.hasOwnProperty(key)) {
+        const opt = this.enabledDateSelectors[key] || {};
+        if (opt['selected']) {
+          return opt['selector'];
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Re-assigns the xAxistTickFormatter. This must be done b/c ngx-charts evaluates all data-bound inputs only on
+   * initialization
+   *    - NOTE: This function requires a helper function to call it
+   *    - Public for tests
+   */
+  public reAssignXTickFormatter(): void {
+    this.xAxisTickFormater = this.getTickFormatter();
+  }
+
+  /**
+   * Fires when user clicks on datapoint in the graph
+   *
+   * @param $event, object - Object containing x,y values of the clicked on datapoint
+   *        e.g. [{
+   *                name: Thu Jun 2 2019 00:00:00 GMT-0400 (Eastern Daylight Time),
+   *                value: "CHROM1",
+   *                series: "PATIENT"
+   *              }]
+   */
+  public onClick($event): Object[] {
+    const sample: string = $event.series;
+    const date: Date = $event.name;
+    const chr: string = $event.value;
+
+    const variantInfo: Object[] = this.vcfMap.get(sample, date, chr);
+    this.setModalinformation(variantInfo);
+
+    // Return for testing purposes
+    return variantInfo;
+  }
+
+  /**
+   * Closes Modal. Does this by clearing all modal fields, specifically, selectedVariant
+   *
+   * @param $event, boolean - event passed to initialize close modal
+   */
+  public closeModal($event: boolean) {
+    this.selectedVariant = [];
+    this.headers = [];
+    this.modalTitle = '';
+  }
+
+  /**
+   * Returns the date fields (e.g. YEAR, MONTH, DAY,... ) that should be used for date calculations
+   * Public for testing
+   */
+  public getTimeFields(): DateOpt[] {
+    const selectors = Object.keys(DateOpt).map(key => DateOpt[key]);
+    const i = selectors.indexOf(this.getSelectedTimeOption());
+    return selectors.slice(i, selectors.length);
+  }
+
+  /**
+   *  Iterate over all timeFields and calculate relevant fields (e.g. seconds, minutes,... ) in date
+   *    @date - Full Date to be used for formatting
+   *    @timeFields - Array of date fields that should be calcluated in the formatted date
+   *                  E.g. Date's formatted up to DAY should have   timeFields = [ DAY, MONTH, YEAR ]
+   *    NOTE - Not private for tests
+   */
+  formatDate(date: Date, timeFields: DateOpt[]): Date {
+    let sec, min, hour, day, month, year;
+    [sec, min, hour, day, month, year] = [0, 0, 0, 1, 0, 0];
+
+    // timeFields will be a
+    for (const selector of timeFields) {
+      switch (selector) {
+        case DateOpt.YEAR: {
+          year = date.getFullYear();
+          break;
+        }
+        case DateOpt.MONTH: {
+          month = date.getMonth();
+          break;
+        }
+        case DateOpt.DAY: {
+          day = date.getDate();
+          break;
+        }
+        case DateOpt.HOUR: {
+          hour = date.getHours();
+          break;
+        }
+        case DateOpt.MIN_SEC: {
+          min = date.getMinutes();
+          sec = date.getSeconds();
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+    return new Date(year, month, day, hour, min, sec);
+  }
+
+  /*********** FIELDS FOR CALCULATING GRAPH PARAMETERS ***********/
+
+  // Calclates floor of the x view in graph. This will be a determined buffer level lower than the earliest date
+  getXScaleMin(): Date {
+    if (this.results === undefined || this.results.length === 0) {
+      return null;
+    }
+
+    const xTicks = this.getSortedDates();
+    const buffer = this.getBuffer(xTicks);
+
+    const floorDate = new Date(xTicks[0].getTime());
+    floorDate.setTime(floorDate.getTime() - buffer);
+
+    return floorDate;
+  }
+
+  // Calclates ceiling of the x view in graph. This will be a determined buffer level higher than the earliest date
+  getXScaleMax(): Date {
+    if (this.results === undefined || this.results.length === 0) {
+      return null;
+    }
+
+    const xTicks = this.getSortedDates();
+    const buffer = this.getBuffer(xTicks);
+
+    const ceilDate = new Date(xTicks[xTicks.length - 1].getTime());
+    ceilDate.setTime(ceilDate.getTime() + buffer);
+
+    return ceilDate;
   }
 
   private deselectAllPatients(): void {
@@ -184,34 +346,13 @@ export class TypeGraphComponent implements OnInit {
     // Toggle all other patients to false. Should only be one, but for readability, do for all
     this.deselectAllPatients();
 
-    if ( !this.patientMap.has(name) ) {
+    if (!this.patientMap.has(name)) {
       // Create a new patient option and toggle to true
-      const opt: PatientOption = new PatientOption( name, true );
+      const opt: PatientOption = new PatientOption(name, true);
       this.patientMap.set(name, opt);
     } else {
       this.patientMap.get(name).setSelected(true);
     }
-  }
-
-  /**
-   * Handles event emitted by select box
-   */
-  public handleDateToggle(toggleOpt: DateOpt): void {
-    const currOpt = this.getSelectedTimeOption();
-    if ( toggleOpt === currOpt ) { return; }
-
-    this.changeTimeSelector(toggleOpt, currOpt);
-
-    const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
-    this.updateViewOnFiltered(filteredResults);
-  }
-
-  /**
-   * Toggles global time selector map so that previous opt is toggled off and input timeselector is toggled on.
-   */
-  public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
-    this.enabledDateSelectors[  currOpt  ][ 'selected' ] = false;
-    this.enabledDateSelectors[ toggleOpt ][ 'selected' ] = true ;
   }
 
   /**
@@ -221,22 +362,8 @@ export class TypeGraphComponent implements OnInit {
     function toggle(value, key, map) {
       value.toggle(true);
     }
-    this.patientMap.forEach(toggle);
-  }
 
-  /**
-   * Returns the selected time option from the global map. Package private for tests
-   */
-  getSelectedTimeOption(): DateOpt {
-    for ( const key in this.enabledDateSelectors ) {
-      if (this.enabledDateSelectors.hasOwnProperty(key)) {
-        const opt = this.enabledDateSelectors[key] || {};
-        if ( opt[ 'selected' ] ) {
-          return opt['selector'];
-        }
-      }
-    }
-    return null;
+    this.patientMap.forEach(toggle);
   }
 
   /**
@@ -248,10 +375,10 @@ export class TypeGraphComponent implements OnInit {
 
     return function (date: Date) {
       let tick = '';
-      for ( const o of formatObject ) {
-        for ( const f of o[ 'funcs' ] ) {
+      for (const o of formatObject) {
+        for (const f of o['funcs']) {
           let val = date[f]();
-          if ( f === 'getMonth' ) {
+          if (f === 'getMonth') {
             // Months are 0-indexed
             val += 1;
           }
@@ -260,16 +387,6 @@ export class TypeGraphComponent implements OnInit {
       }
       return tick;
     };
-  }
-
-  /**
-   * Re-assigns the xAxistTickFormatter. This must be done b/c ngx-charts evaluates all data-bound inputs only on
-   * initialization
-   *    - NOTE: This function requires a helper function to call it
-   *    - Public for tests
-   */
-  public reAssignXTickFormatter(): void {
-    this.xAxisTickFormater = this.getTickFormatter();
   }
 
   /**
@@ -282,7 +399,7 @@ export class TypeGraphComponent implements OnInit {
    *    }
    */
   private createFormatObject(dateOpt: DateOpt, delimiter: string, funcs: string[]) {
-    return { dateOpt, delimiter, funcs };
+    return {dateOpt, delimiter, funcs};
   }
 
   /**
@@ -291,17 +408,17 @@ export class TypeGraphComponent implements OnInit {
    */
   private getFormatOrder(dateOpt: DateOpt): Object[] {
     const formatOrder: Object[] = [
-      this.createFormatObject( DateOpt.MIN_SEC, ':', ['getSeconds', 'getMinutes']),
-      this.createFormatObject( DateOpt.HOUR, ' ', ['getHours']),
-      this.createFormatObject( DateOpt.DAY, '/', ['getDate']),
-      this.createFormatObject( DateOpt.MONTH, '/', ['getMonth']),
-      this.createFormatObject( DateOpt.YEAR, '', ['getFullYear'])
+      this.createFormatObject(DateOpt.MIN_SEC, ':', ['getSeconds', 'getMinutes']),
+      this.createFormatObject(DateOpt.HOUR, ' ', ['getHours']),
+      this.createFormatObject(DateOpt.DAY, '/', ['getDate']),
+      this.createFormatObject(DateOpt.MONTH, '/', ['getMonth']),
+      this.createFormatObject(DateOpt.YEAR, '', ['getFullYear'])
     ];
 
     // Return the slice of objects that should be used for formatting the date
     const numObjs = formatOrder.length;
-    for ( let i = 0; i < numObjs; i++ ) {
-      if ( formatOrder[i]['dateOpt'] === dateOpt ) {
+    for (let i = 0; i < numObjs; i++) {
+      if (formatOrder[i]['dateOpt'] === dateOpt) {
         return formatOrder.slice(i, numObjs);
       }
     }
@@ -344,7 +461,7 @@ export class TypeGraphComponent implements OnInit {
   private formatForVisualization(name: string, date: Date, variantInfo: Object[]) {
     const series = [];
 
-    for ( const vi of variantInfo ) {
+    for (const vi of variantInfo) {
       const dp = {
         name: date,
         y: this.extractChromosomeInfo(vi),
@@ -355,40 +472,7 @@ export class TypeGraphComponent implements OnInit {
       series.push(dp);
     }
 
-    return { name, series, date };
-  }
-
-  /**
-   * Fires when user clicks on datapoint in the graph
-   *
-   * @param $event, object - Object containing x,y values of the clicked on datapoint
-   *        e.g. [{
-   *                name: Thu Jun 2 2019 00:00:00 GMT-0400 (Eastern Daylight Time),
-   *                value: "CHROM1",
-   *                series: "PATIENT"
-   *              }]
-   */
-  public onClick($event): Object[] {
-    const sample: string = $event.series;
-    const date: Date = $event.name;
-    const chr: string = $event.value;
-
-    const variantInfo: Object[] = this.vcfMap.get(sample, date, chr);
-    this.setModalinformation(variantInfo);
-
-    // Return for testing purposes
-    return variantInfo;
-  }
-
-  /**
-   * Closes Modal. Does this by clearing all modal fields, specifically, selectedVariant
-   *
-   * @param $event, boolean - event passed to initialize close modal
-   */
-  public closeModal($event: boolean) {
-    this.selectedVariant = [];
-    this.headers = [];
-    this.modalTitle = '';
+    return {name, series, date};
   }
 
   /**
@@ -397,8 +481,8 @@ export class TypeGraphComponent implements OnInit {
    * @param variantInfo, Object[] - Array of variant objects
    */
   private setModalinformation(variantInfo: Object[]): void {
-      // Sort variantInfo on the position
-    const sortedOnPos: Object[] = variantInfo.sort(function(o1, o2) {
+    // Sort variantInfo on the position
+    const sortedOnPos: Object[] = variantInfo.sort(function (o1, o2) {
       const pos1Str = o1['POS'] || 0;
       const pos2Str = o2['POS'] || 0;
 
@@ -406,7 +490,9 @@ export class TypeGraphComponent implements OnInit {
       const pos1: number = parseInt(pos1Str, 10);
       const pos2: number = parseInt(pos1Str, 10);
 
-      if ( isNaN(pos1) || isNaN(pos2) ) { return 0; }
+      if (isNaN(pos1) || isNaN(pos2)) {
+        return 0;
+      }
 
       return pos1 - pos2;
     });
@@ -422,7 +508,9 @@ export class TypeGraphComponent implements OnInit {
    * @param data, Object[] - VariantInfo data taken from the vcfMap for that chromosome/time
    */
   private getModalTitle(data: Object[]): string {
-    if ( data.length === 0 ) { return; }
+    if (data.length === 0) {
+      return;
+    }
 
     // Take a look at the first entry to determine the chromosome
     const entry: Object = data[0];
@@ -437,16 +525,18 @@ export class TypeGraphComponent implements OnInit {
    * @param data, Object[] - VariantInfo data taken from the vcfMap for that chromosome/time
    */
   private getHeaders(data: Object[]): string[] {
-    if ( data.length === 0 ) { return; }
+    if (data.length === 0) {
+      return;
+    }
 
     // Take a look at the first entry to determine all the header values
     const entry: Object = data[0];
     const keys: string[] = Object.keys(entry);
 
     function includeHeader(includedHeaders) {
-        return function(element) {
-          return includedHeaders.has(element.toUpperCase());
-        };
+      return function (element) {
+        return includedHeaders.has(element.toUpperCase());
+      };
     }
 
     // Only take the headers we would like to show
@@ -456,68 +546,22 @@ export class TypeGraphComponent implements OnInit {
   /**
    * Methods for determining date fields to show
    */
-  private showMonth()   {
-    return this.getSelectedTimeOption() !== DateOpt.YEAR; }
-  private showDay()     {
-    const timeSelect = this.getSelectedTimeOption();
-    return timeSelect !== DateOpt.YEAR && timeSelect !== DateOpt.MONTH; }
-  private showHour()    {
-    const timeSelect = this.getSelectedTimeOption();
-    return timeSelect === DateOpt.HOUR || timeSelect === DateOpt.MIN_SEC; }
-  private showMinSec()  {
-    return this.getSelectedTimeOption() === DateOpt.MIN_SEC; }
-
-  /**
-   * Returns the date fields (e.g. YEAR, MONTH, DAY,... ) that should be used for date calculations
-   * Public for testing
-   */
-  public getTimeFields(): DateOpt[] {
-    const selectors = Object.keys(DateOpt).map(key => DateOpt[key]);
-    const i = selectors.indexOf(this.getSelectedTimeOption());
-    return selectors.slice(i, selectors.length);
+  private showMonth() {
+    return this.getSelectedTimeOption() !== DateOpt.YEAR;
   }
 
-  /**
-   *  Iterate over all timeFields and calculate relevant fields (e.g. seconds, minutes,... ) in date
-   *    @date - Full Date to be used for formatting
-   *    @timeFields - Array of date fields that should be calcluated in the formatted date
-   *                  E.g. Date's formatted up to DAY should have   timeFields = [ DAY, MONTH, YEAR ]
-   *    NOTE - Not private for tests
-   */
-  formatDate(date: Date, timeFields: DateOpt[]): Date {
-    let sec, min, hour, day, month, year;
-    [ sec, min, hour, day, month, year ] = [ 0, 0, 0, 1, 0, 0 ];
+  private showDay() {
+    const timeSelect = this.getSelectedTimeOption();
+    return timeSelect !== DateOpt.YEAR && timeSelect !== DateOpt.MONTH;
+  }
 
-    // timeFields will be a
-    for ( const selector of timeFields ) {
-      switch ( selector ) {
-        case DateOpt.YEAR: {
-          year = date.getFullYear();
-          break;
-        }
-        case DateOpt.MONTH: {
-          month = date.getMonth();
-          break;
-        }
-        case DateOpt.DAY: {
-          day = date.getDate();
-          break;
-        }
-        case DateOpt.HOUR: {
-          hour = date.getHours();
-          break;
-        }
-        case DateOpt.MIN_SEC: {
-          min = date.getMinutes();
-          sec = date.getSeconds();
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    }
-    return new Date(year, month, day, hour, min, sec);
+  private showHour() {
+    const timeSelect = this.getSelectedTimeOption();
+    return timeSelect === DateOpt.HOUR || timeSelect === DateOpt.MIN_SEC;
+  }
+
+  private showMinSec() {
+    return this.getSelectedTimeOption() === DateOpt.MIN_SEC;
   }
 
   private getFilteredResults(variants: Object[]): Object[] {
@@ -532,12 +576,12 @@ export class TypeGraphComponent implements OnInit {
    * chromsome type, mutation tepe), then transformations will need to happen after this method.
    */
   private filterOnSelectedPatients(source: Object[]): Object[] {
-    const patientFilter = function( entry: Object ) {
-      const name: string = entry[ 'name' ] || '';
+    const patientFilter = function (entry: Object) {
+      const name: string = entry['name'] || '';
       return this.patientMap.get(name).isSelected();
     };
 
-    const newData = source.filter( patientFilter, this );
+    const newData = source.filter(patientFilter, this);
     return newData;
   }
 
@@ -592,17 +636,17 @@ export class TypeGraphComponent implements OnInit {
    *      },...], }
    */
   private calculateXValues(source: Object[]): Object[] {
-    const dateFormatter = function( entry: Object ) {
-      const series = entry[ 'series' ] || {};
+    const dateFormatter = function (entry: Object) {
+      const series = entry['series'] || {};
       const date = entry['date'];
       const timeFields = this.getTimeFields();
-      const updatedSeries = series.map( (datapoint: Object) => {
+      const updatedSeries = series.map((datapoint: Object) => {
         const updatedDate = this.formatDate(date, timeFields);
-        datapoint[ 'x' ] = updatedDate;
-        datapoint[ 'name' ] = updatedDate;
+        datapoint['x'] = updatedDate;
+        datapoint['name'] = updatedDate;
         return datapoint;
       }, date, timeFields);
-      entry[ 'series' ] = updatedSeries;
+      entry['series'] = updatedSeries;
       return entry;
     };
 
@@ -616,29 +660,31 @@ export class TypeGraphComponent implements OnInit {
    *  - Should go after new data being uploaded
    */
   private aggregateSeriesOnXValues(source: Object[]): Object[] {
-    source.sort( (p1, p2) => {
+    source.sort((p1, p2) => {
       return p1['date'] - p2['date'];
     });
     const dateMap: Object = {};
 
-    for ( const dp of source ) {
+    for (const dp of source) {
       const series = dp['series'] || [];
-      if ( series.length === 0 ) { continue; }
+      if (series.length === 0) {
+        continue;
+      }
       const formattedDate: Date = series[0]['x'];
       const key: number = formattedDate.getTime();
 
-      if ( key in dateMap ) {
-        dateMap[ key ].push( dp );
+      if (key in dateMap) {
+        dateMap[key].push(dp);
       } else {
-        dateMap[ key ] = [ dp ];
+        dateMap[key] = [dp];
       }
     }
 
     const newResults: Object[] = [];
-    for ( const date in dateMap ) {
+    for (const date in dateMap) {
       if (dateMap.hasOwnProperty(date)) {
-        const entry = this.combineEntries( parseInt(date, 10), dateMap[ date ] );
-        newResults.push( entry );
+        const entry = this.combineEntries(parseInt(date, 10), dateMap[date]);
+        newResults.push(entry);
       }
     }
 
@@ -651,31 +697,31 @@ export class TypeGraphComponent implements OnInit {
    *
    *    [ { hpv1: 1, hpv2: 1}, { hpv1: 1, hpv3: 1 }, ... ] => { hpv1: 2, hpv2: 1, hpv3: 1 }
    */
-  private combineEntries( dateVal: number, entries: Object[] ): Object {
+  private combineEntries(dateVal: number, entries: Object[]): Object {
     const names: Set<string> = new Set();
 
     // Aggregate all hpv types recorded
-    for ( const e of entries ) {
-      const n = e[ 'name' ];
-      names.add( n );
+    for (const e of entries) {
+      const n = e['name'];
+      names.add(n);
 
-      const dataPoints: Object[] = e[ 'series' ] || [];
-      for ( const dp of dataPoints ) {
+      const dataPoints: Object[] = e['series'] || [];
+      for (const dp of dataPoints) {
         this.vcfMap.add(n, dp);
       }
     }
 
 
-    const name    = Array.from(names.values()).join('-');
-    const date    = new Date(dateVal);
-    const series  = this.createSeriesFromMap(this.vcfMap, date);
+    const name = Array.from(names.values()).join('-');
+    const date = new Date(dateVal);
+    const series = this.createSeriesFromMap(this.vcfMap, date);
 
-    return { name, series, date };
+    return {name, series, date};
   }
 
   private createSeriesFromMap(vcfMap: VcfMap, date: Date): Object[] {
     const series = [];
-    for ( const chr of vcfMap.keys() ) {
+    for (const chr of vcfMap.keys()) {
       const dp = {
         name: date,
         y: chr,
@@ -693,24 +739,24 @@ export class TypeGraphComponent implements OnInit {
    */
   private isValidDataPoint(dataPoint: any): boolean {
     // Verify type
-    if ( dataPoint === null || typeof dataPoint !== 'object' ) {
+    if (dataPoint === null || typeof dataPoint !== 'object') {
       return false;
     }
 
     // Verify fields are present
-    if ( dataPoint[ 'name' ] === null ) {
+    if (dataPoint['name'] === null) {
       return false;
     }
-    if ( dataPoint[ 'series' ] === null || dataPoint[ 'series' ].length === 0 ) {
+    if (dataPoint['series'] === null || dataPoint['series'].length === 0) {
       return false;
     }
 
     // Verify datapoint has a non-empty series
-    for ( const point of dataPoint[ 'series' ] ) {
-      const fields: string[] = [ 'name', 'x', 'y', 'r' ];
+    for (const point of dataPoint['series']) {
+      const fields: string[] = ['name', 'x', 'y', 'r'];
 
-      for ( const f of fields ) {
-        if ( point[ f ] === undefined ) {
+      for (const f of fields) {
+        if (point[f] === undefined) {
           return false;
         }
       }
@@ -724,47 +770,19 @@ export class TypeGraphComponent implements OnInit {
    * Calculates x-axis ticks
    */
   private calculateXTicks(): void {
-    this.xScaleMin  = this.getXScaleMin();
-    this.xScaleMax  = this.getXScaleMax();
+    this.xScaleMin = this.getXScaleMin();
+    this.xScaleMax = this.getXScaleMax();
     this.xAxisTicks = this.getSortedDates();
-  }
-
-  /*********** FIELDS FOR CALCULATING GRAPH PARAMETERS ***********/
-
-  // Calclates floor of the x view in graph. This will be a determined buffer level lower than the earliest date
-  getXScaleMin(): Date {
-    if ( this.results === undefined || this.results.length === 0 ) { return null; }
-
-    const xTicks = this.getSortedDates();
-    const buffer = this.getBuffer( xTicks );
-
-    const floorDate =  new Date(xTicks[0].getTime());
-    floorDate.setTime( floorDate.getTime() - buffer );
-
-    return floorDate;
-  }
-
-  // Calclates ceiling of the x view in graph. This will be a determined buffer level higher than the earliest date
-  getXScaleMax(): Date {
-    if ( this.results === undefined || this.results.length === 0 ) { return null; }
-
-    const xTicks = this.getSortedDates();
-    const buffer = this.getBuffer( xTicks );
-
-    const ceilDate = new Date(xTicks[xTicks.length - 1].getTime());
-    ceilDate.setTime( ceilDate.getTime() + buffer );
-
-    return ceilDate;
   }
 
   // Determines the buffer around the data points
   private getBuffer(xTicks: Date[]): number {
     const minDate = xTicks[0];
     const maxDate = xTicks[xTicks.length - 1];
-    const range   = Number(maxDate) - Number(minDate);
+    const range = Number(maxDate) - Number(minDate);
 
     // Case of 1 data point/no difference (e.g. if the user selects "year"). We just need a non-zero
-    if ( range === 0 ) {
+    if (range === 0) {
       return 1;
     }
 
@@ -781,16 +799,20 @@ export class TypeGraphComponent implements OnInit {
      * they should all be the same. If the series is for some reason empty, we'll take
      * the date value of the object that determines the x value of each point
      */
-    const dateValues = this.results.map( (d) => {
+    const dateValues = this.results.map((d) => {
       return d['series'][0]['x'];
     });
     dateValues.sort((a, b) => a - b);
     const uniqueDates = dateValues
-                          .map(function (date) { return date.getTime(); })
-                          .filter(function (date, i, array) {
-                            return array.indexOf(date) === i;
-                          })
-                          .map(function (time) { return new Date(time); });
+      .map(function (date) {
+        return date.getTime();
+      })
+      .filter(function (date, i, array) {
+        return array.indexOf(date) === i;
+      })
+      .map(function (time) {
+        return new Date(time);
+      });
     return uniqueDates;
   }
 }

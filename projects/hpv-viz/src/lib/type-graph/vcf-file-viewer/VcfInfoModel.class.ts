@@ -5,38 +5,18 @@ export class VcfInfoModel {
   private sampleDate: Date;    // Date sample was taken (optional)
   private selectedCommand: string;
 
-  private isDate(key: string): boolean{
-    return key.trim().toLocaleLowerCase().includes('date');
-  }
-
-  private isSampleDate(key: string): boolean{
-    return key.trim().toLocaleLowerCase().includes('sampledate');
-  }
-
-  private isCommand(key: string): boolean{
-    return key.trim().toLocaleLowerCase().includes('command');
-  }
-
-  public isSelectedCommand(cmd: string): boolean {
-    return this.selectedCommand === cmd;
-  }
-
-  public setSelectedCommand(cmd: string): void {
-    this.selectedCommand = cmd;
-  }
-
   constructor(info: Object) {
     const infoFields = Object.keys(info) || [];
 
-    for(const key of infoFields){
-      if(this.isDate(key)){
+    for (const key of infoFields) {
+      if (this.isDate(key)) {
         // get date field (e.g. "Date")
-        if(this.isSampleDate(key)){
+        if (this.isSampleDate(key)) {
           this.sampleDate = info[key];
         } else {
           this.fileCreatedDate = info[key];
         }
-      } else if (this.isCommand(key)){
+      } else if (this.isCommand(key)) {
         // Command Fields (e.g. "bcftoolsCommand", "bcftools_callCommand")
         this.commands.set(key, info[key]);
 
@@ -49,16 +29,39 @@ export class VcfInfoModel {
     }
   }
 
+  public isSelectedCommand(cmd: string): boolean {
+    return this.selectedCommand === cmd;
+  }
+
+  public setSelectedCommand(cmd: string): void {
+    this.selectedCommand = cmd;
+  }
+
   public getCommands(): Map<String, String> {
     return this.commands;
   }
+
   public getMetaData(): Object {
     return this.metaData;
   }
+
   public getSampleDate(): Date {
     return this.sampleDate;
   }
+
   public getFileCreationDate(): Date {
     return this.fileCreatedDate;
+  }
+
+  private isDate(key: string): boolean {
+    return key.trim().toLocaleLowerCase().includes('date');
+  }
+
+  private isSampleDate(key: string): boolean {
+    return key.trim().toLocaleLowerCase().includes('sampledate');
+  }
+
+  private isCommand(key: string): boolean {
+    return key.trim().toLocaleLowerCase().includes('command');
   }
 }

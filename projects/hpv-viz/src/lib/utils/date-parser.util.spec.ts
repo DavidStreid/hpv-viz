@@ -1,4 +1,4 @@
-import { async } from '@angular/core/testing';
+import {async} from '@angular/core/testing';
 import DateParserUtil from './date-parser.util';
 
 describe('DateParserUtil', () => {

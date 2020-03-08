@@ -1,6 +1,6 @@
 @import '../../../styles.scss';
 
-.modal-container{
+.modal-container {
   position: absolute;
   left: 10%;
   top: 10%;
@@ -13,13 +13,13 @@
   overflow-y: scroll;
 }
 
-.body-text{
+.body-text {
   font-size: 22px;
 }
 
-.data-table{
+.data-table {
   padding: 15px;
-  border-collapse:collapse;
+  border-collapse: collapse;
 }
 
 .close-button {
@@ -28,6 +28,7 @@
   right: 15px;
   font-size: 28px;
 }
+
 .close-button:hover {
   cursor: pointer;
 }

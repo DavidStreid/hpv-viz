@@ -4,9 +4,9 @@
       <div *ngFor="let model of vcfFileModels"
            class="info-viewer">
         <div>
-          <VcfFileSelector [vcfInfoModel]="model"
+          <VcfFileSelector (click)="toggleSelection(model)"
                            [isSelected]="model === selectedModel"
-                           (click)="toggleSelection(model)"></VcfFileSelector>
+                           [vcfInfoModel]="model"></VcfFileSelector>
         </div>
       </div>
     </div>

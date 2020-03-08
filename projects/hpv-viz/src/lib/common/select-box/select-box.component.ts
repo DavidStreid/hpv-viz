@@ -1,10 +1,4 @@
-import {  Component,
-          OnInit,
-          Input,
-          Output,
-          EventEmitter,
-          OnChanges,
-          SimpleChanges } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 
 /**
  * Component that binds to parent input and emits events when toggled
@@ -16,19 +10,17 @@ import {  Component,
 
 
 @Component({
-  selector:     'select-box', // tslint:disable-line
-  templateUrl:  './select-box.component.html',
-  styleUrls:    ['./select-box.component.css']
+  selector: 'select-box', // tslint:disable-line
+  templateUrl: './select-box.component.html',
+  styleUrls: ['./select-box.component.css']
 })
 export class SelectBoxComponent implements OnInit, OnChanges {
   @Output()
   public toggle = new EventEmitter<null>();
-
-  @Input()
-  private selected: boolean;
-
   // Data-bound css class
   public class: string;
+  @Input()
+  private selected: boolean;
   private SELECTED_CLASS = 'fa checkbox fa-check-square-o';
   private NOT_SELECTED_CLASS = 'fa checkbox fa-square-o';
 
@@ -37,6 +29,7 @@ export class SelectBoxComponent implements OnInit, OnChanges {
     this.selected = false;
     this.class = this.NOT_SELECTED_CLASS;
   }
+
   ngOnInit() {
     this.class = this.selected ? this.SELECTED_CLASS : this.NOT_SELECTED_CLASS;
   }
@@ -48,7 +41,9 @@ export class SelectBoxComponent implements OnInit, OnChanges {
     const change = input.selected;
 
     // Ignore change fired before initialization
-    if ( change.firstChange ) { return; }
+    if (change.firstChange) {
+      return;
+    }
 
     const selected: boolean = change.currentValue;
     this.selected = selected;
