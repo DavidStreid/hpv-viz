@@ -14,11 +14,17 @@ Install Dependencies
 hpv -> Project:vcf-parser
 hpv -> Project:hpv-viz
 
-So,
-Window 1A: `$ npm run vcf-parser-watch`
-    AND/OR
-Window 1B: `$ npm run hpv-viz`    
-Window 2: `$ npm run start`
+1) Build all dependencies
+```
+$ npm run vcf-parser-watch
+$ npm run hpv-viz
+```
+2) Build or run 
+```
+$ npm run start
+# OR
+$ npm run build
+```
 
 ## Technologies
 This uses the ngx-charts library.
