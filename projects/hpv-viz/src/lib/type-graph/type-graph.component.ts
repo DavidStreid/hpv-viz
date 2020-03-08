@@ -11,10 +11,11 @@ import {VcfMap} from './models/vcfMap.class';
   providers: [HpvDataService]
 })
 export class TypeGraphComponent implements OnInit {
-  public hpvPatientData: Object[];                // IMMUTABLE - Cloned version w/ new data replaces it. Never updated by formatting
-  public results: Object[];                       // MUTABLE - Modified or replaced on formatting changes and appending of data
+  public hpvPatientData: Object[];                // IMMUTABLE: Replaced w/ new data clone. Never updated by formatting
+  public results: Object[];                       // MUTABLE: Modified/replaced on formatting and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
+
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
   public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
   public modalTitle: string;
@@ -35,7 +36,8 @@ export class TypeGraphComponent implements OnInit {
     [DateOpt.MONTH]: {label: 'Month', selector: DateOpt.MONTH, selected: false},
     [DateOpt.YEAR]: {label: 'Year', selector: DateOpt.YEAR, selected: false}
   };
-  // Shoudl be of type 'any" so that "keyvalue" pipe can be used in the view
+  
+  // Should be of type 'any" so that "keyvalue" pipe can be used in the view
   public enabledDateSelectors: any = {};
   // Graph Options
   public view: any[] = [750, 400];
