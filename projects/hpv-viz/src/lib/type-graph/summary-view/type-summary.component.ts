@@ -15,6 +15,7 @@ export class TypeSummaryComponent implements OnChanges {
 
   public types: Set<string>;
   public samples: Set<string>;
+  public dataset: Object[];
 
   constructor() {
     this.typesMap = new Map();
@@ -39,5 +40,9 @@ export class TypeSummaryComponent implements OnChanges {
 
       entry = itr.next();
     }
+  }
+
+  public hasType(type: string, sample: string): boolean {
+    return this.typesMap.get(type).getData().has(sample)
   }
 }

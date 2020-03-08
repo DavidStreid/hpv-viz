@@ -1,1 +1,23 @@
 @import '../../../styles.scss';
+
+table, th, td {
+  border: 1px solid black;
+}
+th, td {
+  text-align: center;
+  padding: 3px 5px;
+}
+table {
+  border-collapse: collapse;
+}
+/* Centering of an html table */
+.table-center {
+  width: 1px;
+  margin: auto;
+}
+.green {
+  color: #248f24;
+}
+.red {
+  color: #ff1a1a;
+}
