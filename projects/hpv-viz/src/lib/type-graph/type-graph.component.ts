@@ -129,9 +129,12 @@ export class TypeGraphComponent implements OnInit {
 
     const types: string[] = variantInfo['types'];
 
-    for(const type of types){
-      this.vcfTypes.set(type, new PatientOption(type, true));
+    // Update map and add any new type entries
+    const vcfTypes: Map<string, PatientOption> = new Map(this.vcfTypes);
+    for (const type of types) {
+      vcfTypes.set(type, new PatientOption(type, true));
     }
+    this.vcfTypes = vcfTypes;
 
     if (!this.isValidDataPoint(dataPoint)) {
       console.error('Invalid upload');
@@ -157,6 +160,15 @@ export class TypeGraphComponent implements OnInit {
     this.addPatientToOptions(name);
 
     const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
+    this.updateViewOnFiltered(filteredResults);
+  }
+
+  /**
+   * Reruns filter - when using an Opt that has an internal state
+   */
+  public updateFilter(): void {
+    const hpvPatientData = this.hpvPatientData.slice(0);
+    const filteredResults: Object[] = this.getFilteredResults(hpvPatientData);
     this.updateViewOnFiltered(filteredResults);
   }
 
@@ -574,10 +586,14 @@ export class TypeGraphComponent implements OnInit {
     return this.getSelectedTimeOption() === DateOpt.MIN_SEC;
   }
 
+  /**
+   * Performs all filters on the input data
+   *
+   * @param variants
+   */
   private getFilteredResults(variants: Object[]): Object[] {
     const filteredPatients: Object[] = this.filterOnSelectedPatients(variants);
     const filteredTypes: Object[] = this.filterOnSelectedTypes(filteredPatients);
-
     return filteredTypes;
   }
 
@@ -595,20 +611,35 @@ export class TypeGraphComponent implements OnInit {
     const newData = source.filter(patientFilter, this);
     return newData;
   }
-
   /**
    * Removes types from source that have been toggled by the user
    *
-   * @param source
+   * @param source, Object[] - Source of variantInfo data
    */
   private filterOnSelectedTypes(source: Object[]): Object[] {
-    for(const vcfData of source){
-      // Only return points that are in the vcfTypes map
-      vcfData['series'] = vcfData['series'].filter(type => {
-        return this.vcfTypes.has(type['y']);
-      }, this);
+    // Pre-process list
+    const itr: IterableIterator<PatientOption> = this.vcfTypes.values();
+    const types: Set<String> = new Set();
+    let opt: IteratorResult<PatientOption> = itr.next();
+    while (!opt.done) {
+      if (opt.value.isSelected()) {
+        types.add(opt.value.getName());
+      }
+      opt = itr.next();
     }
-    return source;
+
+    const filtered: Object[] = [];
+
+    for (const vcfData of source) {
+      const clone: Object = Object.assign({}, vcfData);
+      // Only return points that are in the vcfTypes map
+      clone['series'] = vcfData['series'].filter(type => {
+        return types.has(type['y']);
+      }, this);
+      filtered.push(clone);
+    }
+
+    return filtered;
   }
 
   /**

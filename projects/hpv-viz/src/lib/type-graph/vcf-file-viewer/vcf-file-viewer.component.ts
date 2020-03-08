@@ -14,7 +14,7 @@ export class VcfFileViewerComponent implements OnChanges {
   public selectedModel: VcfInfoModel;
 
   public toggleSelection(toggled: VcfInfoModel): void {
-    if (toggled === this.selectedModel) return;
+    if (toggled === this.selectedModel) { return; }
     this.selectedModel = toggled;
   }
 
