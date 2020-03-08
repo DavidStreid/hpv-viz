@@ -171,7 +171,8 @@ export class VcfParserService {
       }
 
       // Extract unique type information
-      vcfTypes.add(variantInfo['CHROM']);
+      const chrom = variantInfo['CHROM'];
+      if(chrom) vcfTypes.add(chrom);
 
       mutationInfo.push(variantInfo);
     }
