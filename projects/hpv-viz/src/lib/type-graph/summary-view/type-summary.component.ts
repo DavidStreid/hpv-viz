@@ -11,10 +11,10 @@ import {PatientOption} from '../models/patient-option.class';
 })
 export class TypeSummaryComponent implements OnChanges {
   @Input()
-  typesMap: Map<string, PatientOption>;
+  typesMap: Map<String, PatientOption>;
 
-  public types: Set<string>;
-  public samples: Set<string>;
+  public types: Set<String>;
+  public samples: Set<String>;
   public dataset: Object[];
 
   constructor() {
@@ -24,25 +24,29 @@ export class TypeSummaryComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const typesMap: Map<string, PatientOption> = changes.typesMap.currentValue;
-    const itr: IterableIterator<[string, PatientOption]> = typesMap.entries();
-    let entry: IteratorResult<[string, PatientOption]> = itr.next();
+    const typesMap: Map<String, PatientOption> = changes.typesMap.currentValue;
+    const itr: IterableIterator<[String, PatientOption]> = typesMap.entries();
+    let entry: IteratorResult<[String, PatientOption]> = itr.next();
     let type, opt, data;
     while (!entry.done) {
       type = entry.value[0];
       opt = entry.value[1];
       data = opt.getData();
 
-      for (const sample of Array.from(data)) {
-        this.samples.add(sample);
-      }
       this.types.add(type);
+
+      const sampleItr: IterableIterator<String> = data.values();
+      let sample = sampleItr.next();
+      while (!sample.done) {
+        this.samples.add(sample.value);
+        sample = sampleItr.next();
+      }
 
       entry = itr.next();
     }
   }
 
-  public hasType(type: string, sample: string): boolean {
-    return this.typesMap.get(type).getData().has(sample)
+  public hasType(type: String, sample: String): boolean {
+    return this.typesMap.get(type).getData().has(sample);
   }
 }

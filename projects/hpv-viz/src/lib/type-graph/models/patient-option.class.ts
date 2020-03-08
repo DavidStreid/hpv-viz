@@ -6,19 +6,19 @@
 export class PatientOption {
   private selected;
   private name;
-  private data: Set<string>;
+  private data: Set<String>;
 
-  constructor(name: string, selected: boolean) {
+  constructor(name: String, selected: boolean) {
     this.selected = selected;
     this.name = name;
     this.data = new Set();
   }
 
-  public getData(): Set<string> {
+  public getData(): Set<String> {
     return this.data;
   }
 
-  public setData(data: Set<string>): void {
+  public setData(data: Set<String>): void {
     this.data = data;
   }
 
@@ -26,7 +26,7 @@ export class PatientOption {
     return this.selected;
   }
 
-  public getName(): string {
+  public getName(): String {
     return this.name;
   }
 
