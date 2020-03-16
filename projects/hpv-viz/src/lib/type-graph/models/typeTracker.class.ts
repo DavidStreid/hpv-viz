@@ -72,9 +72,6 @@ export class TypeTracker {
       }
 
       const oddsRatioCalculation: number = numerator / denominator;
-
-      console.log(oddsRatioCalculation);
-
       orEntry.set(ODDS_RATIO, oddsRatioCalculation);
     });
 
