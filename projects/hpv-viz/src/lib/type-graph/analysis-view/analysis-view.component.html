@@ -1,0 +1,16 @@
+<table class="table-center">
+  <thead>
+    <tr>
+      <th>Type One</th>
+      <th>Type Two</th>
+      <th>Odds Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let oddsRatio of oddsRatioList">
+      <td>{{oddsRatio['type1']}}</td>
+      <td>{{oddsRatio['type2']}}</td>
+      <td>{{oddsRatio['oddsRatio']}}</td>
+    </tr>
+  </tbody>
+</table>

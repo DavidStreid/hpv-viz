@@ -3,6 +3,7 @@ import {HpvDataService} from '../services/hpv-data-service';
 import {DateOpt} from './models/graph-options.enums';
 import {PatientOption} from './models/patient-option.class';
 import {VcfMap} from './models/vcfMap.class';
+import {TypeTracker} from "./models/typeTracker.class";
 
 @Component({
   selector: 'app-type-graph', // tslint:disable-line
@@ -16,6 +17,8 @@ export class TypeGraphComponent implements OnInit {
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
   public vcfTypes: Map<string, PatientOption>;
+  public typeTracker: TypeTracker;
+  public oddsRatio: Map<Set<string>, Map<string, number>>;
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
   public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
@@ -78,6 +81,8 @@ export class TypeGraphComponent implements OnInit {
     this.vcfFileMap = new Map();
     this.vcfTypes = new Map();
     this.initDateSelectors();
+    this.typeTracker = new TypeTracker();
+    this.oddsRatio = new Map();
 
     // FOR TESTING PURPOSES
     /*
@@ -128,6 +133,9 @@ export class TypeGraphComponent implements OnInit {
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
 
     const types: string[] = variantInfo['types'];
+
+    this.typeTracker.addTypes(types);
+    this.oddsRatio = this.typeTracker.calculateOddsRatios();
 
     // Update map and add any new type entries
     const vcfTypes: Map<string, PatientOption> = new Map(this.vcfTypes);

@@ -16,6 +16,7 @@ import {HpvDataService} from './services/hpv-data-service';
 // DIRECTIVES
 import {FileDropDirective} from './directives/file-drop.directive';
 import {TypeSummaryComponent} from './type-graph/summary-view/type-summary.component';
+import {AnalysisViewComponent} from './type-graph/analysis-view/analysis-view.component';
 
 // LOCAL DEPENDENCIES - Remove when deployed
 // const LOCAL_MODULES = [ BrowserAnimationsModule ];
@@ -30,7 +31,8 @@ const CHILD_COMPONENTS = [
   VcfInfoComponent,
   VcfFileSelectorComponent,
   TypeToggleComponent,
-  TypeSummaryComponent
+  TypeSummaryComponent,
+  AnalysisViewComponent
 ];
 const SERVICES = [HpvDataService];
 
