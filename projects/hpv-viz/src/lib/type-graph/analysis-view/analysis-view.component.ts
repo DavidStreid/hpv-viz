@@ -30,7 +30,8 @@ export class AnalysisViewComponent implements OnChanges {
 
       uiEntry['type1'] = types[0];
       uiEntry['type2'] = types[1];
-      uiEntry['oddsRatio'] = orEntry.get(ODDS_RATIO);
+
+      uiEntry['oddsRatio'] = Number((orEntry.get(ODDS_RATIO)).toFixed(2));
 
       this.oddsRatioList.push(uiEntry);
     });
