@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HpvDataService} from '../services/hpv-data-service';
 import {DateOpt} from './models/graph-options.enums';
-import {PatientOption} from './models/patient-option.class';
+import {Toggle} from './models/patient-option.class';
 import {VcfMap} from './models/vcfMap.class';
 import {TypeTracker} from "./models/typeTracker.class";
 
@@ -14,9 +14,9 @@ import {TypeTracker} from "./models/typeTracker.class";
 export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE: Replaced w/ new data clone. Never updated by formatting
   public results: Object[];                       // MUTABLE: Modified/replaced on formatting and appending of data
-  public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
+  public patientMap: Map<string, Toggle>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
-  public vcfTypes: Map<string, PatientOption>;    // types -> PatientOption (Patient Option tracks the patients w/ that type)
+  public vcfTypes: Map<string, Toggle>;    // types -> Toggle (Patient Option tracks the patients w/ that type)
   public typeTracker: TypeTracker;
   public oddsRatio: Map<Set<string>, Map<string, number>>;
 
@@ -143,10 +143,10 @@ export class TypeGraphComponent implements OnInit {
     const types: string[] = variantInfo['types'];
     this.calculateOddsRatiosFromTypes(types);
 
-    // Update map and add any new type entries
-    const vcfTypes: Map<string, PatientOption> = new Map(this.vcfTypes);
+    // Update map of types to the patients that have that type. Adding any new type entries
+    const vcfTypes: Map<string, Toggle> = new Map(this.vcfTypes);
     for (const type of types) {
-      let opt: PatientOption = new PatientOption(type, true);
+      let opt: Toggle = new Toggle(type, true);
       if(vcfTypes.has(type)){
          opt = vcfTypes.get(type);
       }
@@ -378,7 +378,7 @@ export class TypeGraphComponent implements OnInit {
   }
 
   private deselectAllPatients(): void {
-    this.patientMap.forEach((patientOpt: PatientOption) => {
+    this.patientMap.forEach((patientOpt: Toggle) => {
       patientOpt.setSelected(false);
     });
   }
@@ -393,7 +393,7 @@ export class TypeGraphComponent implements OnInit {
 
     if (!this.patientMap.has(name)) {
       // Create a new patient option and toggle to true
-      const opt: PatientOption = new PatientOption(name, true);
+      const opt: Toggle = new Toggle(name, true);
       this.patientMap.set(name, opt);
     } else {
       this.patientMap.get(name).setSelected(true);
@@ -403,7 +403,7 @@ export class TypeGraphComponent implements OnInit {
   /**
    * Toggles all patients to be selected
    */
-  private togglePatientOptionsToSelected(): void {
+  private toggleTogglesToSelected(): void {
     function toggle(value, key, map) {
       value.toggle(true);
     }
@@ -641,9 +641,9 @@ export class TypeGraphComponent implements OnInit {
    */
   private filterOnSelectedTypes(source: Object[]): Object[] {
     // Pre-process list
-    const itr: IterableIterator<PatientOption> = this.vcfTypes.values();
+    const itr: IterableIterator<Toggle> = this.vcfTypes.values();
     const types: Set<String> = new Set();
-    let opt: IteratorResult<PatientOption> = itr.next();
+    let opt: IteratorResult<Toggle> = itr.next();
     while (!opt.done) {
       if (opt.value.isSelected()) {
         types.add(opt.value.getName());

@@ -1,10 +1,8 @@
 /**
  * Class for Patient Option
  *  Keeps track of patients, @data, with a certain HPV type, @name
- *
- * TODO - Refactor to more generic name
  */
-export class PatientOption {
+export class Toggle {
   private selected;
   private name;               // HPV type
   private data: Set<String>;  // Set of patients with that HPV type
@@ -36,7 +34,7 @@ export class PatientOption {
   }
 
   /**
-   * Flips the selected field of the PatientOption
+   * Flips the selected field of the Toggle
    */
   public toggle(selected?: boolean): void {
     if (selected === undefined) {

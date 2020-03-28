@@ -5,7 +5,7 @@ import {TableModalComponent} from '../common/modal/table-modal.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {INIT_DATA_POINTS, INIT_DATA_POINTS_EVENTS, YEAR_TRANSFORM_DATES} from '../../test/mock-data/mock-viz';
 import {TEST_FILES} from '../../test/mock-data/vcf-files';
-import {PatientOption} from './models/patient-option.class';
+import {Toggle} from './models/patient-option.class';
 import {By} from '@angular/platform-browser';
 
 describe('TypeGraphComponent', () => {
@@ -215,7 +215,7 @@ describe('TypeGraphComponent', () => {
         component.addVcfUpload(event);
 
         // Patient Map is updated w/ a patient option
-        const patientOpt: PatientOption = component.patientMap.get(name);
+        const patientOpt: Toggle = component.patientMap.get(name);
         expect(patientOpt.getName()).toBe(name);
         expect(patientOpt.isSelected()).toBeTruthy();
 
@@ -251,7 +251,7 @@ describe('TypeGraphComponent', () => {
       component.addVcfUpload(evt);
 
       let numPatientsSelected = 0;
-      component.patientMap.forEach((opt: PatientOption) => {
+      component.patientMap.forEach((opt: Toggle) => {
         if (opt.isSelected()) {
           numPatientsSelected += 1;
         }
