@@ -118,14 +118,6 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Calculate Odds Ratios from a list of string types
-   */
-  private calculateOddsRatiosFromTypes(types: string[]): void {
-    this.typeTracker.addTypes(types);
-    this.oddsRatio = this.typeTracker.calculateOddsRatios();
-  }
-
-  /**
    * Handler for uplaod event, which should be formatted as a datapoint.
    *    - Updates component's hpvPatientData
    *    - Updates component's results (updateViewOnFiltered)
@@ -147,8 +139,8 @@ export class TypeGraphComponent implements OnInit {
     const vcfTypes: Map<string, Toggle> = new Map(this.vcfTypes);
     for (const type of types) {
       let opt: Toggle = new Toggle(type, true);
-      if(vcfTypes.has(type)){
-         opt = vcfTypes.get(type);
+      if (vcfTypes.has(type)) {
+        opt = vcfTypes.get(type);
       }
       vcfTypes.set(type, opt);
 
@@ -375,6 +367,14 @@ export class TypeGraphComponent implements OnInit {
     ceilDate.setTime(ceilDate.getTime() + buffer);
 
     return ceilDate;
+  }
+
+  /**
+   * Calculate Odds Ratios from a list of string types
+   */
+  private calculateOddsRatiosFromTypes(types: string[]): void {
+    this.typeTracker.addTypes(types);
+    this.oddsRatio = this.typeTracker.calculateOddsRatios();
   }
 
   private deselectAllPatients(): void {
@@ -634,6 +634,7 @@ export class TypeGraphComponent implements OnInit {
     const newData = source.filter(patientFilter, this);
     return newData;
   }
+
   /**
    * Removes types from source that have been toggled by the user
    *

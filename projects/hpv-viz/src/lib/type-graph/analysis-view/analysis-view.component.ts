@@ -26,7 +26,7 @@ export class AnalysisViewComponent implements OnChanges {
       // Key: set of the two types used to calculate the odds ratio
       const uiEntry = {};
       const types = Array.from(key);
-      if(types.length !== 2) throw new Error('Invalid Odds ratio calculation: ' + types);
+      if (types.length !== 2) throw new Error('Invalid Odds ratio calculation: ' + types);
 
       uiEntry['type1'] = types[0];
       uiEntry['type2'] = types[1];
@@ -37,7 +37,7 @@ export class AnalysisViewComponent implements OnChanges {
     });
 
     // Descending sort
-    this.oddsRatioList.sort(function(or1, or2) {
+    this.oddsRatioList.sort(function (or1, or2) {
       return or2['oddsRatio'] - or1['oddsRatio'];
     });
   }

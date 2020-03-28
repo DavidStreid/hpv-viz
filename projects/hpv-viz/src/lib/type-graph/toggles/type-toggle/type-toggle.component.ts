@@ -28,7 +28,9 @@ export class TypeToggleComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     const typeMap: Map<String, Toggle> = changes.typeMap.currentValue;
     typeMap.forEach((opt, type, map) => {
-      if (type) { this.values.add(type); }    // Add all non-null, defined values
+      if (type) {
+        this.values.add(type);
+      }    // Add all non-null, defined values
     }, this);
   }
 }

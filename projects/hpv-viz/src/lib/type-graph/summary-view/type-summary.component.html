@@ -1,22 +1,22 @@
 <table class="table-center">
   <thead>
-    <th></th>
-    <th *ngFor="let sample of samples">
-      {{sample}}
-    </th>
+  <th></th>
+  <th *ngFor="let sample of samples">
+    {{sample}}
+  </th>
   </thead>
   <tbody>
-    <tr *ngFor="let type of types">
-      <td>{{type}}</td>
-      <td *ngFor="let sample of samples">
-        <i [ngClass]="{
+  <tr *ngFor="let type of types">
+    <td>{{type}}</td>
+    <td *ngFor="let sample of samples">
+      <i [ngClass]="{
                         'fas': true,
                         'fa-check' : hasType(type, sample),
                         'green': hasType(type, sample),
                         'fa-times': !hasType(type, sample),
                         'red': !hasType(type, sample)
           }"></i>
-      </td>
-    </tr>
+    </td>
+  </tr>
   </tbody>
 </table>

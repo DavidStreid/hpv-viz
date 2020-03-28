@@ -1,5 +1,5 @@
-
 export const ODDS_RATIO: string = 'oddsRatio';
+
 /**
  * Tracks all the types that have been observed
  */

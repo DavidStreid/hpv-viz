@@ -1,6 +1,5 @@
-import { NgModule }                from '@angular/core';
-import { NgxChartsModule }         from '@swimlane/ngx-charts';
-
+import {NgModule} from '@angular/core';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 // COMPONENTS
 import {HpvVizComponent} from './hpv-viz.component';
 import {TypeGraphComponent} from './type-graph/type-graph.component';
