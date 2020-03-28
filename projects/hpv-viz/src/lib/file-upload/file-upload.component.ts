@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 // Note - use "ng build vcf-parser --watch"
-import {VcfParserService} from 'vcf-parser';
+import * as vcfParserService from 'variant-call-format-parser';
 import DateParserUtil from '../utils/date-parser.util';
 import {SAMPLE_DATE, SAMPLE_NAME} from '../common/app.const';
 
@@ -15,7 +15,7 @@ export class FileUploadComponent implements OnInit {
   public dropzoneActive = false;
   private dateParserUtil: DateParserUtil;
 
-  constructor(private vcfParserService: VcfParserService) {
+  constructor() {
   }
 
   ngOnInit() {
@@ -39,11 +39,11 @@ export class FileUploadComponent implements OnInit {
    * @param file, string - string contents of vcf file
    */
   private getVariantInfo(file: string): Object[] {
-    return this.vcfParserService.extractVariantInfo(file);
+    return vcfParserService.extractVariantInfo(file);
   }
 
   private getMetadata(file: string): Object {
-    return this.vcfParserService.extractMetadata(file);
+    return vcfParserService.extractMetadata(file);
   }
 
   /**
@@ -86,7 +86,7 @@ export class FileUploadComponent implements OnInit {
         metaData[SAMPLE_DATE] = tempDate;
         this.vcfUpload.emit({name, date: tempDate, variantInfo, metaData});
       } else {
-        const date = this.vcfParserService.extractDate(reader.result);
+        const date = vcfParserService.extractDate(reader.result);
         this.vcfUpload.emit({name, date, variantInfo, metaData});
       }
 
