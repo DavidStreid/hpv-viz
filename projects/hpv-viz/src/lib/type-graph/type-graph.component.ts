@@ -118,6 +118,14 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
+   * Calculate Odds Ratios from a list of string types
+   */
+  private calculateOddsRatiosFromTypes(types: string[]): void {
+    this.typeTracker.addTypes(types);
+    this.oddsRatio = this.typeTracker.calculateOddsRatios();
+  }
+
+  /**
    * Handler for uplaod event, which should be formatted as a datapoint.
    *    - Updates component's hpvPatientData
    *    - Updates component's results (updateViewOnFiltered)
@@ -133,9 +141,7 @@ export class TypeGraphComponent implements OnInit {
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
 
     const types: string[] = variantInfo['types'];
-
-    this.typeTracker.addTypes(types);
-    this.oddsRatio = this.typeTracker.calculateOddsRatios();
+    this.calculateOddsRatiosFromTypes(types);
 
     // Update map and add any new type entries
     const vcfTypes: Map<string, PatientOption> = new Map(this.vcfTypes);
