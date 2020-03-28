@@ -16,7 +16,7 @@ export class TypeGraphComponent implements OnInit {
   public results: Object[];                       // MUTABLE: Modified/replaced on formatting and appending of data
   public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
-  public vcfTypes: Map<string, PatientOption>;
+  public vcfTypes: Map<string, PatientOption>;    // types -> PatientOption (Patient Option tracks the patients w/ that type)
   public typeTracker: TypeTracker;
   public oddsRatio: Map<Set<string>, Map<string, number>>;
 

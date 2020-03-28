@@ -1,12 +1,13 @@
 /**
  * Class for Patient Option
+ *  Keeps track of patients, @data, with a certain HPV type, @name
  *
  * TODO - Refactor to more generic name
  */
 export class PatientOption {
   private selected;
-  private name;
-  private data: Set<String>;
+  private name;               // HPV type
+  private data: Set<String>;  // Set of patients with that HPV type
 
   constructor(name: String, selected: boolean) {
     this.selected = selected;
