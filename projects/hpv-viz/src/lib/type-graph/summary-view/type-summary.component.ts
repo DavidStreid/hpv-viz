@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {Toggle} from '../models/patient-option.class';
+import {Toggle} from '../models/toggle.class';
 
 /**
  * Shows a table of patients with certain type data

@@ -5,7 +5,7 @@ import {TableModalComponent} from '../common/modal/table-modal.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {INIT_DATA_POINTS, INIT_DATA_POINTS_EVENTS, YEAR_TRANSFORM_DATES} from '../../test/mock-data/mock-viz';
 import {TEST_FILES} from '../../test/mock-data/vcf-files';
-import {Toggle} from './models/patient-option.class';
+import {Toggle} from './models/toggle.class';
 import {By} from '@angular/platform-browser';
 
 describe('TypeGraphComponent', () => {

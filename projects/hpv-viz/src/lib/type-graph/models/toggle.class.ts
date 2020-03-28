@@ -1,6 +1,6 @@
 /**
- * Class for Patient Option
- *  Keeps track of patients, @data, with a certain HPV type, @name
+ * Class for Toggle
+ * Keeps track of @name to a set of @data (E.g. HPV Type -> Set ot patients with that HPV type)
  */
 export class Toggle {
   private selected;

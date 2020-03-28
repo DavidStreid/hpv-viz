@@ -1,4 +1,4 @@
-import {Toggle} from './patient-option.class';
+import {Toggle} from './toggle.class';
 
 describe('Toggle ', () => {
   it('Should have valid constructor and getters', () => {

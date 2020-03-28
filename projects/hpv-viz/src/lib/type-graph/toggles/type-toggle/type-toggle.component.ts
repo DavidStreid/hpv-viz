@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {Toggle} from '../../models/patient-option.class';
+import {Toggle} from '../../models/toggle.class';
 
 @Component({
   selector: 'type-toggle', // tslint:disable-line

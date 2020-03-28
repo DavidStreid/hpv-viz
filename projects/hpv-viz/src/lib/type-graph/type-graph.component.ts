@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HpvDataService} from '../services/hpv-data-service';
 import {DateOpt} from './models/graph-options.enums';
-import {Toggle} from './models/patient-option.class';
+import {Toggle} from './models/toggle.class';
 import {VcfMap} from './models/vcfMap.class';
 import {TypeTracker} from './models/typeTracker.class';
 
