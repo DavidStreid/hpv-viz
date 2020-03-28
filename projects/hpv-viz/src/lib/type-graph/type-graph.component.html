@@ -54,13 +54,13 @@
       </div>
     </div>
   </div>
-  <div *ngIf="patientMap.size > 0"
+  <div *ngIf="patientToggles.size > 0"
        class="width-95per padding-left-5per padding-bottom-25px">
     <type-toggle (toggleEvent)="updateFilter()"
-                 [typeMap]="vcfTypes"></type-toggle>
+                 [typeMap]="typeToggles"></type-toggle>
   </div>
   <div class="width-95per padding-left-5per padding-bottom-25px">
-    <div *ngIf="patientMap.size > 0"
+    <div *ngIf="patientToggles.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">
       <div>
         <p class="font-20px">Patients</p>
@@ -68,7 +68,7 @@
           <div class="block">
             <div class="inline-block opt-container">
               <div class="selector flex-center">
-                <div *ngFor="let patient of patientMap | keyvalue" class="inline-block patient-opt">
+                <div *ngFor="let patient of patientToggles | keyvalue" class="inline-block patient-opt">
                   <div class="inline-block">
                     <div (click)="handlePatientToggle(patient.key)"
                          [class.app-button-selected]="patient.value.isSelected()"
@@ -85,19 +85,19 @@
         </div>
       </div>
     </div>
-    <div *ngIf="patientMap.size > 0"
+    <div *ngIf="patientToggles.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">
       <type-summary
-        [typesMap]="vcfTypes">
+        [typesMap]="typeToggles">
       </type-summary>
     </div>
-    <div *ngIf="patientMap.size > 0"
+    <div *ngIf="patientToggles.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">
       <analysis-view
         [oddsRatio]="oddsRatio">
       </analysis-view>
     </div>
-    <div *ngIf="patientMap.size > 0"
+    <div *ngIf="patientToggles.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">
       <div>
         <p class="font-20px">VCF File Information</p>
@@ -105,7 +105,7 @@
           <div class="block height-inherit">
             <div class="inline-block opt-container height-inherit">
               <div class="selector flex-center inherit-width height-inherit">
-                <div *ngFor="let patient of patientMap | keyvalue"
+                <div *ngFor="let patient of patientToggles | keyvalue"
                      [class.none]="!patient.value.isSelected()"
                      class="block patient-opt fill-width height-inherit">
                   <div *ngIf="patient.value.isSelected()"
