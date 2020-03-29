@@ -13,7 +13,7 @@ export class PersistenceViewComponent implements OnChanges {
 
   public headers: string[]; // Headers for the table -  [       'Average',      Patient1, Patient2, ... ]
   public body: string[][];  // Rows of the table -      [ type, averageLength,  p1Length, p2Length, ... ]
-  public dateSelectors: object = {
+  public dateSelectors: any = {
     [DateOpt.DAY]: {label: 'Day', selector: DateOpt.DAY, selected: false},
     [DateOpt.MONTH]: {label: 'Month', selector: DateOpt.MONTH, selected: false},
     [DateOpt.YEAR]: {label: 'Year', selector: DateOpt.YEAR, selected: true}
