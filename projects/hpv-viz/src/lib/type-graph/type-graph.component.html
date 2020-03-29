@@ -54,6 +54,10 @@
       </div>
     </div>
   </div>
+  <div>
+    <persistence-view
+      [patientSummaryInfo]="patientSummaryInfo"></persistence-view>
+  </div>
   <div *ngIf="patientToggles.size > 0"
        class="width-95per padding-left-5per padding-bottom-25px">
     <type-toggle (toggleEvent)="updateFilter()"

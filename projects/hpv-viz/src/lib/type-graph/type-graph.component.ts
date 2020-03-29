@@ -395,6 +395,9 @@ export class TypeGraphComponent implements OnInit {
       this.patientSummaryInfo.set(patient, new PatientSummary(patient));
     }
     this.patientSummaryInfo.get(patient).addTypesOnDate(date, types);
+
+    // clone to trigger change detection
+    this.patientSummaryInfo = new Map<string, PatientSummary>(this.patientSummaryInfo);
   }
 
   private deselectAllPatients(): void {

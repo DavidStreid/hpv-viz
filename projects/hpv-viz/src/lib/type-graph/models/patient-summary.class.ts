@@ -10,6 +10,13 @@ class TypeInfo {
     this.duration = 0;
   }
 
+  /**
+   * Returns the duration of the type
+   */
+  public getDuration(): number {
+    return this.duration;
+  }
+
   public addDate(date: Date) {
     this.dates.push(date);
     // Date::getTime - milliseconds since 1 January 1970 00:00:00.
@@ -41,7 +48,25 @@ export class PatientSummary {
     this.types = new Map<string, TypeInfo>();
   }
 
-  public addTypesOnDate(date: Date, types: string[]) {
+  /**
+   * Returns all types associated with the patient
+   */
+  public getTypes(): string[] {
+    return Array.from(this.types.keys());
+  }
+
+  /**
+   * Returns the duration that a type has been present in the patient
+   * @param type
+   */
+  public getTypeDuration(type: string): number {
+    if(this.types.has(type)){
+      return this.types.get(type).getDuration();
+    }
+    return null;
+  }
+
+  public addTypesOnDate(date: Date, types: string[]): void {
     this.addDate(date);
     for (const type of types) {
       if (!this.types.has(type)) {
@@ -51,7 +76,7 @@ export class PatientSummary {
     }
   }
 
-  private addDate(date: Date) {
+  private addDate(date: Date): void {
     this.dates.push(date);
     this.dates.sort();
   }

@@ -1,0 +1,17 @@
+<div>
+  <table class="table-center">
+    <thead>
+    <th></th>
+    <th *ngFor="let cell of headers">
+      {{cell}}
+    </th>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of body">
+      <td *ngFor="let cell of row">
+        {{cell}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
