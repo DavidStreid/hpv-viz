@@ -5,6 +5,7 @@ import {Toggle} from './models/toggle.class';
 import {VcfMap} from './models/vcfMap.class';
 import {TypeTracker} from './models/typeTracker.class';
 import {PatientSummary} from './models/patient-summary.class';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-type-graph', // tslint:disable-line
@@ -120,6 +121,24 @@ export class TypeGraphComponent implements OnInit {
       }
     }
   }
+  
+  /**
+   * Checks if a file upload, represented by an event, has already been uploaded. Does this by checking the metadata
+   *
+   * @param patientName
+   * @param metaData
+   */
+  private hasFileBeenUploaded(patientName: string, metaData: object): boolean {
+    // If a new patient is being uploaded, the file is new
+    if(!this.vcfFileMap.has(patientName)) return false;
+    const metaDataList: Object[] = this.vcfFileMap.get(patientName);
+    for(const entry of metaDataList){
+      if(_.isEqual(entry, metaData)){
+        return true;
+      }
+    }
+    return false;
+  }
 
   /**
    * Handler for uplaod event, which should be formatted as a datapoint.
@@ -134,6 +153,11 @@ export class TypeGraphComponent implements OnInit {
     const variantInfo = $event['variantInfo'] || [];
     const metaData = $event['metaData'] || {};
     const types: string[] = variantInfo['types'];
+
+    if(this.hasFileBeenUploaded(name, metaData)){
+      console.log(`Already Uploaded: VCF for ${name} on ${date}`);
+      return;
+    }
 
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
     this.calculateOddsRatiosFromTypes(types);
