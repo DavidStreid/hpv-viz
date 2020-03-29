@@ -80,7 +80,7 @@ export class PersistenceViewComponent implements OnChanges {
       const sum = validDurations.reduce(function(c1, c2){
         return c1 + c2;
       }, 0);
-      const avg: number = this.formatMilliSeconds(sum / validDurations.length);
+      const avg: any = this.formatMilliSeconds(sum / validDurations.length);
 
       // Format to milliseconds
       row = row.map((entry) => {return this.formatMilliSeconds(entry)});

@@ -1,8 +1,8 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 
-import { AppComponent } from './app.component';
-import { HpvVizModule } from '../../projects/hpv-viz/src/lib/hpv-viz.module';
+import {AppComponent} from './app.component';
+import {HpvVizModule} from '../../projects/hpv-viz/src/lib/hpv-viz.module';
 
 @NgModule({
   declarations: [
@@ -13,6 +13,7 @@ import { HpvVizModule } from '../../projects/hpv-viz/src/lib/hpv-viz.module';
     HpvVizModule
   ],
   providers: [],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
