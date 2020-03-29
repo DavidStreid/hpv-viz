@@ -4,6 +4,7 @@ import {DateOpt} from './models/graph-options.enums';
 import {Toggle} from './models/toggle.class';
 import {VcfMap} from './models/vcfMap.class';
 import {TypeTracker} from './models/typeTracker.class';
+import {PatientSummary} from './models/patient-summary.class';
 
 @Component({
   selector: 'app-type-graph', // tslint:disable-line
@@ -15,6 +16,7 @@ export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE: Replaced w/ new data clone. Never updated by formatting
   public results: Object[];                       // MUTABLE: Modified/replaced on formatting and appending of data
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
+  public patientSummaryInfo: Map<string, PatientSummary>; // Map of patients to a summary of the types they have
 
   public typeToggles: Map<string, Toggle>;        // types -> Toggle (Toggle tracks the patients w/ that type)
   public patientToggles: Map<string, Toggle>;     // patient -> Toggle (Toggles don't track anything
@@ -84,6 +86,7 @@ export class TypeGraphComponent implements OnInit {
     this.initDateSelectors();
     this.typeTracker = new TypeTracker();
     this.oddsRatio = new Map();
+    this.patientSummaryInfo = new Map();
 
     // FOR TESTING PURPOSES
     /*
@@ -130,11 +133,11 @@ export class TypeGraphComponent implements OnInit {
     const date = $event['date'] || null;
     const variantInfo = $event['variantInfo'] || [];
     const metaData = $event['metaData'] || {};
+    const types: string[] = variantInfo['types'];
 
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
-
-    const types: string[] = variantInfo['types'];
     this.calculateOddsRatiosFromTypes(types);
+    this.addEntryToPatientSummary(types, date, name);
 
     // Update map of types to the patients that have that type. Adding any new type entries
     const typeToggles: Map<string, Toggle> = new Map(this.typeToggles);
@@ -372,10 +375,26 @@ export class TypeGraphComponent implements OnInit {
 
   /**
    * Calculate Odds Ratios from a list of string types
+   *
+   * @param types, string[] - list of types from an uploaded VCF file
    */
   private calculateOddsRatiosFromTypes(types: string[]): void {
     this.typeTracker.addTypes(types);
     this.oddsRatio = this.typeTracker.calculateOddsRatios();
+  }
+
+  /**
+   * Adds the types recorded on a specific date for a patient
+   *
+   * @param types - types taken from VCF file
+   * @param date - date of the sequencing for the VCF file
+   * @param patient - identifier of the patient
+   */
+  private addEntryToPatientSummary(types: string[], date: Date, patient: string) {
+    if (!this.patientSummaryInfo.has(patient)) {
+      this.patientSummaryInfo.set(patient, new PatientSummary(patient));
+    }
+    this.patientSummaryInfo.get(patient).addTypesOnDate(date, types);
   }
 
   private deselectAllPatients(): void {
