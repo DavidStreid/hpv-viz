@@ -787,7 +787,7 @@ export class TypeGraphComponent implements OnInit {
     const newResults: Object[] = [];
     for (const date in dateMap) {
       if (dateMap.hasOwnProperty(date)) {
-        const entry = this.combineEntries(parseInt(date, 10), dateMap[date]);
+        const entry = this.combineEntries(date, dateMap[date]);
         newResults.push(entry);
       }
     }
@@ -801,13 +801,15 @@ export class TypeGraphComponent implements OnInit {
    *
    *    [ { hpv1: 1, hpv2: 1}, { hpv1: 1, hpv3: 1 }, ... ] => { hpv1: 2, hpv2: 1, hpv3: 1 }
    */
-  private combineEntries(dateVal: number, entries: Object[]): Object {
-    const names: Set<string> = new Set();
+  private combineEntries(dateStr: string, entries: Object[]): Object {
+    const dateNum: number = parseInt(dateStr, 10);
+    const date: Date = new Date(dateNum);
+    const patientNames: Set<string> = new Set();
 
     // Aggregate all hpv types recorded
     for (const e of entries) {
       const n = e['name'];
-      names.add(n);
+      patientNames.add(n);
 
       const dataPoints: Object[] = e['series'] || [];
       for (const dp of dataPoints) {
@@ -816,8 +818,7 @@ export class TypeGraphComponent implements OnInit {
     }
 
 
-    const name = Array.from(names.values()).join('-');
-    const date = new Date(dateVal);
+    const name = Array.from(patientNames.values()).join('-');
     const series = this.createSeriesFromMap(this.vcfMap, date);
 
     return {name, series, date};
@@ -825,14 +826,19 @@ export class TypeGraphComponent implements OnInit {
 
   private createSeriesFromMap(vcfMap: VcfMap, date: Date): Object[] {
     const series = [];
+    let numEntries;
     for (const chr of vcfMap.keys()) {
-      const dp = {
-        name: date,
-        y: chr,
-        x: date,
-        r: vcfMap.numEntries(chr)
-      };
-      series.push(dp);
+      // Must filter by date - only add if the set map has an entry on that date
+      numEntries = vcfMap.numEntriesOnDate(chr, date);
+      if(numEntries > 0){
+        const dp = {
+          name: date,
+          y: chr,
+          x: date,
+          r: numEntries
+        };
+        series.push(dp);
+      }
     }
 
     return series;

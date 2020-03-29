@@ -28,6 +28,7 @@ export class VcfMap {
     return Array.from(this.vcfMap.keys());
   }
 
+  /* TODO - Depcrecated */
   public numEntries(k: string): number {
     const dMap: Map<string, Map<string, Object[]>> = this.vcfMap.get(k);
     if (dMap === undefined) {
@@ -42,6 +43,29 @@ export class VcfMap {
         const entries: Object[] = cMap.get(c);
         numEntries += entries.length;
       }
+    }
+
+    return numEntries;
+  }
+
+  /**
+   * Returns the number of recorded variants on a certain date
+   * 
+   * @param k
+   * @param date
+   */
+  public numEntriesOnDate(k: string, date: Date): number {
+    const dMap: Map<string, Map<string, Object[]>> = this.vcfMap.get(k);
+    const dateKey: string = this.dateKey(date);
+    if (dMap === undefined || !dMap.has(dateKey)) {
+      return 0;
+    }
+
+    let numEntries = 0;
+    const cMap: Map<string, Object[]> = dMap.get(dateKey);
+    for (const c of Array.from(cMap.keys())) {
+      const entries: Object[] = cMap.get(c);
+      numEntries += entries.length;
     }
 
     return numEntries;
