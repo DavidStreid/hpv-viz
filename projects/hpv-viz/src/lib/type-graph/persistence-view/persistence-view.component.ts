@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {PatientSummary} from '../models/patient-summary.class';
+import {DateOpt} from '../models/graph-options.enums';
 
 @Component({
   selector: ' persistence-view', // tslint:disable-line
@@ -12,10 +13,101 @@ export class PersistenceViewComponent implements OnChanges {
 
   public headers: string[]; // Headers for the table -  [       'Average',      Patient1, Patient2, ... ]
   public body: string[][];  // Rows of the table -      [ type, averageLength,  p1Length, p2Length, ... ]
+  public dateSelectors: object = {
+    [DateOpt.DAY]: {label: 'Day', selector: DateOpt.DAY, selected: false},
+    [DateOpt.MONTH]: {label: 'Month', selector: DateOpt.MONTH, selected: false},
+    [DateOpt.YEAR]: {label: 'Year', selector: DateOpt.YEAR, selected: true}
+  };
 
   constructor() {
     this.headers = [];
     this.body = [];
+  }
+
+  /**
+   * Handles event emitted by select box
+   */
+  public handleDateToggle(toggleOpt: DateOpt): void {
+    const currOpt = this.getSelectedTimeOption();
+    if (toggleOpt === currOpt) {
+      return;
+    }
+    this.changeTimeSelector(toggleOpt, currOpt);
+
+    this.updateTable(this.patientSummaryInfo);
+  }
+
+  /**
+   * Toggles global time selector map so that previous opt is toggled off and input timeselector is toggled on.
+   */
+  public changeTimeSelector(toggleOpt: DateOpt, currOpt: DateOpt): void {
+    this.dateSelectors[currOpt]['selected'] = false;
+    this.dateSelectors[toggleOpt]['selected'] = true;
+  }
+
+  /**
+   * Returns the selected time option from the global map. Package private for tests
+   */
+  getSelectedTimeOption(): DateOpt {
+    for (const key in this.dateSelectors) {
+      if (this.dateSelectors.hasOwnProperty(key)) {
+        const opt = this.dateSelectors[key] || {};
+        if (opt['selected']) {
+          return opt['selector'];
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Updates table in view based on input @patientSummaryInfo
+   * @param patientSummaryInfo
+   */
+  updateTable(patientSummaryInfo: Map<string, PatientSummary>): void {
+    const types: string[] = this.getAllTypes(patientSummaryInfo);
+    const patients: string[] = Array.from(patientSummaryInfo.keys());
+
+    const body = [];
+
+    // Generate one row - [type, average, Duration (p1), Duration (p2), ...]
+    for (const type of types) {
+      // Get the durations across patients, i.e. [ Duration (p1), Duration (p2), ... ]
+      let row: any[] = this.getDurationsFromPatients(patientSummaryInfo, patients, type);
+
+      // Get the "average" by removing all null cells and summing
+      const validDurations = row.filter(cell => cell !== null);
+      const sum = validDurations.reduce(function(c1, c2){
+        return c1 + c2;
+      }, 0);
+      const avg: number = this.formatMilliSeconds(sum / validDurations.length);
+
+      // Format to milliseconds
+      row = row.map((entry) => {return this.formatMilliSeconds(entry)});
+      row = row.map((entry) => {
+        if(entry == 0){
+          // Absolute equality won't work if entry is "0.00"
+          return "n/a";
+        }
+        return entry;
+      });
+
+
+      row.unshift(avg);
+
+      // Add the "type"
+      row.unshift(type);
+      body.push(row);
+    }
+
+    // Sort the rows in descending order for the average duration
+    this.body = body.sort((row1, row2) => {
+      return row2[1] - row1[1];
+    });
+
+    const headers = patients;
+    headers.unshift('Average');
+    this.headers = headers;
   }
 
   /**
@@ -25,33 +117,25 @@ export class PersistenceViewComponent implements OnChanges {
    */
   ngOnChanges(changes: SimpleChanges): void {
     const patientSummaryInfo: Map<string, PatientSummary> = changes.patientSummaryInfo.currentValue;
-    const types: string[] = this.getAllTypes(patientSummaryInfo);
-    const patients: string[] = Array.from(patientSummaryInfo.keys());
+    this.updateTable(patientSummaryInfo);
+  }
 
-    const body = [];
-
-    // Generate one row - [type, average, Duration (p1), Duration (p2), ...]
-    for (const type of types) {
-      // Get the durations across patients, i.e. [ Duration (p1), Duration (p2), ... ]
-      const row: any[] = this.getDurationsFromPatients(patientSummaryInfo, patients, type);
-
-      // Get the "average" by removing all null cells and summing
-      const validDurations = row.filter(cell => cell !== null);
-      const sum = validDurations.reduce(function(c1, c2){
-        return c1 + c2;
-      }, 0);
-      const avg: number = sum / validDurations.length;
-      row.unshift(avg);
-
-      // Add the "type"
-      row.unshift(type);
-      body.push(row);
+  /**
+   * Returns the formatted milliseconds
+   * @param time
+   */
+  private formatMilliSeconds(time: number): string {
+    const years = (1000 * 60 * 60 * 24 * 365);
+    const months = (1000 * 60 * 60 * 24 * 12);
+    const days = (1000 * 60 * 60 * 24);
+    let divisor = years;
+    if(this.dateSelectors[DateOpt.MONTH].selected){
+      divisor = months;
+    } else if(this.dateSelectors[DateOpt.DAY].selected){
+      divisor = days;
     }
-    this.body = body;
 
-    const headers = patients;
-    headers.unshift('Average');
-    this.headers = headers;
+    return (time/divisor).toFixed(2);
   }
 
   /**
