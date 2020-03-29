@@ -54,7 +54,8 @@
       </div>
     </div>
   </div>
-  <div>
+  <div *ngIf="patientSummaryInfo.size > 0"
+       class="width-95per padding-left-5per padding-bottom-25px">
     <persistence-view
       [patientSummaryInfo]="patientSummaryInfo"></persistence-view>
   </div>
