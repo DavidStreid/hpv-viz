@@ -1,1 +1,10 @@
 @import '../../../styles.scss';
+.table-container {
+  width: 80%;
+  overflow-x: scroll;
+  display: inline-block;
+}
+.selector-container {
+  width: 20%;
+  display: inline-block;
+}

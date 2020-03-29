@@ -222,5 +222,14 @@ p {
 .app-button-selected {
   background-color: #e6e6e6;
 }
+.analysis-container{
+  margin-top: 20px;
+  padding: 15px 5px;
+}
+/* Where the data is contained */
+.analysis-data-container{
+  max-height: 500px;
+  overflow-y: scroll;
+}
 
 

@@ -1,17 +1,38 @@
-<div>
-  <table class="table-center">
-    <thead>
-    <th></th>
-    <th *ngFor="let cell of headers">
-      {{cell}}
-    </th>
-    </thead>
-    <tbody>
-    <tr *ngFor="let row of body">
-      <td *ngFor="let cell of row">
+<div class="analysis-container">
+  <div>
+    <h3>Persistence View</h3>
+  </div>
+  <div class="table-container analysis-data-container">
+    <table class="table-center">
+      <thead>
+      <th></th>
+      <th *ngFor="let cell of headers">
         {{cell}}
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      </th>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of body">
+        <td *ngFor="let cell of row">
+          {{cell}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="selector-container">
+    <div class="inline-block fill-width">
+      <div class="selector">
+        <div *ngFor="let ds of dateSelectors | keyvalue"
+             class="date-opt padding-left-5 inline-block fill-width">
+          <div class="inline-block width-80per"><p>{{ ds.value['label'] }}</p></div>
+          <div class="inline-block width-15per">
+            <select-box (toggle)="handleDateToggle(ds.value['selector'])"
+                        [selected]="ds.value['selected']">
+            </select-box>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
