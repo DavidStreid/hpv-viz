@@ -19,6 +19,10 @@ export default class DateParserUtil {
     const dateString: string = this.getSplit(splitName, SUFFIX_DELIMITER, 0);
     const date = this.parseDateValue(dateString);
 
+    if(date === null){
+      console.log(`Unable to parse date from fileName - ${name}`);
+    }
+
     return date;
   }
 
@@ -48,7 +52,7 @@ export default class DateParserUtil {
   }
 
   /**
-   * Returns the Date value parsed from the string
+   * Returns the Date value parsed from the string. If no date can be parsed, return a null
    *
    * @param dateString, string - Returns the Date value of a valid date string. null return on null input
    */
@@ -59,16 +63,22 @@ export default class DateParserUtil {
 
     // Try to parse date from the string
     let date = new Date(dateString);
-    if (isNaN(date.getTime())) {  // invalid date
-      const dateFormat = 'MMDDYYYY';
-      const tempDate = this.getDateMoment(dateString, dateFormat);
-      if (!isNaN(tempDate.getTime())) {
-        date = tempDate;
-      } else {
-        date = this.getDateMoment('0' + dateString, dateFormat);
+    if(!isNaN(date.getTime())){
+      // Valid date - return
+      return date;
+    }
+
+    // Try the following formats to extract a date value
+    const dateFormats = ['MMDDYYYY', 'YYYYMMDD'];
+    for(const dateFormat of dateFormats){
+      date = this.getDateMoment(dateString, dateFormat);
+      if (!isNaN(date.getTime())) {
+        // Valid date - return
+        return date;
       }
     }
-    return date;
+
+    return null;
   }
 
   /**
