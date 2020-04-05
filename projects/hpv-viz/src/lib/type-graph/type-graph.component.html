@@ -67,7 +67,7 @@
         <div class="margin-left-5per">
           <div class="block">
             <div class="inline-block opt-container">
-              <div class="selector flex-center">
+              <div class="selector">
                 <div *ngFor="let patient of patientToggles | keyvalue" class="inline-block patient-opt">
                   <div class="inline-block">
                     <div (click)="handlePatientToggle(patient.key)"
@@ -90,7 +90,7 @@
     </div>
   </div>
   <div *ngIf="patientSummaryInfo.size > 0"
-       class="width-95per padding-left-5per padding-bottom-25px">
+       class="selectors-container width-95per padding-left-5per padding-bottom-25px">
     <persistence-view
       [patientSummaryInfo]="patientSummaryInfo"></persistence-view>
   </div>
