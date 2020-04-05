@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {PatientOption} from '../models/patient-option.class';
+import {Toggle} from '../models/toggle.class';
 
 /**
  * Shows a table of patients with certain type data
@@ -11,7 +11,7 @@ import {PatientOption} from '../models/patient-option.class';
 })
 export class TypeSummaryComponent implements OnChanges {
   @Input()
-  typesMap: Map<String, PatientOption>;
+  typesMap: Map<String, Toggle>;
 
   public types: Set<String>;
   public samples: Set<String>;
@@ -24,9 +24,9 @@ export class TypeSummaryComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const typesMap: Map<String, PatientOption> = changes.typesMap.currentValue;
-    const itr: IterableIterator<[String, PatientOption]> = typesMap.entries();
-    let entry: IteratorResult<[String, PatientOption]> = itr.next();
+    const typesMap: Map<String, Toggle> = changes.typesMap.currentValue;
+    const itr: IterableIterator<[String, Toggle]> = typesMap.entries();
+    let entry: IteratorResult<[String, Toggle]> = itr.next();
     let type, opt, data;
     while (!entry.done) {
       type = entry.value[0];

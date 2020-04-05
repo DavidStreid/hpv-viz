@@ -4,5 +4,5 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "whitelistedNonPeerDependencies": ["moment", "variant-call-format-parser"]
+  "whitelistedNonPeerDependencies": ["moment", "variant-call-format-parser", "lodash"]
 }

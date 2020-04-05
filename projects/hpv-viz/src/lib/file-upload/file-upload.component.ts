@@ -1,5 +1,4 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-// Note - use "ng build vcf-parser --watch"
 import * as vcfParserService from 'variant-call-format-parser';
 import DateParserUtil from '../utils/date-parser.util';
 import {SAMPLE_DATE, SAMPLE_NAME} from '../common/app.const';

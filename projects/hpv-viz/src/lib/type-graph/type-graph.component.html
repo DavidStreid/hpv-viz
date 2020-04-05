@@ -54,13 +54,13 @@
       </div>
     </div>
   </div>
-  <div class="width-95per padding-left-5per padding-bottom-25px"
-       *ngIf="patientMap.size > 0">
-    <type-toggle [typeMap]="vcfTypes"
-                 (toggleEvent)="updateFilter()"></type-toggle>
+  <div *ngIf="patientToggles.size > 0"
+       class="width-95per padding-left-5per padding-bottom-25px">
+    <type-toggle (toggleEvent)="updateFilter()"
+                 [typeMap]="typeToggles"></type-toggle>
   </div>
   <div class="width-95per padding-left-5per padding-bottom-25px">
-    <div *ngIf="patientMap.size > 0"
+    <div *ngIf="patientToggles.size > 0"
          class="selectors-container fill-width padding-top-15px vertical-align-top">
       <div>
         <p class="font-20px">Patients</p>
@@ -68,7 +68,7 @@
           <div class="block">
             <div class="inline-block opt-container">
               <div class="selector flex-center">
-                <div *ngFor="let patient of patientMap | keyvalue" class="inline-block patient-opt">
+                <div *ngFor="let patient of patientToggles | keyvalue" class="inline-block patient-opt">
                   <div class="inline-block">
                     <div (click)="handlePatientToggle(patient.key)"
                          [class.app-button-selected]="patient.value.isSelected()"
@@ -85,42 +85,47 @@
         </div>
       </div>
     </div>
-    <div *ngIf="patientMap.size > 0"
-         class="selectors-container fill-width padding-top-15px vertical-align-top">
-        <type-summary
-          [typesMap]="vcfTypes">
-        </type-summary>
+    <div class="upload-container vertical-align-top padding-top-15px fill-height fill-width">
+      <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
     </div>
-    <div *ngIf="patientMap.size > 0"
-         class="selectors-container fill-width padding-top-15px vertical-align-top">
-      <analysis-view
-        [oddsRatio]="oddsRatio">
-      </analysis-view>
-    </div>
-    <div *ngIf="patientMap.size > 0"
-         class="selectors-container fill-width padding-top-15px vertical-align-top">
-      <div>
-        <p class="font-20px">VCF File Information</p>
-        <div class="margin-left-5per info-content-container height-inherit">
-          <div class="block height-inherit">
-            <div class="inline-block opt-container height-inherit">
-              <div class="selector flex-center inherit-width height-inherit">
-                <div *ngFor="let patient of patientMap | keyvalue"
-                     [class.none]="!patient.value.isSelected()"
-                     class="block patient-opt fill-width height-inherit">
-                  <div *ngIf="patient.value.isSelected()"
-                       class="inline-block inherit-width height-inherit">
-                    <VcfFileViewer [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfFileViewer>
-                  </div>
+  </div>
+  <div *ngIf="patientSummaryInfo.size > 0"
+       class="width-95per padding-left-5per padding-bottom-25px">
+    <persistence-view
+      [patientSummaryInfo]="patientSummaryInfo"></persistence-view>
+  </div>
+  <div *ngIf="patientToggles.size > 0"
+       class="selectors-container fill-width padding-top-15px vertical-align-top">
+    <type-summary
+      [typesMap]="typeToggles">
+    </type-summary>
+  </div>
+  <div *ngIf="patientToggles.size > 0"
+       class="selectors-container fill-width padding-top-15px vertical-align-top">
+    <analysis-view
+      [oddsRatio]="oddsRatio">
+    </analysis-view>
+  </div>
+  <div *ngIf="patientToggles.size > 0"
+       class="selectors-container fill-width padding-top-15px vertical-align-top">
+    <div>
+      <p class="font-20px">VCF File Information</p>
+      <div class="margin-left-5per info-content-container height-inherit">
+        <div class="block height-inherit">
+          <div class="inline-block opt-container height-inherit">
+            <div class="selector flex-center inherit-width height-inherit">
+              <div *ngFor="let patient of patientToggles | keyvalue"
+                   [class.none]="!patient.value.isSelected()"
+                   class="block patient-opt fill-width height-inherit">
+                <div *ngIf="patient.value.isSelected()"
+                     class="inline-block inherit-width height-inherit">
+                  <VcfFileViewer [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfFileViewer>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="upload-container vertical-align-top padding-top-15px fill-height fill-width">
-      <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
     </div>
   </div>
 </div>

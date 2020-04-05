@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {PatientOption} from '../../models/patient-option.class';
+import {Toggle} from '../../models/toggle.class';
 
 @Component({
   selector: 'type-toggle', // tslint:disable-line
@@ -8,7 +8,7 @@ import {PatientOption} from '../../models/patient-option.class';
 })
 export class TypeToggleComponent implements OnChanges {
   @Input()
-  public typeMap: Map<String, PatientOption>;
+  public typeMap: Map<String, Toggle>;
   @Output()
   public toggleEvent = new EventEmitter<String>();
 
@@ -19,16 +19,18 @@ export class TypeToggleComponent implements OnChanges {
   }
 
   public toggle(toggle: String) {
-    const opt: PatientOption = this.typeMap.get(toggle);
+    const opt: Toggle = this.typeMap.get(toggle);
     opt.setSelected(!opt.isSelected());
 
     this.toggleEvent.emit(toggle);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const typeMap: Map<String, PatientOption> = changes.typeMap.currentValue;
+    const typeMap: Map<String, Toggle> = changes.typeMap.currentValue;
     typeMap.forEach((opt, type, map) => {
-      if (type) { this.values.add(type); }    // Add all non-null, defined values
+      if (type) {
+        this.values.add(type);
+      }    // Add all non-null, defined values
     }, this);
   }
 }

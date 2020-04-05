@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {HpvDataService} from '../services/hpv-data-service';
 import {DateOpt} from './models/graph-options.enums';
-import {PatientOption} from './models/patient-option.class';
+import {Toggle} from './models/toggle.class';
 import {VcfMap} from './models/vcfMap.class';
-import {TypeTracker} from "./models/typeTracker.class";
+import {TypeTracker} from './models/typeTracker.class';
+import {PatientSummary} from './models/patient-summary.class';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-type-graph', // tslint:disable-line
@@ -14,9 +16,11 @@ import {TypeTracker} from "./models/typeTracker.class";
 export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE: Replaced w/ new data clone. Never updated by formatting
   public results: Object[];                       // MUTABLE: Modified/replaced on formatting and appending of data
-  public patientMap: Map<string, PatientOption>;  // Map of patient names to their options
   public vcfFileMap: Map<string, Object[]>;       // Map of all the VCF files for a given patient - key: patient
-  public vcfTypes: Map<string, PatientOption>;    // types -> PatientOption (Patient Option tracks the patients w/ that type)
+  public patientSummaryInfo: Map<string, PatientSummary>; // Map of patients to a summary of the types they have
+
+  public typeToggles: Map<string, Toggle>;        // types -> Toggle (Toggle tracks the patients w/ that type)
+  public patientToggles: Map<string, Toggle>;     // patient -> Toggle (Toggles don't track anything
   public typeTracker: TypeTracker;
   public oddsRatio: Map<Set<string>, Map<string, number>>;
 
@@ -76,13 +80,14 @@ export class TypeGraphComponent implements OnInit {
   init(): void {
     this.hpvPatientData = [];
     this.results = [];
-    this.patientMap = new Map();
+    this.patientToggles = new Map();
     this.vcfMap = new VcfMap();
     this.vcfFileMap = new Map();
-    this.vcfTypes = new Map();
+    this.typeToggles = new Map();
     this.initDateSelectors();
     this.typeTracker = new TypeTracker();
     this.oddsRatio = new Map();
+    this.patientSummaryInfo = new Map();
 
     // FOR TESTING PURPOSES
     /*
@@ -116,13 +121,23 @@ export class TypeGraphComponent implements OnInit {
       }
     }
   }
-
+  
   /**
-   * Calculate Odds Ratios from a list of string types
+   * Checks if a file upload, represented by an event, has already been uploaded. Does this by checking the metadata
+   *
+   * @param patientName
+   * @param metaData
    */
-  private calculateOddsRatiosFromTypes(types: string[]): void {
-    this.typeTracker.addTypes(types);
-    this.oddsRatio = this.typeTracker.calculateOddsRatios();
+  private hasFileBeenUploaded(patientName: string, metaData: object): boolean {
+    // If a new patient is being uploaded, the file is new
+    if(!this.vcfFileMap.has(patientName)) return false;
+    const metaDataList: Object[] = this.vcfFileMap.get(patientName);
+    for(const entry of metaDataList){
+      if(_.isEqual(entry, metaData)){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -137,27 +152,32 @@ export class TypeGraphComponent implements OnInit {
     const date = $event['date'] || null;
     const variantInfo = $event['variantInfo'] || [];
     const metaData = $event['metaData'] || {};
+    const types: string[] = variantInfo['types'];
+
+    if(this.hasFileBeenUploaded(name, metaData)){
+      console.log(`Already Uploaded: VCF for ${name} on ${date}`);
+      return;
+    }
 
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
-
-    const types: string[] = variantInfo['types'];
     this.calculateOddsRatiosFromTypes(types);
+    this.addEntryToPatientSummary(types, date, name);
 
-    // Update map and add any new type entries
-    const vcfTypes: Map<string, PatientOption> = new Map(this.vcfTypes);
+    // Update map of types to the patients that have that type. Adding any new type entries
+    const typeToggles: Map<string, Toggle> = new Map(this.typeToggles);
     for (const type of types) {
-      let opt: PatientOption = new PatientOption(type, true);
-      if(vcfTypes.has(type)){
-         opt = vcfTypes.get(type);
+      let opt: Toggle = new Toggle(type, true);
+      if (typeToggles.has(type)) {
+        opt = typeToggles.get(type);
       }
-      vcfTypes.set(type, opt);
+      typeToggles.set(type, opt);
 
       // Opt will keep track of all patients that have that type
       const data = opt.getData();
       data.add(name);
       opt.setData(data);
     }
-    this.vcfTypes = vcfTypes;
+    this.typeToggles = typeToggles;
 
     if (!this.isValidDataPoint(dataPoint)) {
       console.error('Invalid upload');
@@ -199,13 +219,13 @@ export class TypeGraphComponent implements OnInit {
    *  Handles toggling of select box of patients
    */
   public handlePatientToggle(name: string): void {
-    if (!this.patientMap.has(name)) {
+    if (!this.patientToggles.has(name)) {
       return;
     }
 
     // Flip all patients to false and then toggle the input patient name
     this.deselectAllPatients();
-    this.patientMap.get(name).toggle();   // Toggle option
+    this.patientToggles.get(name).toggle();   // Toggle option
 
     const filteredResults: Object[] = this.getFilteredResults(this.hpvPatientData);
     this.updateViewOnFiltered(filteredResults);
@@ -377,8 +397,35 @@ export class TypeGraphComponent implements OnInit {
     return ceilDate;
   }
 
+  /**
+   * Calculate Odds Ratios from a list of string types
+   *
+   * @param types, string[] - list of types from an uploaded VCF file
+   */
+  private calculateOddsRatiosFromTypes(types: string[]): void {
+    this.typeTracker.addTypes(types);
+    this.oddsRatio = this.typeTracker.calculateOddsRatios();
+  }
+
+  /**
+   * Adds the types recorded on a specific date for a patient
+   *
+   * @param types - types taken from VCF file
+   * @param date - date of the sequencing for the VCF file
+   * @param patient - identifier of the patient
+   */
+  private addEntryToPatientSummary(types: string[], date: Date, patient: string) {
+    if (!this.patientSummaryInfo.has(patient)) {
+      this.patientSummaryInfo.set(patient, new PatientSummary(patient));
+    }
+    this.patientSummaryInfo.get(patient).addTypesOnDate(date, types);
+
+    // clone to trigger change detection
+    this.patientSummaryInfo = new Map<string, PatientSummary>(this.patientSummaryInfo);
+  }
+
   private deselectAllPatients(): void {
-    this.patientMap.forEach((patientOpt: PatientOption) => {
+    this.patientToggles.forEach((patientOpt: Toggle) => {
       patientOpt.setSelected(false);
     });
   }
@@ -391,24 +438,24 @@ export class TypeGraphComponent implements OnInit {
     // Toggle all other patients to false. Should only be one, but for readability, do for all
     this.deselectAllPatients();
 
-    if (!this.patientMap.has(name)) {
+    if (!this.patientToggles.has(name)) {
       // Create a new patient option and toggle to true
-      const opt: PatientOption = new PatientOption(name, true);
-      this.patientMap.set(name, opt);
+      const opt: Toggle = new Toggle(name, true);
+      this.patientToggles.set(name, opt);
     } else {
-      this.patientMap.get(name).setSelected(true);
+      this.patientToggles.get(name).setSelected(true);
     }
   }
 
   /**
    * Toggles all patients to be selected
    */
-  private togglePatientOptionsToSelected(): void {
+  private toggleTogglesToSelected(): void {
     function toggle(value, key, map) {
       value.toggle(true);
     }
 
-    this.patientMap.forEach(toggle);
+    this.patientToggles.forEach(toggle);
   }
 
   /**
@@ -628,12 +675,13 @@ export class TypeGraphComponent implements OnInit {
   private filterOnSelectedPatients(source: Object[]): Object[] {
     const patientFilter = function (entry: Object) {
       const name: string = entry['name'] || '';
-      return this.patientMap.get(name).isSelected();
+      return this.patientToggles.get(name).isSelected();
     };
 
     const newData = source.filter(patientFilter, this);
     return newData;
   }
+
   /**
    * Removes types from source that have been toggled by the user
    *
@@ -641,9 +689,9 @@ export class TypeGraphComponent implements OnInit {
    */
   private filterOnSelectedTypes(source: Object[]): Object[] {
     // Pre-process list
-    const itr: IterableIterator<PatientOption> = this.vcfTypes.values();
+    const itr: IterableIterator<Toggle> = this.typeToggles.values();
     const types: Set<String> = new Set();
-    let opt: IteratorResult<PatientOption> = itr.next();
+    let opt: IteratorResult<Toggle> = itr.next();
     while (!opt.done) {
       if (opt.value.isSelected()) {
         types.add(opt.value.getName());
@@ -655,7 +703,7 @@ export class TypeGraphComponent implements OnInit {
 
     for (const vcfData of source) {
       const clone: Object = Object.assign({}, vcfData);
-      // Only return points that are in the vcfTypes map
+      // Only return points that are in the typeToggles map
       clone['series'] = vcfData['series'].filter(type => {
         return types.has(type['y']);
       }, this);
@@ -763,7 +811,7 @@ export class TypeGraphComponent implements OnInit {
     const newResults: Object[] = [];
     for (const date in dateMap) {
       if (dateMap.hasOwnProperty(date)) {
-        const entry = this.combineEntries(parseInt(date, 10), dateMap[date]);
+        const entry = this.combineEntries(date, dateMap[date]);
         newResults.push(entry);
       }
     }
@@ -777,13 +825,15 @@ export class TypeGraphComponent implements OnInit {
    *
    *    [ { hpv1: 1, hpv2: 1}, { hpv1: 1, hpv3: 1 }, ... ] => { hpv1: 2, hpv2: 1, hpv3: 1 }
    */
-  private combineEntries(dateVal: number, entries: Object[]): Object {
-    const names: Set<string> = new Set();
+  private combineEntries(dateStr: string, entries: Object[]): Object {
+    const dateNum: number = parseInt(dateStr, 10);
+    const date: Date = new Date(dateNum);
+    const patientNames: Set<string> = new Set();
 
     // Aggregate all hpv types recorded
     for (const e of entries) {
       const n = e['name'];
-      names.add(n);
+      patientNames.add(n);
 
       const dataPoints: Object[] = e['series'] || [];
       for (const dp of dataPoints) {
@@ -792,8 +842,7 @@ export class TypeGraphComponent implements OnInit {
     }
 
 
-    const name = Array.from(names.values()).join('-');
-    const date = new Date(dateVal);
+    const name = Array.from(patientNames.values()).join('-');
     const series = this.createSeriesFromMap(this.vcfMap, date);
 
     return {name, series, date};
@@ -801,14 +850,19 @@ export class TypeGraphComponent implements OnInit {
 
   private createSeriesFromMap(vcfMap: VcfMap, date: Date): Object[] {
     const series = [];
+    let numEntries;
     for (const chr of vcfMap.keys()) {
-      const dp = {
-        name: date,
-        y: chr,
-        x: date,
-        r: vcfMap.numEntries(chr)
-      };
-      series.push(dp);
+      // Must filter by date - only add if the set map has an entry on that date
+      numEntries = vcfMap.numEntriesOnDate(chr, date);
+      if(numEntries > 0){
+        const dp = {
+          name: date,
+          y: chr,
+          x: date,
+          r: numEntries
+        };
+        series.push(dp);
+      }
     }
 
     return series;

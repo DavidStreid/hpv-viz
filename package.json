@@ -8,10 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "hpv-viz": "npm install projects/hpv-viz && ng build hpv-viz",
-    "vcf-parser": "npm install projects/vcf-parser && ng build vcf-parser",
-    "vcf-parser-watch": "npm install projects/vcf-parser && ng build vcf-parser --watch=true",
-    "hpv-viz-full": "npm run vcf-parser && cp -rf dist/vcf-parser node_modules && npm run hpv-viz"
+    "hpv-viz": "npm install projects/hpv-viz && ng build hpv-viz"
   },
   "private": true,
   "dependencies": {
@@ -29,7 +26,6 @@
     "font-awesome": "^4.7.0",
     "hpv-viz": "file:projects/hpv-viz",
     "rxjs": "~6.2.0",
-    "vcf-parser": "file:projects/vcf-parser",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

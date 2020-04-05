@@ -5,7 +5,7 @@ import {TableModalComponent} from '../common/modal/table-modal.component';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {INIT_DATA_POINTS, INIT_DATA_POINTS_EVENTS, YEAR_TRANSFORM_DATES} from '../../test/mock-data/mock-viz';
 import {TEST_FILES} from '../../test/mock-data/vcf-files';
-import {PatientOption} from './models/patient-option.class';
+import {Toggle} from './models/toggle.class';
 import {By} from '@angular/platform-browser';
 
 describe('TypeGraphComponent', () => {
@@ -205,7 +205,7 @@ describe('TypeGraphComponent', () => {
     + 'option and render an option in the view', () => {
     // Verify initial state
     expect(fixture.debugElement.query(By.css('.patient-opt'))).toBeNull();
-    expect(component.patientMap.size).toBe(0);
+    expect(component.patientToggles.size).toBe(0);
 
     for (const fileName in TEST_FILES) {
       if (TEST_FILES.hasOwnProperty(fileName)) {
@@ -215,7 +215,7 @@ describe('TypeGraphComponent', () => {
         component.addVcfUpload(event);
 
         // Patient Map is updated w/ a patient option
-        const patientOpt: PatientOption = component.patientMap.get(name);
+        const patientOpt: Toggle = component.patientToggles.get(name);
         expect(patientOpt.getName()).toBe(name);
         expect(patientOpt.isSelected()).toBeTruthy();
 
@@ -251,13 +251,13 @@ describe('TypeGraphComponent', () => {
       component.addVcfUpload(evt);
 
       let numPatientsSelected = 0;
-      component.patientMap.forEach((opt: PatientOption) => {
+      component.patientToggles.forEach((opt: Toggle) => {
         if (opt.isSelected()) {
           numPatientsSelected += 1;
         }
       });
       expect(numPatientsSelected).toBe(1);
-      expect(component.patientMap.get(evt['name']).isSelected()).toBeTruthy();
+      expect(component.patientToggles.get(evt['name']).isSelected()).toBeTruthy();
     }
 
     verifyResults(component.results);
@@ -367,7 +367,7 @@ describe('TypeGraphComponent', () => {
 
     const name = selectedDataPoint['name'];
     component.handlePatientToggle(name);
-    expect(component.patientMap.get(name).isSelected()).toBeTruthy();
+    expect(component.patientToggles.get(name).isSelected()).toBeTruthy();
     expect(component.results.length).toBe(1);
 
     verifyResults(component.results);

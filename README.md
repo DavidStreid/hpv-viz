@@ -11,12 +11,10 @@ $ npm run start # App should now be started at localhost:4200
 
 ### Dev Notes
 Install Dependencies
-hpv -> Project:vcf-parser
 hpv -> Project:hpv-viz
 
 1) Build all dependencies
 ```
-$ npm run vcf-parser-watch
 $ npm run hpv-viz
 ```
 2) Build or run 

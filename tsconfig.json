@@ -23,12 +23,6 @@
       ],
       "hpv-viz/*": [
         "dist/hpv-viz/*"
-      ],
-      "vcf-parser": [
-        "dist/vcf-parser"
-      ],
-      "vcf-parser/*": [
-        "dist/vcf-parser/*"
       ]
     }
   }
