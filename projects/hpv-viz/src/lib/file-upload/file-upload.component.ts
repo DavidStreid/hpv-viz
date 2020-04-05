@@ -65,12 +65,31 @@ export class FileUploadComponent implements OnInit {
     return 'NO_NAME';
   }
 
+  /**
+   * Returns the date, in order of priority -
+   *    1) File name, E.g. "P_3161994.hpv.bam" -> Date(Wed Nov 28 1994 00:00:00 GMT-0500)
+   *    2) VCF File Contents
+   *    3) If either don't contain the date, will log an error and return the date of the current time
+   *
+   * @param result, File-upload contents
+   * @param fileName
+   */
+  private getDate(result: any, fileName: string): Date {
+    let date = this.dateParserUtil.getDateFromFileName(fileName) || vcfParserService.extractDate.result;
+    if(!date){
+      console.error(`Could not parse date from filename: ${fileName} or uploaded file. Using current date`);
+      date = new Date();
+    }
+    return date;
+  }
+
+  /**
+   * Reads uploaded file and creates VCF entry
+   * @param file
+   */
   private readFile(file: File) {
     const fileName = file['name'] || 'NO_NAME';
     const name = this.getPatientFromFileName(fileName);
-
-    // Check name for whether a valid date can be parsed
-    const tempDate = this.dateParserUtil.getDateFromFileName(fileName);
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -80,15 +99,9 @@ export class FileUploadComponent implements OnInit {
       const metaData: Object = this.getMetadata(result);
       metaData[SAMPLE_NAME] = name;
 
-      // Use the name from the date if available, if not, grab from the time in the file
-      if (tempDate !== null) {
-        metaData[SAMPLE_DATE] = tempDate;
-        this.vcfUpload.emit({name, date: tempDate, variantInfo, metaData});
-      } else {
-        const date = vcfParserService.extractDate(reader.result);
-        this.vcfUpload.emit({name, date, variantInfo, metaData});
-      }
-
+      const date = this.getDate(result, fileName);
+      metaData[SAMPLE_DATE] = date;
+      this.vcfUpload.emit({name, date, variantInfo, metaData});
     };
     const contents = reader.readAsText(file);
   }

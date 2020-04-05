@@ -19,10 +19,6 @@ export default class DateParserUtil {
     const dateString: string = this.getSplit(splitName, SUFFIX_DELIMITER, 0);
     const date = this.parseDateValue(dateString);
 
-    if(date === null){
-      console.log(`Unable to parse date from fileName - ${name}`);
-    }
-
     return date;
   }
 
@@ -63,11 +59,52 @@ export default class DateParserUtil {
 
     // Try to parse date from the string
     let date = new Date(dateString);
-    if(!isNaN(date.getTime())){
+    if(this.isValidDate(date)){
       // Valid date - return
       return date;
     }
 
+    // Try to parse out date w/ different formats
+    date = this.tryDateFormats(dateString);
+    if(this.isValidDate(date)){
+      return date;
+    }
+
+    // Handle special cases
+    // TODO - Write tests
+    if(dateString && dateString.length === 7){
+      // TRY: 1) 3111999 -> 03111999, 2) 1999311 -> 19990311, 3) 1999113 -> 19991103
+      const appendedStrings = [`0${dateString}`,
+        `${dateString.slice(0, 4)}0${dateString.slice(4, 7)}`,
+        `${dateString.slice(0, 6)}0${dateString.slice(6, 7)}`
+      ];
+
+      for(const formatted of appendedStrings){
+        date = this.tryDateFormats(formatted);
+        if(this.isValidDate(date)){
+          console.log(`SUCCESS - special-case date extraction for ${dateString}: ${date}`);
+          return date;
+        }
+      }
+    }
+    console.log(`FAILED - special-case date extraction for ${dateString}`);
+    return null;
+  }
+
+  /**
+   * Returns whether input is a valid date
+   * @param date
+   */
+  private isValidDate(date: any): boolean {
+    return !isNaN(date.getTime());
+  }
+
+  /**
+   * Attempts to format input string into date using accepted formats
+   * @param dateString
+   */
+  private tryDateFormats(dateString: string): Date {
+    let date;
     // Try the following formats to extract a date value
     const dateFormats = ['MMDDYYYY', 'YYYYMMDD'];
     for(const dateFormat of dateFormats){
@@ -78,7 +115,7 @@ export default class DateParserUtil {
       }
     }
 
-    return null;
+    return date;
   }
 
   /**
