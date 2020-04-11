@@ -53,16 +53,23 @@ describe('TypeGraphComponent', () => {
   });
 
   it('When select box is toggled, the formatted date should return a date based on the time selection', () => {
-    const testDate = new Date('Sat Apr 06 2019 14:00:04 GMT-0400');
+    // Verify that 'Sat Apr 06 2019 14:00:04 GMT-0400' is formatted correctly
+    const year = 2019;
+    const month = 3;    // April
+    const day = 6;
+    const hour = 13;
+    const min = 0;
+    const sec = 4;
+
+    const testDate = new Date(year, month, day, hour, min, sec);
     const testCases = [
-      [DateOpt.MIN_SEC, new Date('Sat Apr 06 2019 14:00:04 GMT-0400')],
-      [DateOpt.HOUR, new Date('Sat Apr 06 2019 14:00:00 GMT-0400')],
-      [DateOpt.DAY, new Date('Sat Apr 06 2019 00:00:00 GMT-0400')],
-      [DateOpt.MONTH, new Date('Mon Apr 01 2019 00:00:00 GMT-0400')],
-      [DateOpt.YEAR, new Date('Tue Jan 01 2019 00:00:00 GMT-0500')]
+      [DateOpt.MIN_SEC, new Date(year, month, day, hour, min, sec)],
+      [DateOpt.HOUR, new Date(year, month, day, hour, 0, 0)],
+      [DateOpt.DAY, new Date(year, month, day, 0, 0, 0)],
+      [DateOpt.MONTH, new Date(year, month, 1, 0, 0)],
+      [DateOpt.YEAR, new Date(year, 0, 1, 0, 0)]
     ];
-
-
+    
     for (const test of testCases) {
       const timeSelect = test[0];
       const expectedDate = <Date>test[1];
