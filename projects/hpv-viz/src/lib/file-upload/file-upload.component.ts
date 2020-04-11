@@ -76,7 +76,7 @@ export class FileUploadComponent implements OnInit {
    */
   private getDate(result: any, fileName: string): Date {
     let date = this.dateParserUtil.getDateFromFileName(fileName) || vcfParserService.extractDate(result);
-    if(!date){
+    if (!date) {
       console.error(`Could not parse date from filename: ${fileName} or uploaded file. Using current date`);
       date = new Date();
     }

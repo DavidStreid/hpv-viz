@@ -121,24 +121,6 @@ export class TypeGraphComponent implements OnInit {
       }
     }
   }
-  
-  /**
-   * Checks if a file upload, represented by an event, has already been uploaded. Does this by checking the metadata
-   *
-   * @param patientName
-   * @param metaData
-   */
-  private hasFileBeenUploaded(patientName: string, metaData: object): boolean {
-    // If a new patient is being uploaded, the file is new
-    if(!this.vcfFileMap.has(patientName)) return false;
-    const metaDataList: Object[] = this.vcfFileMap.get(patientName);
-    for(const entry of metaDataList){
-      if(_.isEqual(entry, metaData)){
-        return true;
-      }
-    }
-    return false;
-  }
 
   /**
    * Handler for uplaod event, which should be formatted as a datapoint.
@@ -396,6 +378,24 @@ export class TypeGraphComponent implements OnInit {
     ceilDate.setTime(ceilDate.getTime() + buffer);
 
     return ceilDate;
+  }
+
+  /**
+   * Checks if a file upload, represented by an event, has already been uploaded. Does this by checking the metadata
+   *
+   * @param patientName
+   * @param metaData
+   */
+  private hasFileBeenUploaded(patientName: string, metaData: object): boolean {
+    // If a new patient is being uploaded, the file is new
+    if (!this.vcfFileMap.has(patientName)) return false;
+    const metaDataList: Object[] = this.vcfFileMap.get(patientName);
+    for (const entry of metaDataList) {
+      if (_.isEqual(entry, metaData)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -855,7 +855,7 @@ export class TypeGraphComponent implements OnInit {
     for (const chr of vcfMap.keys()) {
       // Must filter by date - only add if the set map has an entry on that date
       numEntries = vcfMap.numEntriesOnDate(chr, date);
-      if(numEntries > 0){
+      if (numEntries > 0) {
         const dp = {
           name: date,
           y: chr,
