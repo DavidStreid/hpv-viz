@@ -52,44 +52,42 @@ export const INIT_DATA_POINTS_EVENTS: Object[] = [
     name: 'P1',
     date: new Date('2011-02-13T10:38:12'),
     variantInfo: {
-      variantInfo: [{'CHROM': 'C1'}, {'CHROM': 'C2'}, {'CHROM': 'C3'}, {'CHROM': 'C4'}]
+      variantInfo: [{'CHROM': 'C1'}, {'CHROM': 'C2'}, {'CHROM': 'C3'}, {'CHROM': 'C4'}],
+      types: ['C1', 'C2', 'C3', 'C4']
     }
   },
   {
     name: 'P2',
     date: new Date('2011-02-14T10:38:12'),
     variantInfo: {
-      variantInfo: [{'CHROM': 'C2'}, {'CHROM': 'C5'}]
+      variantInfo: [{'CHROM': 'C2'}, {'CHROM': 'C5'}],
+      types: ['C1', 'C2']
     }
   },
   {
     name: 'P3',
     date: new Date('2011-02-13T10:38:11'),
     variantInfo: {
-      variantInfo: [{'CHROM': 'C4'}]
+      variantInfo: [{'CHROM': 'C4'}],
+      types: ['C4']
     }
   },
   {
     name: 'P4',
     date: new Date('2011-02-13T11:38:12'),
     variantInfo: {
-      variantInfo: [{'CHROM': 'C5'}]
+      variantInfo: [{'CHROM': 'C5'}],
+      types: ['C5']
     }
   },
   {
     name: 'P5',
     date: new Date('2011-02-13T10:20:00'),
     variantInfo: {
-      variantInfo: [{'CHROM': 'C1'}, {'CHROM': 'C2'}, {'CHROM': 'C3'}, {'CHROM': 'C4'}, {'CHROM': 'C5'}]
+      variantInfo: [{'CHROM': 'C1'}, {'CHROM': 'C2'}, {'CHROM': 'C3'}, {'CHROM': 'C4'}, {'CHROM': 'C5'}],
+      types: ['C1', 'C2', 'C3', 'C4', 'C5']
     }
-  },
-  {
-    name: 'P1',
-    date: new Date('2011-03-13T12:30:00'),
-    variantInfo: {
-      variantInfo: [{'CHROM': 'C3'}, {'CHROM': 'C4'}]
-    }
-  },
+  }
 ];
 
 export const INIT_DATA_POINTS: Object[] =
