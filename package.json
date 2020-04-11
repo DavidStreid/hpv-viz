@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "hpv-viz": "npm install projects/hpv-viz && ng build hpv-viz"
+    "hpv-viz": "npm install projects/hpv-viz && npm run test hpv-viz && ng build hpv-viz"
   },
   "private": true,
   "dependencies": {
