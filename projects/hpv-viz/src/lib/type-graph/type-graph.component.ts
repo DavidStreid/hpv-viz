@@ -150,11 +150,12 @@ export class TypeGraphComponent implements OnInit {
   public addVcfUpload($event: Object): void {
     const name = $event['name'] || '';
     const date = $event['date'] || null;
-    const variantInfo = $event['variantInfo'] || [];
+    const resp = $event['variantInfo'] || [];
+    const variantInfo = resp['variantInfo'];
     const metaData = $event['metaData'] || {};
-    const types: string[] = variantInfo['types'];
+    const types: string[] = resp['types'] || [];
 
-    if(this.hasFileBeenUploaded(name, metaData)){
+    if (this.hasFileBeenUploaded(name, metaData)) {
       console.log(`Already Uploaded: VCF for ${name} on ${date}`);
       return;
     }

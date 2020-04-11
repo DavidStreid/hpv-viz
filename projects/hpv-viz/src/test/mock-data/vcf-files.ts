@@ -10,7 +10,12 @@ export const TEST_FILES: object = {
     event: {
       name: 'P1',
       date: new Date('Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)'),
-      variantInfo: [{'CHROM': 'TEST_CHROM'}]
+      variantInfo: {
+        'variantInfo': [
+          {'CHROM': 'TEST_CHROM'}
+        ],
+        'types': ['TEST_CHROM']
+      }
     },
     datapoint: {
       name: 'P1',

@@ -136,9 +136,11 @@ describe('TypeGraphComponent', () => {
     component.handleDateToggle(DateOpt.YEAR);
 
     // Makes sure all data-points get tested
-    let numDataPoints = component.hpvPatientData.length;
+    let numDataPoints = component.results.length;
 
-    for (const entry of component.hpvPatientData) {
+    // Check that there are data points
+    expect(numDataPoints > 0).toBeTruthy();
+    for (const entry of component.results) {
       numDataPoints -= 1;
 
       const name = entry['name'];
