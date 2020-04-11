@@ -212,25 +212,5 @@ export const INIT_DATA_POINTS: Object[] =
           data: {'CHROM': 'C5'}
         }
       ]
-    },
-    {
-      'name': 'P1',
-      date: new Date('2011-03-13T12:30:00'),
-      series: [
-        {
-          name: new Date('2011-03-13T12:30:00'),
-          y: 'C3',
-          x: new Date('2011-03-13T12:30:00'),
-          r: 1,
-          data: {'CHROM': 'C3'}
-        },
-        {
-          name: new Date('2011-03-13T12:30:00'),
-          y: 'C4',
-          x: new Date('2011-03-13T12:30:00'),
-          r: 1,
-          data: {'CHROM': 'C4'}
-        }
-      ]
     }
   ];
