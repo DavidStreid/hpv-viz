@@ -77,12 +77,7 @@ describe('FileUploadComponent', () => {
   });
 
 
-  function checkFileName(fileName: string, expected: string, done:
-
-  function
-
-):
-  void {
+  function checkFileName(fileName: string, expected: string, done):  void {
     const f = new File([''], fileName);
   const contents = '';
   const blob = new Blob([contents], {type: 'application/json'});
