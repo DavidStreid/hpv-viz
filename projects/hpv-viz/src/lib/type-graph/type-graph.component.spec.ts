@@ -331,10 +331,10 @@ describe('TypeGraphComponent', () => {
     const chromosomes = INIT_DATA_POINTS_EVENTS
       .filter(evt => evt['name'] === selectedSubject) // filter out only selectedPatient
       .map(evt => evt['variantInfo'])                 // { variantInfo: { CHROM: 'C1' } } -> { CHROM: 'C1' }
-      .map(vi => vi.map(o => o['CHROM']))              // { CHROM: 'C1' }, { CHROM: 'C1' } -> [ 'C1', 'C2' ]
+      .map(vi => vi['variantInfo'].map(o => o['CHROM']))              // { CHROM: 'C1' }, { CHROM: 'C1' } -> [ 'C1', 'C2' ]
       .reduce((accumulator, curr) => accumulator.concat(curr)); // ['C1','C2'],['C3'] -> ['C1','C2','C3' ]
     aggregatedChromosomes.forEach((a) => {
-      expect(chromosomes.filter((c) => a === c).length > 1).toBeTruthy();
+      expect(chromosomes.filter((c) => a === c).length > 0).toBeTruthy();
     });
 
     // Choose a patient with multiple different date entries, e.g. 'P1'
