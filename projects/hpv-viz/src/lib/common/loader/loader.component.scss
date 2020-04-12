@@ -1,0 +1,33 @@
+@import '../../../styles.scss';
+
+.modal-container {
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  width: 80%;
+  height: 100px;
+  background-color: #f2f2f2;
+  opacity: 0.9;
+  z-index: 1;
+  overflow-y: scroll;
+}
+
+.body-text {
+  font-size: 22px;
+}
+
+.data-table {
+  padding: 15px;
+  border-collapse: collapse;
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 28px;
+}
+
+.close-button:hover {
+  cursor: pointer;
+}

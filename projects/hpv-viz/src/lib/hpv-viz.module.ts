@@ -10,13 +10,14 @@ import {VcfFileViewerComponent} from './type-graph/vcf-file-viewer/vcf-file-view
 import {VcfInfoComponent} from './type-graph/vcf-file-viewer/vcf-info/vcf-info.component';
 import {VcfFileSelectorComponent} from './type-graph/vcf-file-viewer/vcf-file-selector/vcf-file-selector.component';
 import {TypeToggleComponent} from './type-graph/toggles/type-toggle/type-toggle.component';
-// SERVICES
-
-// DIRECTIVES
-import {FileDropDirective} from './directives/file-drop.directive';
 import {TypeSummaryComponent} from './type-graph/summary-view/type-summary.component';
 import {AnalysisViewComponent} from './type-graph/analysis-view/analysis-view.component';
 import {PersistenceViewComponent} from './type-graph/persistence-view/persistence-view.component';
+import {LoaderComponent} from './common/loader/loader.component';
+// SERVICES
+// DIRECTIVES
+import {FileDropDirective} from './directives/file-drop.directive';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 // LOCAL DEPENDENCIES - Remove when deployed
 // const LOCAL_MODULES = [ BrowserAnimationsModule ];
@@ -33,7 +34,8 @@ const CHILD_COMPONENTS = [
   TypeToggleComponent,
   TypeSummaryComponent,
   AnalysisViewComponent,
-  PersistenceViewComponent
+  PersistenceViewComponent,
+  LoaderComponent
 ];
 const SERVICES = [];
 

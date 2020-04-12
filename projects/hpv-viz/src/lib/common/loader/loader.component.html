@@ -1,0 +1,11 @@
+<div [style.display]="show ? 'block' : 'none'"
+     class="modal-container app-border-medium padding-top-15px padding-bottom-15px">
+  <div class="block text-align-center">
+    <p class="font-20px">{{title}}</p>
+  </div>
+  <div>
+    <div *ngFor="let msg of messages">
+      <p>{{msg.getContent()}}</p>
+    </div>
+  </div>
+</div>
