@@ -82,7 +82,7 @@ export default class DateParserUtil {
       for(const formatted of appendedStrings){
         date = this.tryDateFormats(formatted);
         if(this.isValidDate(date)){
-          console.log(`SUCCESS - special-case date extraction for ${dateString}: ${date}`);
+          // console.log(`SUCCESS - special-case date extraction for ${dateString}: ${date}`);
           return date;
         }
       }
