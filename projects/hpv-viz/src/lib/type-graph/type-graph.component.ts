@@ -113,6 +113,13 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
+   * Shows the data viewer. Should be invoked when the loader has indicated it is done loading
+   */
+  public showDataViewer(): void {
+    this.isLoading = false;
+  }
+
+  /**
    * Removes any dateSelectors that haven't been enabled. We do this because when rendering the page,
    * the date selectors that aren't enabled wiil still give a little bit of unwanted white space
    */
@@ -137,6 +144,7 @@ export class TypeGraphComponent implements OnInit {
    * @param $event, Object[] - list of enriched objects containing variant info
    */
   public addVcfUpload($event: Object): void {
+    this.isLoading = true;
     const name = $event['name'] || '';
     const date = $event['date'] || null;
     const resp = $event['variantInfo'] || [];
@@ -144,8 +152,7 @@ export class TypeGraphComponent implements OnInit {
     const metaData = $event['metaData'] || {};
     const types: string[] = resp['types'] || [];
 
-    this.loaderUpdater.next(new Message(`Loading ${name}`, MessageTypeEnum.INFO));
-
+    this.loaderUpdater.next(new Message(`Loading ${name} (${date})`, MessageTypeEnum.INFO));
     if (this.hasFileBeenUploaded(name, metaData)) {
       console.log(`Already Uploaded: VCF for ${name} on ${date}`);
       return;

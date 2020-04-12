@@ -1,6 +1,8 @@
 <div class="fill-width fill-height">
   <loader [updater]="loaderUpdater"
-          [title]="'Loading'"></loader>
+          [title]="'Loading'"
+          [show]="isLoading"
+          (doneLoading)="showDataViewer($event)"></loader>
     <table-modal (closeModal)="closeModal($event)"
                  [data]="selectedVariant"
                  [headers]="headers"
@@ -12,7 +14,8 @@
       <div [style.height]="height"
            [style.width]="width"
            class="ngx-container margin-hor-auto inline-block">
-        <div class="inline-block">
+        <div class="inline-block"
+             *ngIf="!isLoading">
           <ngx-charts-bubble-chart
             (select)="onClick($event)"
             [legend]="showLegend"

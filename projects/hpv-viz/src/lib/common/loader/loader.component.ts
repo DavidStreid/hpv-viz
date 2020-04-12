@@ -1,7 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from './modal-message.class';
-import {MessageTypeEnum} from './message-type.enum';
-import {fromEvent, interval, Observable, Subject} from 'rxjs';
+import {interval, Subject} from 'rxjs';
 import {debounce} from 'rxjs/operators';
 
 @Component({
@@ -12,36 +11,34 @@ import {debounce} from 'rxjs/operators';
 export class LoaderComponent implements OnInit {
   @Input()
   public updater: Subject<Message>;
+  @Input()
+  public show: boolean;         // NOTE - Necessary (instead of wrapping loader in an *ngIf="loading" for @updater
+  @Output()
+  public doneLoading: EventEmitter<void>;
 
   public title: string;
-  public show: boolean;
   public messages: Message[];
+  public close: Subject<any>;   // Subject that pushes events with each message
 
-  public close: Subject<any>;
+  private INTERVAL = 500;       // Time in milliseconds w/o a message update before the loader closes
 
   constructor() {
     this.title = 'Loading';
     this.messages = [];
-    this.show = true;
-  }
-
-  updateMessages(msg: Message): void {
-    this.show = true;
-    this.messages.push(msg);
-
+    this.doneLoading = new EventEmitter<void>();
 
     this.close = new Subject<any>();
-    const results = this.close.pipe(debounce(() => interval(1000)));
+    const results = this.close.pipe(debounce(() => interval(this.INTERVAL)));
     results.subscribe(x => {
-      this.show = false;
+      this.doneLoading.emit();
     });
   }
 
   ngOnInit(){
     this.updater.subscribe(
       (msg) => {
-        this.updateMessages(msg);
-        this.close.next('test');
+        this.messages.push(msg);
+        this.close.next();
       },
       console.error,
       console.log
