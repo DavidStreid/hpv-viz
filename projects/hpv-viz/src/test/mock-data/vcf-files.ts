@@ -9,7 +9,7 @@ export const TEST_FILES: object = {
     contents: P1_MOCK,
     event: {
       name: 'P1',
-      date: new Date('Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)'),
+      date: new Date('Sun Feb 13 2011 00:00:00'),
       variantInfo: {
         'variantInfo': [
           {'CHROM': 'TEST_CHROM'}
@@ -19,7 +19,7 @@ export const TEST_FILES: object = {
     },
     datapoint: {
       name: 'P1',
-      date: new Date('Sun Feb 13 2011 00:00:00 GMT-0500 (Eastern Standard Time)'),
+      date: new Date('Sun Feb 13 2011 00:00:00'),
       series: [
         {
           name: new Date('2011-02-13T00:00:00'),
