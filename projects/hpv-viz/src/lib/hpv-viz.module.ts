@@ -11,7 +11,7 @@ import {VcfInfoComponent} from './type-graph/vcf-file-viewer/vcf-info/vcf-info.c
 import {VcfFileSelectorComponent} from './type-graph/vcf-file-viewer/vcf-file-selector/vcf-file-selector.component';
 import {TypeToggleComponent} from './type-graph/toggles/type-toggle/type-toggle.component';
 // SERVICES
-import {HpvDataService} from './services/hpv-data-service';
+
 // DIRECTIVES
 import {FileDropDirective} from './directives/file-drop.directive';
 import {TypeSummaryComponent} from './type-graph/summary-view/type-summary.component';
@@ -35,7 +35,7 @@ const CHILD_COMPONENTS = [
   AnalysisViewComponent,
   PersistenceViewComponent
 ];
-const SERVICES = [HpvDataService];
+const SERVICES = [];
 
 @NgModule({
   imports: [
