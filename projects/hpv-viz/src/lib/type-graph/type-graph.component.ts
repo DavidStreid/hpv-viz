@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {HpvDataService} from '../services/hpv-data-service';
 import {DateOpt} from './models/graph-options.enums';
 import {Toggle} from './models/toggle.class';
 import {VcfMap} from './models/vcfMap.class';
@@ -10,8 +9,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'app-type-graph', // tslint:disable-line
   templateUrl: './type-graph.component.html',
-  styleUrls: ['./type-graph.component.scss'],
-  providers: [HpvDataService]
+  styleUrls: ['./type-graph.component.scss']
 })
 export class TypeGraphComponent implements OnInit {
   public hpvPatientData: Object[];                // IMMUTABLE: Replaced w/ new data clone. Never updated by formatting
@@ -70,7 +68,7 @@ export class TypeGraphComponent implements OnInit {
   // TypeGraphContainer - Add 5 for a buffer
   public typeGraphContainerWidth = `${this.sideSelectorWidthNum + this.view[0] + 5}px`;
 
-  constructor(private hpvDataService: HpvDataService) {
+  constructor() {
     this.init();
   }
 
