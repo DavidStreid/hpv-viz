@@ -1,3 +1,5 @@
+##fileformat=VCFv4.1
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT
 HPV16_E(p)	1842	1	.	A	.	.	.
 HPV16_E(p)	3159	2	.	C	.	.	.
 HPV16_E(p)	3249	3	.	G	.	.	.

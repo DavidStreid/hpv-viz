@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+from os import path
 
 if len(sys.argv) != 3:
   sys.exit("Runtime command: 'python vcf_creator_wrapper.py [INPUT_FILE] [OUTPUT_FILE]'\n\tpython vcf_creator_wrapper.py included_snps.txt diagnostic_snps.vcf")
@@ -9,6 +10,14 @@ INPUT = sys.argv[1]
 OUTPUT = sys.argv[2]
 
 print("Input: %s, VCF: %s" % (INPUT, OUTPUT))
+
+if path.exists(OUTPUT):
+  continue_resp=raw_input("This will overwrite an existing file, %s. Continue (y/n)?\n" % OUTPUT)
+  if "n" in continue_resp.lower():
+    sys.exit("Not writing to file. Exiting.")
+  else:
+    print("Removing contents from %s" % OUTPUT)
+    open(OUTPUT, 'w').close()
 
 print("Reading file...")
 f=open(INPUT, "r")
@@ -29,7 +38,7 @@ if (len(pair) != 0) and pair[0] != '':
   sys.exit("Check input file - improper parsing")
 
 print("Creating file contents")
-file_contents = ''
+file_contents = '##fileformat=VCFv4.1\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n'
 id = 1
 for entry in entries:
   chrom = entry[0]
