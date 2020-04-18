@@ -25,8 +25,8 @@ export class TypeGraphComponent implements OnInit {
   public typeTracker: TypeTracker;
   public oddsRatio: Map<Set<string>, Map<string, number>>;
 
-  public isLoading: boolean;
-  public loaderUpdater: Subject<Message>;
+  public isLoading: boolean;                      // Toggle of whether to show the loading screen
+  public loaderUpdater: Subject<Message>;         // Subject that sends messages to display on the loading screen
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
   public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);

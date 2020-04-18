@@ -11,16 +11,21 @@ import {debounce} from 'rxjs/operators';
 export class LoaderComponent implements OnInit {
   @Input()
   public updater: Subject<Message>;
+  /**
+   * @show - Parent component feeds this in so that the @updater gets initialized w/ the parent.
+   *    i.e. If you attach <loader *ngIf="{LOADING_BOOLEAN}"...></loader>, @updater won't be passed in and
+   *    transmit messages until LOADING_BOOLEAN === true
+   */
   @Input()
-  public show: boolean;         // NOTE - Necessary (instead of wrapping loader in an *ngIf="loading" for @updater
+  public show: boolean;
   @Output()
   public doneLoading: EventEmitter<void>;
 
   public title: string;
-  public messages: Message[];
-  public close: Subject<any>;   // Subject that pushes events with each message
 
-  private INTERVAL = 500;       // Time in milliseconds w/o a message update before the loader closes
+  public messages: Message[];     // Messages to show in the loader
+  public close: Subject<any>;     // Subject that pushes events with each message
+  private INTERVAL = 500;         // Time in milliseconds w/o a message update before the loader @doneLoading message
 
   constructor() {
     this.title = 'Loading';
