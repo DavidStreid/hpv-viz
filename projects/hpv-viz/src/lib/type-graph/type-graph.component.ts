@@ -428,7 +428,7 @@ export class TypeGraphComponent implements OnInit {
     const lineage = this.diagnosticSnpsService.getDetectedLineageFromVariant(variant, pos);
     if (lineage) {
       // If a lineage is detected from the variant, return this and not the CHROM entry from the VCF
-      console.log(`Detected lineage: ${lineage} from Variant: ${variant}, Position: ${pos}`);
+      this.loaderUpdater.next(new Message(`Detected lineage: ${lineage} from Variant: ${variant}, Position: ${pos}`, MessageTypeEnum.INFO));
       return lineage;
     }
   }
