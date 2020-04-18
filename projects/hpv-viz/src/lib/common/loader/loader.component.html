@@ -1,0 +1,10 @@
+<div [style.display]="show ? 'block' : 'none'"
+     class="loader-terminal fill-height">
+  <div>
+    <div>
+      <p>Initializing loader...</p>
+      <p>{{status}}</p>
+      <p *ngFor="let msg of messages.reverse()">{{msg.getContent()}}</p>
+    </div>
+  </div>
+</div>

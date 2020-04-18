@@ -5,6 +5,9 @@ import {VcfMap} from './models/vcfMap.class';
 import {TypeTracker} from './models/typeTracker.class';
 import {PatientSummary} from './models/patient-summary.class';
 import * as _ from 'lodash';
+import {Message} from '../common/loader/modal-message.class';
+import {MessageTypeEnum} from '../common/loader/message-type.enum';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-type-graph', // tslint:disable-line
@@ -21,6 +24,9 @@ export class TypeGraphComponent implements OnInit {
   public patientToggles: Map<string, Toggle>;     // patient -> Toggle (Toggles don't track anything
   public typeTracker: TypeTracker;
   public oddsRatio: Map<Set<string>, Map<string, number>>;
+
+  public isLoading: boolean;                      // Toggle of whether to show the loading screen
+  public loaderUpdater: Subject<Message>;         // Subject that sends messages to display on the loading screen
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
   public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
@@ -87,6 +93,9 @@ export class TypeGraphComponent implements OnInit {
     this.oddsRatio = new Map();
     this.patientSummaryInfo = new Map();
 
+    this.loaderUpdater = new Subject<Message>();
+    this.isLoading = false;
+
     // FOR TESTING PURPOSES
     /*
     this.getHeaders(this.selectedVariant);
@@ -101,6 +110,13 @@ export class TypeGraphComponent implements OnInit {
       this.addVcfUpload( evt );
     }
     */
+  }
+
+  /**
+   * Shows the data viewer. Should be invoked when the loader has indicated it is done loading
+   */
+  public showDataViewer(): void {
+    this.isLoading = false;
   }
 
   /**
@@ -128,6 +144,7 @@ export class TypeGraphComponent implements OnInit {
    * @param $event, Object[] - list of enriched objects containing variant info
    */
   public addVcfUpload($event: Object): void {
+    this.isLoading = true;
     const name = $event['name'] || '';
     const date = $event['date'] || null;
     const resp = $event['variantInfo'] || [];
@@ -136,9 +153,10 @@ export class TypeGraphComponent implements OnInit {
     const types: string[] = resp['types'] || [];
 
     if (this.hasFileBeenUploaded(name, metaData)) {
-      console.log(`Already Uploaded: VCF for ${name} on ${date}`);
+      this.loaderUpdater.next(new Message(`Already Uploaded: VCF for ${name} on ${date}`, MessageTypeEnum.INFO));
       return;
     }
+    this.loaderUpdater.next(new Message(`Loading ${name} (${date})`, MessageTypeEnum.NEW_FILE));
 
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
     this.calculateOddsRatiosFromTypes(types);
