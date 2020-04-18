@@ -1,18 +1,5 @@
 @import '../../../styles.scss';
 
-.modal-container {
-  position: absolute;
-  left: 10%;
-  top: 10%;
-  width: 80%;
-  min-height: 80%;
-  height: 80%;
-  background-color: #f2f2f2;
-  opacity: 0.9;
-  z-index: 1;
-  overflow-y: scroll;
-}
-
 .body-text {
   font-size: 22px;
 }

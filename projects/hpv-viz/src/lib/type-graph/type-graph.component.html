@@ -1,7 +1,7 @@
 <div class="fill-width fill-height">
-  <div>
+  <!-- All Modals go here. Need to add conditional to ngClass tag to show. TODO: One modal -->
+  <div [ngClass]="(isLoading || selectedVariant.length !== 0) ? 'modal-container' : ''">
     <loader [updater]="loaderUpdater"
-            [title]="'Loading'"
             [show]="isLoading"
             (doneLoading)="showDataViewer()"></loader>
     <table-modal (closeModal)="closeModal($event)"

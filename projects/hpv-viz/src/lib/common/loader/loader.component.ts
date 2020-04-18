@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from './modal-message.class';
 import {interval, Subject} from 'rxjs';
 import {debounce} from 'rxjs/operators';
+import {MessageTypeEnum} from './message-type.enum';
 
 @Component({
   selector: 'loader', // tslint:disable-line
@@ -21,16 +22,18 @@ export class LoaderComponent implements OnInit {
   @Output()
   public doneLoading: EventEmitter<void>;
 
-  @Input()
-  public title: string;
-
+  public status: string;          // Provides overall status of the loading
   public messages: Message[];     // Messages to show in the loader
   public close: Subject<any>;     // Subject that pushes events with each message
   private INTERVAL = 500;         // Time in milliseconds w/o a message update before the loader @doneLoading message
+  public numFiles;               // Number of uploaded files
 
   constructor() {
     this.messages = [];
     this.doneLoading = new EventEmitter<void>();
+
+    this.numFiles = 0;
+    this.status = 'No samples loaded';
 
     this.close = new Subject<any>();
     const results = this.close.pipe(debounce(() => interval(this.INTERVAL)));
@@ -39,11 +42,24 @@ export class LoaderComponent implements OnInit {
     });
   }
 
+  /**
+   * Updates view on input message
+   * @param msg
+   */
+  private updateViewWithMessage(msg: Message): void {
+    if(msg.isType(MessageTypeEnum.NEW_FILE)){
+      // Update overall status and continue
+      this.numFiles += 1;
+      this.status = `Uploaded ${this.numFiles}`;
+    }
+    this.messages.push(msg);
+    this.close.next();
+  }
+
   ngOnInit(){
     this.updater.subscribe(
       (msg) => {
-        this.messages.push(msg);
-        this.close.next();
+        this.updateViewWithMessage(msg);
       },
       console.error,
       console.log

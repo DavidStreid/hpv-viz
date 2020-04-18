@@ -1,16 +1,14 @@
 @import '../../../styles.scss';
 
-.modal-container {
-  position: absolute;
-  left: 10%;
-  top: 10%;
-  width: 80%;
-  min-height: 80%;
-  height: 80%;
-  background-color: #f2f2f2;
-  opacity: 0.9;
-  z-index: 1;
-  overflow-y: scroll;
+p {
+  color: black;
+  font: 1.3rem Inconsolata, monospace;
+  text-shadow: 0 0 5px #C8C8C8;
+}
+
+.loader-terminal {
+  padding-left: 25px;
+  padding-right: 25px;
 }
 
 .body-text {

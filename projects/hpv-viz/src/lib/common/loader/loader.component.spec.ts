@@ -29,4 +29,13 @@ describe('LoaderComponent', () => {
     updater.next(new Message('TEST MESSAGE', MessageTypeEnum.INFO));
     expect(component.messages.length).toBe(1);
   });
+
+  it('Loader component doesn NOT update number of files on INFO message, but does update messages', () => {
+    expect(component.numFiles).toBe(0);
+    updater.next(new Message('UPLOADING TEST FILE', MessageTypeEnum.NEW_FILE));
+    expect(component.numFiles).toBe(1);
+    updater.next(new Message('UPDATING FILE', MessageTypeEnum.INFO));
+    expect(component.numFiles).toBe(1);
+    expect(component.messages.length).toBe(2);
+  });
 });

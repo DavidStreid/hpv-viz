@@ -12,7 +12,10 @@ export class Message {
     this.type = type;
   }
 
-  getContent(): string {
+  public getContent(): string {
     return this.content;
+  }
+  public isType(query: MessageTypeEnum): boolean {
+    return query === this.type;
   }
 }

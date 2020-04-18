@@ -152,11 +152,11 @@ export class TypeGraphComponent implements OnInit {
     const metaData = $event['metaData'] || {};
     const types: string[] = resp['types'] || [];
 
-    this.loaderUpdater.next(new Message(`Loading ${name} (${date})`, MessageTypeEnum.INFO));
     if (this.hasFileBeenUploaded(name, metaData)) {
-      console.log(`Already Uploaded: VCF for ${name} on ${date}`);
+      this.loaderUpdater.next(new Message(`Already Uploaded: VCF for ${name} on ${date}`, MessageTypeEnum.INFO));
       return;
     }
+    this.loaderUpdater.next(new Message(`Loading ${name} (${date})`, MessageTypeEnum.NEW_FILE));
 
     const dataPoint = this.formatForVisualization(name, date, variantInfo);
     this.calculateOddsRatiosFromTypes(types);
