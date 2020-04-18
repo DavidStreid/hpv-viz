@@ -7,6 +7,7 @@ import {INIT_DATA_POINTS, INIT_DATA_POINTS_EVENTS, YEAR_TRANSFORM_DATES} from '.
 import {TEST_FILES} from '../../test/mock-data/vcf-files';
 import {Toggle} from './models/toggle.class';
 import {By} from '@angular/platform-browser';
+import {DiagnosticSnpsService} from "../services/diagnostic-snps-service";
 
 describe('TypeGraphComponent', () => {
   let component: TypeGraphComponent;
@@ -28,6 +29,7 @@ describe('TypeGraphComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TypeGraphComponent, TableModalComponent],
+      providers: [DiagnosticSnpsService],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
