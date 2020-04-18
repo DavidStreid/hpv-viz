@@ -5,28 +5,7 @@ p {
   font: 1.3rem Inconsolata, monospace;
   text-shadow: 0 0 5px #C8C8C8;
 }
-
 .loader-terminal {
   padding-left: 25px;
   padding-right: 25px;
-}
-
-.body-text {
-  font-size: 22px;
-}
-
-.data-table {
-  padding: 15px;
-  border-collapse: collapse;
-}
-
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 28px;
-}
-
-.close-button:hover {
-  cursor: pointer;
 }
