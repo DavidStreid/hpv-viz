@@ -11,7 +11,7 @@ export class DiagnosticSnpsService {
 
   constructor() {
     this.snpMap = new Map<string, string>();
-    this.addSNPsListToMap(HPV_16_SNPs);
+    this.addSNPsListToMap(HPV_16_SNPs);     // Default detection will be done using HPV_16 SNPs
   }
 
   /**
