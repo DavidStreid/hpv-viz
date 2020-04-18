@@ -2,7 +2,7 @@
   <loader [updater]="loaderUpdater"
           [title]="'Loading'"
           [show]="isLoading"
-          (doneLoading)="showDataViewer($event)"></loader>
+          (doneLoading)="showDataViewer()"></loader>
     <table-modal (closeModal)="closeModal($event)"
                  [data]="selectedVariant"
                  [headers]="headers"

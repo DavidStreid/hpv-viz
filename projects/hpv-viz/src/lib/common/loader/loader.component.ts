@@ -21,6 +21,7 @@ export class LoaderComponent implements OnInit {
   @Output()
   public doneLoading: EventEmitter<void>;
 
+  @Input()
   public title: string;
 
   public messages: Message[];     // Messages to show in the loader
@@ -28,7 +29,6 @@ export class LoaderComponent implements OnInit {
   private INTERVAL = 500;         // Time in milliseconds w/o a message update before the loader @doneLoading message
 
   constructor() {
-    this.title = 'Loading';
     this.messages = [];
     this.doneLoading = new EventEmitter<void>();
 
