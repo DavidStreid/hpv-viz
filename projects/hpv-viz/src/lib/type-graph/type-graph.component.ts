@@ -6,7 +6,7 @@ import {TypeTracker} from './models/typeTracker.class';
 import {PatientSummary} from './models/patient-summary.class';
 import * as _ from 'lodash';
 import {DiagnosticSnpsService} from '../services/diagnostic-snps-service';
-import {VCF_ALT, VCF_CHROM, VCF_POS} from '../common/app.const';
+import {VCF_ALT, VCF_CHROM, VCF_POS, VCF_QUAL, VCF_REF} from '../common/app.const';
 import {Message} from '../common/loader/modal-message.class';
 import {MessageTypeEnum} from '../common/loader/message-type.enum';
 import {Subject} from 'rxjs';
@@ -31,7 +31,7 @@ export class TypeGraphComponent implements OnInit {
   public loaderUpdater: Subject<Message>;         // Subject that sends messages to display on the loading screen
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
-  public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
+  public includeInModal: Set<string> = new Set<string>([VCF_ALT, VCF_CHROM, VCF_POS, VCF_QUAL, VCF_REF]);
   public modalTitle: string;
   public headers: string[];
   public selectedVariant: Object[] = [];
@@ -687,8 +687,8 @@ export class TypeGraphComponent implements OnInit {
   private setModalinformation(variantInfo: Object[]): void {
     // Sort variantInfo on the position
     const sortedOnPos: Object[] = variantInfo.sort(function (o1, o2) {
-      const pos1Str = o1['POS'] || 0;
-      const pos2Str = o2['POS'] || 0;
+      const pos1Str = o1[VCF_POS] || 0;
+      const pos2Str = o2[VCF_POS] || 0;
 
 
       const pos1: number = parseInt(pos1Str, 10);
