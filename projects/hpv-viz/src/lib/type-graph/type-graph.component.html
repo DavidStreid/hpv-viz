@@ -67,11 +67,11 @@
     </div>
     <div *ngIf="!isLoading">
       <div *ngIf="patientToggles.size > 0"
-           class="width-95per padding-left-5per padding-bottom-25px">
+           class="fill-width padding-bottom-25px">
         <type-toggle (toggleEvent)="updateFilter()"
                      [typeMap]="typeToggles"></type-toggle>
       </div>
-      <div class="width-95per padding-left-5per padding-bottom-25px">
+      <div class="fill-width padding-bottom-25px">
         <div *ngIf="patientToggles.size > 0"
              class="selectors-container fill-width padding-top-15px vertical-align-top">
           <div>
@@ -99,7 +99,7 @@
         </div>
       </div>
       <div *ngIf="patientSummaryInfo.size > 0"
-           class="selectors-container width-95per padding-left-5per padding-bottom-25px">
+           class="selectors-container fill-width padding-bottom-25px">
         <persistence-view
           [patientSummaryInfo]="patientSummaryInfo"></persistence-view>
       </div>
