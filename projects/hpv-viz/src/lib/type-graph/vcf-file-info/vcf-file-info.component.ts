@@ -18,4 +18,8 @@ export class VcfFileInfoComponent {
     this.show = !this.show;
   }
   // TAB-TOGGLE CODE (copy-pasta: end)
+
+  constructor() {
+    this.show = true;
+  }
 }

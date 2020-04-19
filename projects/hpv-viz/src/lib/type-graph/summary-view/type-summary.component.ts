@@ -29,6 +29,7 @@ export class TypeSummaryComponent implements OnChanges {
     this.typesMap = new Map();
     this.types = new Set();
     this.samples = new Set();
+    this.show = true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

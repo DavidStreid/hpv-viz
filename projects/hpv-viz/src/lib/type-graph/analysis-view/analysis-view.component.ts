@@ -21,6 +21,7 @@ export class AnalysisViewComponent implements OnChanges {
 
   constructor() {
     this.oddsRatioList = [];
+    this.show = true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -30,6 +30,7 @@ export class PersistenceViewComponent implements OnChanges {
   constructor() {
     this.headers = [];
     this.body = [];
+    this.show = true;
   }
 
   /**
