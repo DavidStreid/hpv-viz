@@ -1,8 +1,10 @@
 <div class="analysis-container">
-  <div>
-    <h3>Odds Ratio</h3>
-  </div>
-  <div class="analysis-data-container">
+  <tab-toggle
+    [title]="title"
+    [show]="show"
+    (toggle)="toggleShow()"></tab-toggle>
+  <div class="analysis-data-container"
+       *ngIf="show">
     <table class="table-center">
       <thead>
       <tr>

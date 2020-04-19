@@ -19,9 +19,18 @@ export class PersistenceViewComponent implements OnChanges {
     [DateOpt.YEAR]: {label: 'Year', selector: DateOpt.YEAR, selected: true}
   };
 
+  // TAB-TOGGLE CODE (copy-pasta: start)
+  public show: boolean;
+  public title: string = 'Persistence View';
+  public toggleShow(): void{
+    this.show = !this.show;
+  }
+  // TAB-TOGGLE CODE (copy-pasta: end)
+
   constructor() {
     this.headers = [];
     this.body = [];
+    this.show = true;
   }
 
   /**

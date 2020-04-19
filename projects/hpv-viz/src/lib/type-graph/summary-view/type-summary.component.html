@@ -1,8 +1,10 @@
 <div class="analysis-container">
-  <div>
-    <h3>Types Present</h3>
-  </div>
-  <div class="analysis-data-container">
+  <tab-toggle
+    [title]="title"
+    [show]="show"
+    (toggle)="toggleShow()"></tab-toggle>
+  <div class="analysis-data-container"
+       *ngIf="show">
     <table class="table-center">
       <thead>
       <th></th>
@@ -15,12 +17,12 @@
         <td>{{type}}</td>
         <td *ngFor="let sample of samples">
           <i [ngClass]="{
-                          'fas': true,
-                          'fa-check' : hasType(type, sample),
-                          'green': hasType(type, sample),
-                          'fa-times': !hasType(type, sample),
-                          'red': !hasType(type, sample)
-            }"></i>
+                        'fa': true,
+                        'fa-check' : hasType(type, sample),
+                        'green': hasType(type, sample),
+                        'fa-times': !hasType(type, sample),
+                        'red': !hasType(type, sample)
+                        }"></i>
         </td>
       </tr>
       </tbody>
