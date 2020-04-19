@@ -11,6 +11,13 @@ export class AnalysisViewComponent implements OnChanges {
   oddsRatio: Map<Set<string>, Map<string, number>>;
 
   public oddsRatioList: Object[];
+  // TAB-TOGGLE CODE (copy-pasta: start)
+  public show: boolean;
+  public title: string = 'Odds Ratio';
+  public toggleShow(): void{
+    this.show = !this.show;
+  }
+  // TAB-TOGGLE CODE (copy-pasta: end)
 
   constructor() {
     this.oddsRatioList = [];

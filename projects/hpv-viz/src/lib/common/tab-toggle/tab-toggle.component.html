@@ -1,0 +1,10 @@
+<div>
+  <p>{{title}}</p>
+    <i [ngClass]="{
+                    'fa': true,
+                    'fa-angle-right' : !show,
+                    'fa-angle-down' : show
+      }"
+      (click)="sendToggle()"
+    ></i>
+</div>

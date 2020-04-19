@@ -17,6 +17,14 @@ export class TypeSummaryComponent implements OnChanges {
   public samples: Set<String>;
   public dataset: Object[];
 
+  // TAB-TOGGLE CODE (copy-pasta: start)
+  public show: boolean;
+  public title: string = 'Types Detected In Samples';
+  public toggleShow(): void{
+    this.show = !this.show;
+  }
+  // TAB-TOGGLE CODE (copy-pasta: end)
+
   constructor() {
     this.typesMap = new Map();
     this.types = new Set();
