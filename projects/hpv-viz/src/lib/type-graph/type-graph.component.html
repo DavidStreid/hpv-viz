@@ -62,18 +62,18 @@
         </div>
       </div>
     </div>
-    <div class="upload-container vertical-align-top padding-top-15px fill-height fill-width">
+    <div class="upload-container vertical-align-top fill-height fill-width">
       <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
     </div>
     <div *ngIf="!isLoading">
       <div *ngIf="patientToggles.size > 0"
-           class="fill-width padding-bottom-25px">
+           class="fill-width">
         <type-toggle (toggleEvent)="updateFilter()"
                      [typeMap]="typeToggles"></type-toggle>
       </div>
-      <div class="fill-width padding-bottom-25px">
+      <div class="fill-width">
         <div *ngIf="patientToggles.size > 0"
-             class="selectors-container fill-width padding-top-15px vertical-align-top">
+             class="selectors-container fill-width vertical-align-top">
           <div>
             <p class="font-20px">Patients</p>
             <div class="margin-left-5per">
@@ -99,7 +99,7 @@
         </div>
       </div>
       <div *ngIf="patientSummaryInfo.size > 0"
-           class="selectors-container fill-width padding-bottom-25px">
+           class="selectors-container fill-width">
         <persistence-view
           [patientSummaryInfo]="patientSummaryInfo"></persistence-view>
       </div>
