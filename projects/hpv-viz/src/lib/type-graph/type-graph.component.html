@@ -117,25 +117,9 @@
       </div>
       <div *ngIf="patientToggles.size > 0"
            class="selectors-container fill-width padding-top-15px vertical-align-top">
-        <div>
-          <p class="font-20px">VCF File Information</p>
-          <div class="margin-left-5per info-content-container height-inherit">
-            <div class="block height-inherit">
-              <div class="inline-block opt-container height-inherit">
-                <div class="selector flex-center inherit-width height-inherit">
-                  <div *ngFor="let patient of patientToggles | keyvalue"
-                       [class.none]="!patient.value.isSelected()"
-                       class="block patient-opt fill-width height-inherit">
-                    <div *ngIf="patient.value.isSelected()"
-                         class="inline-block inherit-width height-inherit">
-                      <VcfFileViewer [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfFileViewer>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <vcf-file-info
+          [patientToggles]="patientToggles"
+          [vcfFileMap]="vcfFileMap"></vcf-file-info>
       </div>
     </div>
   </div>

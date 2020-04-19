@@ -15,6 +15,7 @@ import {AnalysisViewComponent} from './type-graph/analysis-view/analysis-view.co
 import {PersistenceViewComponent} from './type-graph/persistence-view/persistence-view.component';
 import {LoaderComponent} from './common/loader/loader.component';
 import {TabToggleComponent} from './common/tab-toggle/tab-toggle.component';
+import {VcfFileInfoComponent} from './type-graph/vcf-file-info/vcf-file-info.component';
 
 // SERVICES
 import {DiagnosticSnpsService} from './services/diagnostic-snps-service';
@@ -40,7 +41,8 @@ const CHILD_COMPONENTS = [
   AnalysisViewComponent,
   PersistenceViewComponent,
   LoaderComponent,
-  TabToggleComponent
+  TabToggleComponent,
+  VcfFileInfoComponent
 ];
 const SERVICES = [DiagnosticSnpsService];
 
