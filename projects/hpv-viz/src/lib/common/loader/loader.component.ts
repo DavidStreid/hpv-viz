@@ -26,7 +26,8 @@ export class LoaderComponent implements OnInit {
   public messages: Message[];     // Messages to show in the loader
   public close: Subject<any>;     // Subject that pushes events with each message
   private INTERVAL = 500;         // Time in milliseconds w/o a message update before the loader @doneLoading message
-  public numFiles;               // Number of uploaded files
+  private CLOSE_INTERVAL = 500;   // Time in milliseconds before the loader automatically closes
+  public numFiles;                // Number of uploaded files
 
   constructor() {
     this.messages = [];
@@ -38,7 +39,10 @@ export class LoaderComponent implements OnInit {
     this.close = new Subject<any>();
     const results = this.close.pipe(debounce(() => interval(this.INTERVAL)));
     results.subscribe(x => {
-      this.doneLoading.emit();
+      this.status = `Uploaded ${this.numFiles} samples. Done.`;
+      setTimeout(() => {
+        this.doneLoading.emit();
+      }, this.CLOSE_INTERVAL);
     });
   }
 
@@ -50,7 +54,7 @@ export class LoaderComponent implements OnInit {
     if(msg.isType(MessageTypeEnum.NEW_FILE)){
       // Update overall status and continue
       this.numFiles += 1;
-      this.status = `Uploaded ${this.numFiles}`;
+      this.status = `Uploading ${this.numFiles} samples`;
     }
     this.messages.push(msg);
     this.close.next();
