@@ -1,10 +1,11 @@
 import {VcfMap} from './vcfMap.class';
+import {VCF_CHROM} from '../../common/app.const';
 
 describe('VcfMap', () => {
   const sample = 'MOCK_SAMPLE';
   const chrom = 'TEST_CHROM';
   const date: Date = new Date();
-  const data: Object = {'CHROM': chrom};
+  const data: Object = {[VCF_CHROM]: chrom};
   // TODO - make this a class?
   const entry = {
     name: date, // name of the entry is typically the date

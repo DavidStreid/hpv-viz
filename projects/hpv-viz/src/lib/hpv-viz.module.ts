@@ -14,11 +14,14 @@ import {TypeSummaryComponent} from './type-graph/summary-view/type-summary.compo
 import {AnalysisViewComponent} from './type-graph/analysis-view/analysis-view.component';
 import {PersistenceViewComponent} from './type-graph/persistence-view/persistence-view.component';
 import {LoaderComponent} from './common/loader/loader.component';
+
 // SERVICES
+import {DiagnosticSnpsService} from './services/diagnostic-snps-service';
+
 // DIRECTIVES
 import {FileDropDirective} from './directives/file-drop.directive';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
+// import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 // LOCAL DEPENDENCIES - Remove when deployed
 // const LOCAL_MODULES = [ BrowserAnimationsModule ];
 const LOCAL_MODULES = [];
@@ -37,7 +40,7 @@ const CHILD_COMPONENTS = [
   PersistenceViewComponent,
   LoaderComponent
 ];
-const SERVICES = [];
+const SERVICES = [DiagnosticSnpsService];
 
 @NgModule({
   imports: [

@@ -5,6 +5,8 @@ import {VcfMap} from './models/vcfMap.class';
 import {TypeTracker} from './models/typeTracker.class';
 import {PatientSummary} from './models/patient-summary.class';
 import * as _ from 'lodash';
+import {DiagnosticSnpsService} from '../services/diagnostic-snps-service';
+import {VCF_ALT, VCF_CHROM, VCF_POS, VCF_QUAL, VCF_REF} from '../common/app.const';
 import {Message} from '../common/loader/modal-message.class';
 import {MessageTypeEnum} from '../common/loader/message-type.enum';
 import {Subject} from 'rxjs';
@@ -29,7 +31,7 @@ export class TypeGraphComponent implements OnInit {
   public loaderUpdater: Subject<Message>;         // Subject that sends messages to display on the loading screen
 
   // Columns of the vcf file we won't show in the modal on click. Make sure these are capital
-  public includeInModal: Set<string> = new Set<string>(['ALT', 'CHROM', 'POS', 'QUAL', 'REF']);
+  public includeInModal: Set<string> = new Set<string>([VCF_ALT, VCF_CHROM, VCF_POS, VCF_QUAL, VCF_REF]);
   public modalTitle: string;
   public headers: string[];
   public selectedVariant: Object[] = [];
@@ -74,7 +76,7 @@ export class TypeGraphComponent implements OnInit {
   // TypeGraphContainer - Add 5 for a buffer
   public typeGraphContainerWidth = `${this.sideSelectorWidthNum + this.view[0] + 5}px`;
 
-  constructor() {
+  constructor(private diagnosticSnpsService: DiagnosticSnpsService) {
     this.init();
   }
 
@@ -149,6 +151,7 @@ export class TypeGraphComponent implements OnInit {
     const date = $event['date'] || null;
     const resp = $event['variantInfo'] || [];
     const variantInfo = resp['variantInfo'];
+
     const metaData = $event['metaData'] || {};
     const types: string[] = resp['types'] || [];
 
@@ -158,25 +161,22 @@ export class TypeGraphComponent implements OnInit {
     }
     this.loaderUpdater.next(new Message(`Loading ${name} (${date})`, MessageTypeEnum.NEW_FILE));
 
-    const dataPoint = this.formatForVisualization(name, date, variantInfo);
-    this.calculateOddsRatiosFromTypes(types);
-    this.addEntryToPatientSummary(types, date, name);
+    // Create an ngx-charts datapoint, { name: '', series: [], date: Date }
+    const formatted: Object = this.createNgxChartsDataPoint(name, date, variantInfo);
+    const dataPoint: Object = this.addLineageDetectionToDataPoint(formatted);
 
-    // Update map of types to the patients that have that type. Adding any new type entries
-    const typeToggles: Map<string, Toggle> = new Map(this.typeToggles);
-    for (const type of types) {
-      let opt: Toggle = new Toggle(type, true);
-      if (typeToggles.has(type)) {
-        opt = typeToggles.get(type);
+    // Add detected lineages to the list of types in the VCF file
+    const lineages: string[] = this.getLineageList(dataPoint);
+    if (lineages.length > 0) {
+      this.updateTypeToggles(lineages);
+      for(const lineage of lineages){
+        types.push(lineage);
       }
-      typeToggles.set(type, opt);
-
-      // Opt will keep track of all patients that have that type
-      const data = opt.getData();
-      data.add(name);
-      opt.setData(data);
     }
-    this.typeToggles = typeToggles;
+
+    this.updateTypeToggles(types);  // Important to update the type toggles prior to calculating the odds ratio
+    this.addEntryToPatientSummary(types, date, name);
+    this.calculateOddsRatiosFromTypes(types);
 
     if (!this.isValidDataPoint(dataPoint)) {
       console.error('Invalid upload');
@@ -397,6 +397,81 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
+   * Updates the global @typeToggles field of the component based on input list of type strings
+   * @param types
+   */
+  private updateTypeToggles(types: string[]): void {
+    // Update map of types to the patients that have that type. Adding any new type entries
+    const typeToggles: Map<string, Toggle> = new Map(this.typeToggles);
+    for (const type of types) {
+      let opt: Toggle = new Toggle(type, true);
+      if (typeToggles.has(type)) {
+        opt = typeToggles.get(type);
+      }
+      typeToggles.set(type, opt);
+
+      // Opt will keep track of all patients that have that type
+      const data = opt.getData();
+      data.add(name);
+      opt.setData(data);
+    }
+    this.typeToggles = typeToggles;
+  }
+
+  /**
+   * Get the lineage detected in the variant info
+   * @param variantInfo, Object - data field of an ngxCharts datapoint
+   */
+  private getLineage(variantInfo: Object): string {
+    const variant = variantInfo[VCF_ALT] || '';
+    const pos = variantInfo[VCF_POS] || '';
+    const lineage = this.diagnosticSnpsService.getDetectedLineageFromVariant(variant, pos);
+    if (lineage) {
+      // If a lineage is detected from the variant, return this and not the CHROM entry from the VCF
+      this.loaderUpdater.next(new Message(`Detected lineage: ${lineage} from Variant: ${variant}, Position: ${pos}`, MessageTypeEnum.INFO));
+      return lineage;
+    }
+  }
+
+  /**
+   * Modiifes the input datapoint to include detected lineage information if it is detected.
+   * @param dataPoint
+   */
+  private addLineageDetectionToDataPoint(dataPoint: Object): Object {
+    const series = dataPoint['series'] || [];
+    for (let i = 0; i < series.length; i++) {
+      // for(const entry of series){
+      const entry = series[i];
+      const variantInfo = entry['data'] || {};
+      const lineage = this.getLineage(variantInfo);
+      if (lineage) {
+        entry['y'] = lineage;
+        variantInfo[VCF_CHROM] = lineage;
+      }
+    }
+    return dataPoint;
+  }
+
+  /**
+   * Get detected lineages from the input dataPoint list
+   * @param dataPoint
+   */
+  private getLineageList(dataPoint: Object): string[] {
+    const series = dataPoint['series'] || [];
+    const detectedLineages = [];
+    for (let i = 0; i < series.length; i++) {
+      // for(const entry of series){
+      const entry = series[i];
+      const variantInfo = entry['data'] || {};
+      const lineage = this.getLineage(variantInfo);
+      if (lineage) {
+        detectedLineages.push(lineage);
+      }
+    }
+    return detectedLineages;
+  }
+
+  /**
    * Checks if a file upload, represented by an event, has already been uploaded. Does this by checking the metadata
    *
    * @param patientName
@@ -415,9 +490,22 @@ export class TypeGraphComponent implements OnInit {
   }
 
   /**
-   * Calculate Odds Ratios from a list of string types
-   *
-   * @param types, string[] - list of types from an uploaded VCF file
+   * Extract the list of types in the toggles of the component
+   */
+  private getTypesFromToggles(): string[] {
+    // Extract all types from the typeToggles of the component
+    const types = [];
+    const mapIter = this.typeToggles.keys();
+    let type: string = mapIter.next().value;
+    while (type) {
+      types.push(type);
+      type = mapIter.next().value;
+    }
+    return types;
+  }
+
+  /**
+   * Calculate Odds Ratios from the component's internal typeToggles
    */
   private calculateOddsRatiosFromTypes(types: string[]): void {
     this.typeTracker.addTypes(types);
@@ -536,9 +624,12 @@ export class TypeGraphComponent implements OnInit {
     return formatOrder.slice(numObjs - 1, numObjs);
   }
 
-  // TODO - Right now extraction isn't the safest. Add constants? Add a dedicated type?
   private extractChromosomeInfo(variantInfo: Object) {
-    return variantInfo['CHROM'] || '';
+    const chrom = variantInfo[VCF_CHROM];
+    if (!chrom) {
+      throw Error(`Not able to detect a CHROM entry for VCF entry: ${JSON.stringify(variantInfo)}`);
+    }
+    return chrom;
   }
 
   /**
@@ -553,7 +644,7 @@ export class TypeGraphComponent implements OnInit {
    * @param date, Date - Date the vcf was taken
    * @param variantInfo, Object[] - List of enriched objects representing variant information
    *
-   * @return, Object[] - List of objects, where each object contains the data for a specific variant type, indicated by
+   * @return, Object - ngx-charts datapoint, where each object contains the data for a specific variant type, indicated by
    *                     name
    *
    *                     e.g. {
@@ -567,18 +658,22 @@ export class TypeGraphComponent implements OnInit {
    *                         ]
    *                     }
    */
-  private formatForVisualization(name: string, date: Date, variantInfo: Object[]) {
+  private createNgxChartsDataPoint(name: string, date: Date, variantInfo: Object[]): Object {
     const series = [];
 
     for (const vi of variantInfo) {
-      const dp = {
-        name: date,
-        y: this.extractChromosomeInfo(vi),
-        x: date,
-        r: 1,
-        data: vi
-      };
-      series.push(dp);
+      try {
+        const dp = {
+          name: date,
+          y: this.extractChromosomeInfo(vi),
+          x: date,
+          r: 1,
+          data: vi
+        };
+        series.push(dp);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     return {name, series, date};
@@ -592,8 +687,8 @@ export class TypeGraphComponent implements OnInit {
   private setModalinformation(variantInfo: Object[]): void {
     // Sort variantInfo on the position
     const sortedOnPos: Object[] = variantInfo.sort(function (o1, o2) {
-      const pos1Str = o1['POS'] || 0;
-      const pos2Str = o2['POS'] || 0;
+      const pos1Str = o1[VCF_POS] || 0;
+      const pos2Str = o2[VCF_POS] || 0;
 
 
       const pos1: number = parseInt(pos1Str, 10);
