@@ -54,7 +54,7 @@ export class TypeGraphComponent implements OnInit {
   // Should be of type 'any" so that "keyvalue" pipe can be used in the view
   public enabledDateSelectors: any = {};
   // Graph Options
-  public view: any[] = [750, 400];
+  public view: any[] = [750, 500];
   public width = `${this.view[0]}px`;
   public height = `${this.view[1]}px`;
   public showXAxis = true;

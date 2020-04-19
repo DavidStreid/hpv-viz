@@ -2,6 +2,7 @@
   <div>
     <p><span class="font-20px">Upload Data</span> - Upload .vcf files in the box below</p>
   </div>
+  <!-- DO NOT REMOVE id:"info-content-container". Simulating a "drop-event" is done by targeting this div's ID -->
   <div (filesDropped)="handleDrop($event)" (filesHovered)="dropzoneState($event)"
        [ngClass]="{'active': dropzoneActive}"
        class="drop-container vert-align-parent width-95per margin-left-5per"
