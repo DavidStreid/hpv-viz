@@ -165,16 +165,17 @@ export class TypeGraphComponent implements OnInit {
     const formatted: Object = this.createNgxChartsDataPoint(name, date, variantInfo);
     const dataPoint: Object = this.addLineageDetectionToDataPoint(formatted);
 
-    // Add detected lineages to the list of types in the VCF file
+    // detected-lineages update for type toggles
     const lineages: string[] = this.getLineageList(dataPoint);
     if (lineages.length > 0) {
-      this.updateTypeToggles(lineages);
+      this.updateTypeToggles(lineages, name);
       for(const lineage of lineages){
         types.push(lineage);
       }
     }
 
-    this.updateTypeToggles(types);  // Important to update the type toggles prior to calculating the odds ratio
+    // types update for type toggles
+    this.updateTypeToggles(types, name);
     this.addEntryToPatientSummary(types, date, name);
     this.calculateOddsRatiosFromTypes(types);
 
@@ -398,9 +399,10 @@ export class TypeGraphComponent implements OnInit {
 
   /**
    * Updates the global @typeToggles field of the component based on input list of type strings
-   * @param types
+   * @param types - list of types found in a patient
+   * @param name - patient name
    */
-  private updateTypeToggles(types: string[]): void {
+  private updateTypeToggles(types: string[], name: string): void {
     // Update map of types to the patients that have that type. Adding any new type entries
     const typeToggles: Map<string, Toggle> = new Map(this.typeToggles);
     for (const type of types) {
