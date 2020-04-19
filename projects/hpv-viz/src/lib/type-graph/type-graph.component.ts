@@ -399,7 +399,8 @@ export class TypeGraphComponent implements OnInit {
 
   /**
    * Updates the global @typeToggles field of the component based on input list of type strings
-   * @param types
+   * @param types - list of types found in a patient
+   * @param name - patient name
    */
   private updateTypeToggles(types: string[], name: string): void {
     // Update map of types to the patients that have that type. Adding any new type entries
