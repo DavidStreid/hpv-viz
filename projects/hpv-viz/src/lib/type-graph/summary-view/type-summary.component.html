@@ -14,13 +14,15 @@
       <tr *ngFor="let type of types">
         <td>{{type}}</td>
         <td *ngFor="let sample of samples">
-          <i [ngClass]="{
-                          'fas': true,
+          <a class="btn btn-social-icon btn-github">
+            <i [ngClass]="{
+                          'fa': true,
                           'fa-check' : hasType(type, sample),
                           'green': hasType(type, sample),
                           'fa-times': !hasType(type, sample),
                           'red': !hasType(type, sample)
-            }"></i>
+                          }"></i>
+          </a>
         </td>
       </tr>
       </tbody>
