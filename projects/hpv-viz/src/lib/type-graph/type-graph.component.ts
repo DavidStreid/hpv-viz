@@ -414,7 +414,7 @@ export class TypeGraphComponent implements OnInit {
 
       // Opt will keep track of all patients that have that type
       const data = opt.getData();
-      data.add(type);
+      data.add(name);
       opt.setData(data);
     }
     this.typeToggles = typeToggles;
