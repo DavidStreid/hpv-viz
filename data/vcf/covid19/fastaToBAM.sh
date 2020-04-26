@@ -11,9 +11,6 @@ FASTA_IDX=$1
 FASTA_DIR=$2
 BAM_DIR=$3
 
-LOG=${BAM_DIR}/alignment.log
-ERR=${BAM_DIR}/bad_bams.fofn
-
 # Param Validation
 if [[ ! -f ${FASTA_IDX}  ]]
   then
@@ -29,6 +26,12 @@ fi
 # Create $BAM_DIR if not existent
 mkdir -p $BAM_DIR
 
+# Create log dir
+LOG_DIR=${BAM_DIR}/logs
+mkdir -p $LOG_DIR
+LOG=${LOG_DIR}/alignment.log
+ERR=${LOG_DIR}/bad_bams.log
+
 for FASTA in ${FASTA_DIR}/*.fasta; do
    FILE_NAME=$(basename $FASTA)
    SAMPLE=$( cut -d '.' -f 1 <<< "${FILE_NAME}" )
@@ -37,5 +40,6 @@ for FASTA in ${FASTA_DIR}/*.fasta; do
    bwa mem $FASTA_IDX $FASTA  > $SAM_FILE 2>> ${LOG}
    samtools view -bS $SAM_FILE > $BAM_FILE 2>> ${LOG}
 
-   samtools quickcheck -v ${BAM_FILE} > ${ERR} 2>&1  && : || echo Invalid BAM from sample: ${SAMPLE}; rm ${BAM_FILE}
+   # Verify valid BAMs. Delete if invalid
+   samtools quickcheck -v ${BAM_FILE} >> ${ERR} 2>&1  && : || (echo Invalid BAM from sample: ${SAMPLE} && rm ${BAM_FILE})
 done
