@@ -1,45 +1,48 @@
 #!/bin/bash
 
-if [[ -z "$1"  ||  -z "$2"  || -z "$3" ]]
+if [[ -z "$1"  ]]
    then
-      printf "please specify FASTA index (from bwa idx), directory of FASTA files, and output for BAMs - ./fastaToBAM.sh {FASTA_IDX} {FASTA_DIR} {BAM_DIR}\ne.g.\n\t"
-      printf "./fastaToBAM.sh ./bwaIdx/NC_045512.genome.fasta ./covid19_downloads ./covid19_bams\n"
+      printf "please specify location of downloaded FASTA files - ./fastaToBAM.sh {FASTA_DIR} e.g.\n\t"
+      printf "./fastaToBAM.sh ./covid19_downloads \n"
    exit 1
 fi
 
-FASTA_IDX=$1
-FASTA_DIR=$2
-BAM_DIR=$3
+FASTA_DIR=$1
 
-# Param Validation
-if [[ ! -f ${FASTA_IDX}  ]]
-  then
-    echo "Invalid FASTA index: ${FASTA_IDX}"
-  exit 1
-fi
-if [[ ! -d ${FASTA_DIR}  ]]
-  then
-    echo "Invalid FASTA directory: ${FASTA_DIR}"
-  exit 1
-fi
+# Default output directory locations
+IDX_DIR=./covid19_idx
+IDX_FA=${IDX_DIR}/covid19_idx.fa
+BAM_DIR=./covid19_bams
+LOG_DIR=${BAM_DIR}/logs
 
-# Create $BAM_DIR if not existent
+echo "Creating BWA index of CDS FASTA files: ${IDX_DIR}"
+mkdir -p $IDX_DIR && touch $IDX_FA
+for FASTA in ${FASTA_DIR}/*cds*; do
+   is_human_gene=$(head -1 $FASTA | grep -i "gene" | grep -i "human")
+   if [[ ${is_human_gene}  ]]; then
+      cat $FASTA >> ${IDX_FA}
+   fi
+done
+bwa index $IDX_FA
+
+echo "Creating BWA index of CDS FASTA files: ${IDX_DIR}"
 mkdir -p $BAM_DIR
 
-# Create log dir
-LOG_DIR=${BAM_DIR}/logs
+# Add log files
 mkdir -p $LOG_DIR
 LOG=${LOG_DIR}/alignment.log
 ERR=${LOG_DIR}/bad_bams.log
 
+# Create BAMs
 for FASTA in ${FASTA_DIR}/*.fasta; do
    FILE_NAME=$(basename $FASTA)
    SAMPLE=$( cut -d '.' -f 1 <<< "${FILE_NAME}" )
    SAM_FILE=${BAM_DIR}/${SAMPLE}.aln.sam
    BAM_FILE=${BAM_DIR}/${SAMPLE}.bam
-   bwa mem $FASTA_IDX $FASTA  > $SAM_FILE 2>> ${LOG}
+   bwa mem $IDX_FA $FASTA  > $SAM_FILE 2>> ${LOG}
    samtools view -bS $SAM_FILE > $BAM_FILE 2>> ${LOG}
 
    # Verify valid BAMs. Delete if invalid
    samtools quickcheck -v ${BAM_FILE} >> ${ERR} 2>&1  && : || (echo Invalid BAM from sample: ${SAMPLE} && rm ${BAM_FILE})
 done
+echo "Done."
