@@ -11,6 +11,9 @@ FASTA_IDX=$1
 FASTA_DIR=$2
 BAM_DIR=$3
 
+LOG=${BAM_DIR}/alignment.log
+ERR=${BAM_DIR}/bad_bams.fofn
+
 # Param Validation
 if [[ ! -f ${FASTA_IDX}  ]]
   then
@@ -31,6 +34,8 @@ for FASTA in ${FASTA_DIR}/*.fasta; do
    SAMPLE=$( cut -d '.' -f 1 <<< "${FILE_NAME}" )
    SAM_FILE=${BAM_DIR}/${SAMPLE}.aln.sam
    BAM_FILE=${BAM_DIR}/${SAMPLE}.bam
-   bwa mem $FASTA_IDX $FASTA  > $SAM_FILE
-   samtools view -S -b $SAM_FILE > $BAM_FILE
+   bwa mem $FASTA_IDX $FASTA  > $SAM_FILE 2>> ${LOG}
+   samtools view -bS $SAM_FILE > $BAM_FILE 2>> ${LOG}
+
+   samtools quickcheck -v ${BAM_FILE} > ${ERR} 2>&1  && : || echo Invalid BAM from sample: ${SAMPLE}; rm ${BAM_FILE}
 done
