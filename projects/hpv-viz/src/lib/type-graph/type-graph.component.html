@@ -10,6 +10,9 @@
                  [hidden]="selectedVariant.length === 0"
                  [title]="modalTitle"></table-modal>
   </div>
+  <div class="upload-container vertical-align-top fill-height fill-width">
+    <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
+  </div>
   <div class="fill-width fill-height">
     <div [style.height]="height"
          [style.width]="typeGraphContainerWidth"
@@ -61,9 +64,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="upload-container vertical-align-top fill-height fill-width">
-      <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
     </div>
     <div *ngIf="!isLoading">
       <div *ngIf="patientToggles.size > 0"
