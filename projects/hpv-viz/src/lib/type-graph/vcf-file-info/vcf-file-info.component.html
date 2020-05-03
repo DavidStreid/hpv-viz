@@ -2,9 +2,18 @@
   <tab-toggle
     [title]="title"
     [show]="show"
-    (toggle)="toggleShow()"></tab-toggle>
+    (toggle)="toggleShow()"
+    (infoToggle)="toggleInfo()"></tab-toggle>
   <div class="margin-left-5per info-content-container height-inherit"
     *ngIf="show">
+    <div *ngIf="showInfo"
+         class="info-view">
+      <p>
+        Shows metadata that could be extracted from the uploaded VCF file for the currently selected patient.
+        Each VCF upload is represented on the left.
+        Currently the <a class="bold">Date Created</a>, <a class="bold">Sample Date</a> (date identified from the uploaded sample name), and any bcftools command (e.g. mpileup/call) used to produce genotype likelihoods or make variant calls.
+      </p>
+    </div>
     <div class="block height-inherit">
       <div class="inline-block opt-container height-inherit">
         <div class="selector flex-center inherit-width height-inherit">

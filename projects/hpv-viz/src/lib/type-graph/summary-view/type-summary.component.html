@@ -2,9 +2,14 @@
   <tab-toggle
     [title]="title"
     [show]="show"
-    (toggle)="toggleShow()"></tab-toggle>
+    (toggle)="toggleShow()"
+    (infoToggle)="toggleInfo()"></tab-toggle>
   <div class="analysis-data-container"
        *ngIf="show">
+    <div *ngIf="showInfo"
+         class="info-view">
+      <p> Summary of all types detected across all time points for each sample.</p>
+    </div>
     <table class="table-center">
       <thead>
       <th></th>

@@ -98,6 +98,12 @@
           </div>
         </div>
       </div>
+      <div *ngIf="patientToggles.size > 0"
+           class="selectors-container fill-width padding-top-15px vertical-align-top">
+        <analysis-view
+          [oddsRatio]="oddsRatio">
+        </analysis-view>
+      </div>
       <div *ngIf="patientSummaryInfo.size > 0"
            class="selectors-container fill-width">
         <persistence-view
@@ -108,12 +114,6 @@
         <type-summary
           [typesMap]="typeToggles">
         </type-summary>
-      </div>
-      <div *ngIf="patientToggles.size > 0"
-           class="selectors-container fill-width padding-top-15px vertical-align-top">
-        <analysis-view
-          [oddsRatio]="oddsRatio">
-        </analysis-view>
       </div>
       <div *ngIf="patientToggles.size > 0"
            class="selectors-container fill-width padding-top-15px vertical-align-top">

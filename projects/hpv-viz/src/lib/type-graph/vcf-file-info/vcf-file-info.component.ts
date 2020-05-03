@@ -13,9 +13,13 @@ export class VcfFileInfoComponent {
 
   // TAB-TOGGLE CODE (copy-pasta: start)
   public show: boolean;
-  public title: string = 'VCF File Information';
+  public showInfo: boolean;
+  public title = 'VCF File Information';
   public toggleShow(): void{
     this.show = !this.show;
+  }
+  public toggleInfo(): void {
+    this.showInfo = !this.showInfo;
   }
   // TAB-TOGGLE CODE (copy-pasta: end)
 

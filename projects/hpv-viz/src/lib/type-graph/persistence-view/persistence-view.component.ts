@@ -21,10 +21,14 @@ export class PersistenceViewComponent implements OnChanges {
 
   // TAB-TOGGLE CODE (copy-pasta: start)
   public show: boolean;
-  public title: string = 'Persistence View';
+  public showInfo: boolean;
+  public title = 'Persistence View';
   public toggleShow(): void{
-    this.show = !this.show;
-  }
+      this.show = !this.show;
+   }
+   public toggleInfo(): void {
+      this.showInfo = !this.showInfo;
+   }
   // TAB-TOGGLE CODE (copy-pasta: end)
 
   constructor() {
