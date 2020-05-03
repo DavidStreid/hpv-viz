@@ -2,8 +2,15 @@
   <tab-toggle
     [title]="title"
     [show]="show"
-    (toggle)="toggleShow()"></tab-toggle>
+    (toggle)="toggleShow()"
+    (infoToggle)="toggleInfo()"></tab-toggle>
   <div *ngIf="show">
+    <div *ngIf="showInfo"
+         class="info-view">
+      <p> Average amount of time each type is present across all samples.
+          For each type detected in a sample across all time-points,
+          the persistence of that type for that sample is the date of the last recorded identification of that type for that sample minus the first occurrence.</p>
+    </div>
     <div class="table-container analysis-data-container">
       <table class="table-center">
         <thead>

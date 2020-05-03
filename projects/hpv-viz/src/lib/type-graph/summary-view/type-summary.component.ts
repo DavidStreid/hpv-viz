@@ -19,9 +19,13 @@ export class TypeSummaryComponent implements OnChanges {
 
   // TAB-TOGGLE CODE (copy-pasta: start)
   public show: boolean;
-  public title: string = 'Types Detected In Samples';
+  public showInfo: boolean;
+  public title = 'Types Detected In Samples';
   public toggleShow(): void{
     this.show = !this.show;
+  }
+  public toggleInfo(): void {
+    this.showInfo = !this.showInfo;
   }
   // TAB-TOGGLE CODE (copy-pasta: end)
 
