@@ -10,3 +10,11 @@ i {
   float: right;
   font-size: 48px;
 }
+.info {
+  float: none;
+  font-size: 20px;
+  margin-left: 10px;
+}
+.info:hover {
+  cursor: pointer;
+}

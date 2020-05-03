@@ -8,14 +8,20 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
          <tab-toggle
           [title]="title"
           [show]="show"
-          (toggle)="toggleShow()"></tab-toggle>
+          (toggle)="toggleShow()"
+          (infoToggle)="toggleInfo()"></tab-toggle>
  * 2) Wrap div to hide-show in a  *ngIf="show"
- * 3) Add to component
+ * 3) Wrap info div in *ngIf="showInfo"
+ * 4) Add to component
          // TAB-TOGGLE CODE (copy-pasta: start)
          public show: boolean;
+         public showInfo: boolean;
          public title: string = {YOUR_TITLE}
          public toggleShow(): void{
             this.show = !this.show;
+         }
+         public toggleInfo(): void {
+            this.showInfo = !this.showInfo;
          }
          // TAB-TOGGLE CODE (copy-pasta: end)
  */
@@ -31,11 +37,14 @@ export class TabToggleComponent {
   public show: boolean;
   @Output()
   public toggle: EventEmitter<void>;
+  @Output()
+  public infoToggle: EventEmitter<void>;
 
   constructor() {
     this.title = '';
     this.show = false;
     this.toggle = new EventEmitter<void>();
+    this.infoToggle = new EventEmitter<void>();
   }
 
   /**
@@ -43,5 +52,9 @@ export class TabToggleComponent {
    */
   sendToggle(): void {
     this.toggle.next();
+  }
+
+  toggleInfo(): void {
+    this.infoToggle.next();
   }
 }

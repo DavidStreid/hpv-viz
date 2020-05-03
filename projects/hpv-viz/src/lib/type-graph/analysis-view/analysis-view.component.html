@@ -2,14 +2,61 @@
   <tab-toggle
     [title]="title"
     [show]="show"
-    (toggle)="toggleShow()"></tab-toggle>
+    (toggle)="toggleShow()"
+    (infoToggle)="toggleInfo()"></tab-toggle>
   <div class="analysis-data-container"
        *ngIf="show">
+    <div *ngIf="showInfo"
+         class="info-view">
+      <p> The Odds Ratio measures the <a class="nice-link" target="_blank" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/">association between an exposure and an outcome</a>.
+          We apply the odds ratio to each pair of detected types to measure the association of co-infection of one type relative to infection of the other
+      </p>
+      <table class="table-center">
+        <tbody>
+          <tr>
+            <th rowspan="2">Type A Infection</th>
+            <th colspan="2">Type B Infection</th>
+          </tr>
+          <tr>
+            <td>+</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>+</td>
+            <td>a</td>
+            <td>b</td>
+          </tr>
+          <tr>
+            <td>-</td>
+            <td>c</td>
+            <td>d</td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <p>Where a, b, c, & d are counts of the infection status of the two HPV types of interest, we can calculate the odds ratio as,</p>
+        <p class="equation text-align-center">OR = ad/bc</p>
+        <p>If the product of b and c are 0, we perform a <a href="https://www.statsdirect.com/help/chi_square_tests/haldane_correction.htm" class="nice-link" target="_blank">Haldane-Anscombe correction</a> to the contingency table.</p>
+        <p>We calculate this ratio to determine which viral types/lineages are likely to be present together in an infection event and highlight potential similarities between the two.</p>
+      </div>
+    </div>
+    <div>
+      <form [formGroup]="oddsRatioFilterForm" novalidate>
+        <label class="inline-block">
+          <p>Currently showing odds ratios with maximum values greater than</p>
+        </label>
+        <input type="text" class="inline-block form-input" formControlName="oddsRatioFilter" (keyup)="onKey($event)" required>
+      </form>
+    </div>
     <table class="table-center">
       <thead>
       <tr>
         <th>Type One</th>
         <th>Type Two</th>
+        <th>+/+</th>
+        <th>+/-</th>
+        <th>-/+</th>
+        <th>-/-</th>
         <th>Odds Ratio</th>
       </tr>
       </thead>
@@ -17,6 +64,10 @@
       <tr *ngFor="let oddsRatio of oddsRatioList">
         <td>{{oddsRatio['type1']}}</td>
         <td>{{oddsRatio['type2']}}</td>
+        <td>{{oddsRatio['+/+']}}</td>
+        <td>{{oddsRatio['+/-']}}</td>
+        <td>{{oddsRatio['-/+']}}</td>
+        <td>{{oddsRatio['-/-']}}</td>
         <td>{{oddsRatio['oddsRatio']}}</td>
       </tr>
       </tbody>
