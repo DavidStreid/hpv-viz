@@ -2,7 +2,7 @@
   "name": "hpv-viz",
   "version": "0.0.1",
   "scripts": {
-    "clean": "rm -rf node_modules"
+    "clean": "rm -rf node_modules && npm install"
   },
   "peerDependencies": {
     "@angular/common": "^6.0.0-rc.0 || ^6.0.0",
