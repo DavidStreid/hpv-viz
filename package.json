@@ -4,12 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "clean": "rm -rf node_modules && rm package-lock.json",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "hpv-viz-test": "ng test hpv-viz --watch=false",
-    "hpv-viz": "npm install projects/hpv-viz && npm run hpv-viz-test && ng build hpv-viz"
+    "hpv-viz": "npm install projects/hpv-viz && npm run clean && npm install && npm run hpv-viz-test && ng build hpv-viz"
   },
   "private": true,
   "dependencies": {
