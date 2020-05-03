@@ -2,7 +2,7 @@
 export const P1_MOCK =
   `##fileformat=VCFv4.1
 ##fileDate=20110213
-##fileUTCtime=2011-02-13T10:38:12
+##fileUTCtime=2011-02-13T00:00:00
 ##source="MOCK"
 ##parametersName="MOCK"
 ##parametersDetails="MOCK"
