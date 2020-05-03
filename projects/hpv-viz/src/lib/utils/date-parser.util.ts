@@ -1,6 +1,14 @@
-import * as moment_ from 'moment';
-
-const moment = moment_;
+/**
+ * Question: Why not import "* as moment from moment""?
+ *
+ * Answer: This is a finicky import. After a moment update, this should work and not throw this
+ *  "hpv/projects/hpv-viz/node_modules/moment/moment"' has no default export." has no default export.
+ *  Apparently moment usually explodes a function, which would probably be done at runtime and not compile-time.
+ *  So just play around with this?
+ * Ref - https://stackoverflow.com/questions/35272832/systemjs-moment-is-not-a-function
+ */
+// @ts-ignore
+import moment from 'moment';
 
 export default class DateParserUtil {
   /**
