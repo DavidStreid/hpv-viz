@@ -1,5 +1,7 @@
 import {NgModule} from '@angular/core';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { ReactiveFormsModule }    from '@angular/forms';
+
 // COMPONENTS
 import {HpvVizComponent} from './hpv-viz.component';
 import {TypeGraphComponent} from './type-graph/type-graph.component';
@@ -49,6 +51,7 @@ const SERVICES = [DiagnosticSnpsService];
 @NgModule({
   imports: [
     NgxChartsModule,
+    ReactiveFormsModule,
     LOCAL_MODULES
   ],
   declarations: [HpvVizComponent, FileDropDirective, CHILD_COMPONENTS],

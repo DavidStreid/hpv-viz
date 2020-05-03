@@ -149,6 +149,22 @@ p {
   border-bottom: 1px solid #d9d9d9;
 }
 
+.info-view {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.nice-link {
+  color: #808080;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  font-style: italic;
+}
+.equation {
+  font: 1.3rem Inconsolata, monospace;
+}
+
 /* Toggle Option */
 .opt-container {
   width: 400px;

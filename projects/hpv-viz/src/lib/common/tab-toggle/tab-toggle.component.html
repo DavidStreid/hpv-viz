@@ -1,5 +1,7 @@
 <div>
   <p>{{title}}</p>
+    <i class="info fa fa-info-circle"
+       (click)="toggleInfo()"></i>
     <i [ngClass]="{
                     'fa': true,
                     'fa-angle-right' : !show,
