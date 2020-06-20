@@ -25,9 +25,9 @@ export class LoaderComponent implements OnInit {
   public status: string;          // Provides overall status of the loading
   public messages: Message[];     // Messages to show in the loader
   public close: Subject<any>;     // Subject that pushes events with each message
+  public numFiles;                // Number of uploaded files
   private INTERVAL = 500;         // Time in milliseconds w/o a message update before the loader @doneLoading message
   private CLOSE_INTERVAL = 500;   // Time in milliseconds before the loader automatically closes
-  public numFiles;                // Number of uploaded files
 
   constructor() {
     this.messages = [];
@@ -46,21 +46,7 @@ export class LoaderComponent implements OnInit {
     });
   }
 
-  /**
-   * Updates view on input message
-   * @param msg
-   */
-  private updateViewWithMessage(msg: Message): void {
-    if(msg.isType(MessageTypeEnum.NEW_FILE)){
-      // Update overall status and continue
-      this.numFiles += 1;
-      this.status = `Uploading ${this.numFiles} samples`;
-    }
-    this.messages.push(msg);
-    this.close.next();
-  }
-
-  ngOnInit(){
+  ngOnInit() {
     this.updater.subscribe(
       (msg) => {
         this.updateViewWithMessage(msg);
@@ -68,5 +54,19 @@ export class LoaderComponent implements OnInit {
       console.error,
       console.log
     );
+  }
+
+  /**
+   * Updates view on input message
+   * @param msg
+   */
+  private updateViewWithMessage(msg: Message): void {
+    if (msg.isType(MessageTypeEnum.NEW_FILE)) {
+      // Update overall status and continue
+      this.numFiles += 1;
+      this.status = `Uploading ${this.numFiles} samples`;
+    }
+    this.messages.push(msg);
+    this.close.next();
   }
 }

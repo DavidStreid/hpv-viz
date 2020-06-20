@@ -3,6 +3,7 @@ export const PLUS_PLUS = '+/+';
 export const PLUS_MINUS = '+/-';
 export const MINUS_PLUS = '-/+';
 export const MINUS_MINUS = '-/-';
+
 /**
  * Tracks all the types that have been observed
  */

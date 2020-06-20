@@ -15,6 +15,7 @@ export class Message {
   public getContent(): string {
     return this.content;
   }
+
   public isType(query: MessageTypeEnum): boolean {
     return query === this.type;
   }

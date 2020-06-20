@@ -4,10 +4,11 @@ import {By} from '@angular/platform-browser';
 import {FileDropDirective} from './file-drop.directive';
 
 @Component({
-  template: `<div
-                fileDrop
-                (filesDropped)='handleDrop($event)'
-                (filesHovered)='handleHover($event)'></div>`
+  template: `
+    <div
+      fileDrop
+      (filesDropped)='handleDrop($event)'
+      (filesHovered)='handleHover($event)'></div>`
 })
 class TestFileDropComponent {
   public handleDrop($event): void {

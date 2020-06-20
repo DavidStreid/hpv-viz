@@ -92,12 +92,15 @@ p {
 .none {
   display: none;
 }
+
 .padding-top-15px {
   padding-top: 15px;
 }
+
 .padding-left-5per {
   padding-left: 5%;
 }
+
 .padding-left-5 {
   padding-left: 5px;
 }
@@ -154,6 +157,7 @@ p {
   margin-left: auto;
   margin-right: auto;
 }
+
 .nice-link {
   color: #808080;
   font-weight: bold;
@@ -161,6 +165,7 @@ p {
   text-decoration: underline;
   font-style: italic;
 }
+
 .equation {
   font: 1.3rem Inconsolata, monospace;
 }
@@ -227,11 +232,13 @@ p {
 .app-button-selected {
   background-color: #e6e6e6;
 }
-.analysis-container{
+
+.analysis-container {
   padding: 15px 5px;
 }
+
 /* Where the data is contained */
-.analysis-data-container{
+.analysis-data-container {
   max-height: 500px;
   overflow-y: scroll;
 }

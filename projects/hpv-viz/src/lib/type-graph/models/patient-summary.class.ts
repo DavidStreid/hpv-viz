@@ -60,7 +60,7 @@ export class PatientSummary {
    * @param type
    */
   public getTypeDuration(type: string): number {
-    if(this.types.has(type)){
+    if (this.types.has(type)) {
       return this.types.get(type).getDuration();
     }
     return null;

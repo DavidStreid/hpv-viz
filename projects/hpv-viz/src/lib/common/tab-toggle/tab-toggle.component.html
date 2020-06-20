@@ -1,13 +1,13 @@
 <div>
   <p>{{title}}</p>
-    <i class="info fa fa-info-circle"
-       (click)="toggleInfo()"></i>
-    <i [ngClass]="{
+  <i (click)="toggleInfo()"
+     class="info fa fa-info-circle"></i>
+  <i (click)="sendToggle()"
+     [ngClass]="{
                     'hover': true,
                     'fa': true,
                     'fa-angle-right' : !show,
                     'fa-angle-down' : show
       }"
-      (click)="sendToggle()"
-    ></i>
+  ></i>
 </div>

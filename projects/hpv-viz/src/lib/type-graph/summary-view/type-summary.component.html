@@ -1,11 +1,11 @@
 <div class="analysis-container">
   <tab-toggle
-    [title]="title"
-    [show]="show"
+    (infoToggle)="toggleInfo()"
     (toggle)="toggleShow()"
-    (infoToggle)="toggleInfo()"></tab-toggle>
-  <div class="analysis-data-container"
-       *ngIf="show">
+    [show]="show"
+    [title]="title"></tab-toggle>
+  <div *ngIf="show"
+       class="analysis-data-container">
     <div *ngIf="showInfo"
          class="info-view">
       <p> Summary of all types detected across all time points for each sample.</p>

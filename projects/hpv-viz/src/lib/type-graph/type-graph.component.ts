@@ -169,7 +169,7 @@ export class TypeGraphComponent implements OnInit {
     const lineages: string[] = this.getLineageList(dataPoint);
     if (lineages.length > 0) {
       this.updateTypeToggles(lineages, name);
-      for(const lineage of lineages){
+      for (const lineage of lineages) {
         types.push(lineage);
       }
     }
@@ -481,7 +481,9 @@ export class TypeGraphComponent implements OnInit {
    */
   private hasFileBeenUploaded(patientName: string, metaData: object): boolean {
     // If a new patient is being uploaded, the file is new
-    if (!this.vcfFileMap.has(patientName)) return false;
+    if (!this.vcfFileMap.has(patientName)) {
+      return false;
+    }
     const metaDataList: Object[] = this.vcfFileMap.get(patientName);
     for (const entry of metaDataList) {
       if (_.isEqual(entry, metaData)) {

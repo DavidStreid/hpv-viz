@@ -5,16 +5,19 @@ p {
   font-size: 20px;
   font-weight: bold;
 }
+
 i {
   display: inline-block;
   float: right;
   font-size: 48px;
 }
+
 .info {
   float: none;
   font-size: 20px;
   margin-left: 10px;
 }
+
 .info:hover {
   cursor: pointer;
 }

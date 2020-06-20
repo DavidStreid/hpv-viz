@@ -23,7 +23,7 @@ export class DiagnosticSnpsService {
   public getDetectedLineageFromVariant(variant: string, pos: string): string {
     const key = this.getKey(pos, variant);
     const lineage = this.snpMap.get(key);  // Should return null if lineage isn't detected
-    if(lineage){
+    if (lineage) {
       return lineage;
     }
     return null;    // Map.get will return undefined
@@ -44,14 +44,14 @@ export class DiagnosticSnpsService {
    * @param inputSnps
    */
   private addSNPsListToMap(inputSnps: Object[]): void {
-    for(const entry of inputSnps){
+    for (const entry of inputSnps) {
       const pos: string = entry[VCF_POS];
       const variant: string = entry[VCF_ALT];
       const chrom: string = entry[VCF_CHROM];
 
-      if(pos && variant && chrom){
+      if (pos && variant && chrom) {
         const key = this.getKey(pos, variant);
-        if(this.snpMap.has(key)){
+        if (this.snpMap.has(key)) {
           console.error(`Overwriting entry for ${key}: ${this.snpMap.get(key)}`);
         }
         this.snpMap.set(key, chrom);

@@ -1,9 +1,9 @@
 <div class="fill-width fill-height">
   <!-- All Modals go here. Need to add conditional to ngClass tag to show. TODO: One modal -->
   <div [ngClass]="(isLoading || selectedVariant.length !== 0) ? 'modal-container' : ''">
-    <loader [updater]="loaderUpdater"
+    <loader (doneLoading)="showDataViewer()"
             [show]="isLoading"
-            (doneLoading)="showDataViewer()"></loader>
+            [updater]="loaderUpdater"></loader>
     <table-modal (closeModal)="closeModal($event)"
                  [data]="selectedVariant"
                  [headers]="headers"
@@ -14,10 +14,10 @@
     <app-file-upload (vcfUpload)="addVcfUpload($event)"></app-file-upload>
   </div>
   <div class="fill-width fill-height">
-    <div [style.height]="height"
+    <div *ngIf="!isLoading"
+         [style.height]="height"
          [style.width]="typeGraphContainerWidth"
-         class="type-graph-container"
-         *ngIf="!isLoading">
+         class="type-graph-container">
       <div [style.height]="height"
            [style.width]="width"
            class="ngx-container margin-hor-auto inline-block">
@@ -100,6 +100,12 @@
       </div>
       <div *ngIf="patientToggles.size > 0"
            class="selectors-container fill-width padding-top-15px vertical-align-top">
+        <vcf-file-info
+          [patientToggles]="patientToggles"
+          [vcfFileMap]="vcfFileMap"></vcf-file-info>
+      </div>
+      <div *ngIf="patientToggles.size > 0"
+           class="selectors-container fill-width padding-top-15px vertical-align-top">
         <analysis-view
           [oddsRatio]="oddsRatio">
         </analysis-view>
@@ -114,12 +120,6 @@
         <type-summary
           [typesMap]="typeToggles">
         </type-summary>
-      </div>
-      <div *ngIf="patientToggles.size > 0"
-           class="selectors-container fill-width padding-top-15px vertical-align-top">
-        <vcf-file-info
-          [patientToggles]="patientToggles"
-          [vcfFileMap]="vcfFileMap"></vcf-file-info>
       </div>
     </div>
   </div>

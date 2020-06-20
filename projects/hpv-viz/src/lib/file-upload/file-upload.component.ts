@@ -77,7 +77,7 @@ export class FileUploadComponent implements OnInit {
   private getDate(result: any, fileName: string): Date {
     let date = this.dateParserUtil.getDateFromFileName(fileName);
     // Check for an invalid date
-    if (!date || isNaN(date.getTime())){
+    if (!date || isNaN(date.getTime())) {
       date = vcfParserService.extractDate(result);
     }
     if (!date) {

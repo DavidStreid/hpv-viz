@@ -50,7 +50,7 @@ export class VcfMap {
 
   /**
    * Returns the number of recorded variants on a certain date
-   * 
+   *
    * @param k
    * @param date
    */

@@ -6,7 +6,7 @@ describe('Diagnostic SNPs Service', () => {
   let service: DiagnosticSnpsService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [DiagnosticSnpsService] });
+    TestBed.configureTestingModule({providers: [DiagnosticSnpsService]});
   });
 
   it('Returns lineage if detected from SNP info', () => {

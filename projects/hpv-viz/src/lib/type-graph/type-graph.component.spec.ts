@@ -6,8 +6,7 @@ import {NO_ERRORS_SCHEMA} from '@angular/core';
 import {INIT_DATA_POINTS, INIT_DATA_POINTS_EVENTS, YEAR_TRANSFORM_DATES} from '../../test/mock-data/mock-viz';
 import {TEST_FILES} from '../../test/mock-data/vcf-files';
 import {Toggle} from './models/toggle.class';
-import {By} from '@angular/platform-browser';
-import {DiagnosticSnpsService} from "../services/diagnostic-snps-service";
+import {DiagnosticSnpsService} from '../services/diagnostic-snps-service';
 
 describe('TypeGraphComponent', () => {
   let component: TypeGraphComponent;

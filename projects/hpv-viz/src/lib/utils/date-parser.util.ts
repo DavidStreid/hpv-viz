@@ -67,29 +67,29 @@ export default class DateParserUtil {
 
     // Try to parse date from the string
     let date = new Date(dateString);
-    if(this.isValidDate(date)){
+    if (this.isValidDate(date)) {
       // Valid date - return
       return date;
     }
 
     // Try to parse out date w/ different formats
     date = this.tryDateFormats(dateString);
-    if(this.isValidDate(date)){
+    if (this.isValidDate(date)) {
       return date;
     }
 
     // Handle special cases
     // TODO - Write tests
-    if(dateString && dateString.length === 7){
+    if (dateString && dateString.length === 7) {
       // TRY: 1) 3111999 -> 03111999, 2) 1999311 -> 19990311, 3) 1999113 -> 19991103
       const appendedStrings = [`0${dateString}`,
         `${dateString.slice(0, 4)}0${dateString.slice(4, 7)}`,
         `${dateString.slice(0, 6)}0${dateString.slice(6, 7)}`
       ];
 
-      for(const formatted of appendedStrings){
+      for (const formatted of appendedStrings) {
         date = this.tryDateFormats(formatted);
-        if(this.isValidDate(date)){
+        if (this.isValidDate(date)) {
           // console.log(`SUCCESS - special-case date extraction for ${dateString}: ${date}`);
           return date;
         }
@@ -115,7 +115,7 @@ export default class DateParserUtil {
     let date;
     // Try the following formats to extract a date value
     const dateFormats = ['MMDDYYYY', 'YYYYMMDD'];
-    for(const dateFormat of dateFormats){
+    for (const dateFormat of dateFormats) {
       date = this.getDateMoment(dateString, dateFormat);
       if (!isNaN(date.getTime())) {
         // Valid date - return

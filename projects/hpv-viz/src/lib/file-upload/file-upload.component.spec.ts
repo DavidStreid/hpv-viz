@@ -77,26 +77,26 @@ describe('FileUploadComponent', () => {
   });
 
 
-  function checkFileName(fileName: string, expected: string, done):  void {
+  function checkFileName(fileName: string, expected: string, done): void {
     const f = new File([''], fileName);
-  const contents = '';
-  const blob = new Blob([contents], {type: 'application/json'});
-  blob['name'] = fileName;
-  const file = <File>blob;
+    const contents = '';
+    const blob = new Blob([contents], {type: 'application/json'});
+    blob['name'] = fileName;
+    const file = <File>blob;
 
-  const fileList = {
-    0: file,
-    length: 1,
-    item: (index: number) => file
-  };
+    const fileList = {
+      0: file,
+      length: 1,
+      item: (index: number) => file
+    };
 
-  // Subscribe to emitted event and test output
-  component.vcfUpload.subscribe($event => {
-    expect($event.name).toEqual(expected);
-    done();
-  });
-  component.handleDrop(fileList);
-}
+    // Subscribe to emitted event and test output
+    component.vcfUpload.subscribe($event => {
+      expect($event.name).toEqual(expected);
+      done();
+    });
+    component.handleDrop(fileList);
+  }
 
   // TODO - Wanted to do all name tests in same method - figure out async/await
   it('fileName is parsed from the file name correctly - P1.ann.vcf', (done) => {
