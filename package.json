@@ -5,13 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "clean": "rm -rf node_modules && cd ./projects/hpv-viz && npm run clean && cd -",
-    "install": "npm install && npm install projects/hpv-viz",
-    "build": "ng build",
+    "build": "npm run clean && npm install && npm install projects/hpv-viz && npm run hpv-viz-test && ng build hpv-viz",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "hpv-viz-test": "ng test hpv-viz --watch=false",
-    "hpv-viz": "npm run clean && npm run install && npm run hpv-viz-test && ng build hpv-viz"
+    "hpv-viz-test": "ng test hpv-viz --watch=false"
   },
   "private": true,
   "dependencies": {
