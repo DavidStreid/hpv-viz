@@ -28,6 +28,7 @@ export class PersistenceViewComponent implements OnChanges {
    }
    public toggleInfo(): void {
       this.showInfo = !this.showInfo;
+      this.show = this.showInfo;
    }
   // TAB-TOGGLE CODE (copy-pasta: end)
 
@@ -35,6 +36,7 @@ export class PersistenceViewComponent implements OnChanges {
     this.headers = [];
     this.body = [];
     this.show = true;
+    this.showInfo = false;
   }
 
   /**

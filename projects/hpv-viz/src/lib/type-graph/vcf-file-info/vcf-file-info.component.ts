@@ -20,10 +20,12 @@ export class VcfFileInfoComponent {
   }
   public toggleInfo(): void {
     this.showInfo = !this.showInfo;
+    this.show = this.showInfo;
   }
   // TAB-TOGGLE CODE (copy-pasta: end)
 
   constructor() {
-    this.show = true;
+    this.show = false;
+    this.showInfo = false;
   }
 }

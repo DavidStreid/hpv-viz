@@ -22,6 +22,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
          }
          public toggleInfo(): void {
             this.showInfo = !this.showInfo;
+            this.show = this.showInfo;
          }
          // TAB-TOGGLE CODE (copy-pasta: end)
  */

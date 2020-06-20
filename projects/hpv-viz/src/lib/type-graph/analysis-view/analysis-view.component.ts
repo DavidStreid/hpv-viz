@@ -25,6 +25,7 @@ export class AnalysisViewComponent implements OnChanges {
   }
   public toggleInfo(): void {
     this.showInfo = !this.showInfo;
+    this.show = this.showInfo;
   }
   // TAB-TOGGLE CODE (copy-pasta: end)
 
@@ -67,7 +68,7 @@ export class AnalysisViewComponent implements OnChanges {
 
   /**
    * Modular filtering on the component's oddsRatioMap that's added by the user
-   * 
+   *
    * @param oddsRatioMap
    */
   createOddsRatioList(oddsRatioMap): Object[] {

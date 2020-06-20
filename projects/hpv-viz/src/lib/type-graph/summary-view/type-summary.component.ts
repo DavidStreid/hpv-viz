@@ -26,6 +26,7 @@ export class TypeSummaryComponent implements OnChanges {
   }
   public toggleInfo(): void {
     this.showInfo = !this.showInfo;
+    this.show = this.showInfo;
   }
   // TAB-TOGGLE CODE (copy-pasta: end)
 
@@ -34,6 +35,7 @@ export class TypeSummaryComponent implements OnChanges {
     this.types = new Set();
     this.samples = new Set();
     this.show = true;
+    this.showInfo = false;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
