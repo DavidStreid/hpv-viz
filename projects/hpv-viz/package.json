@@ -9,7 +9,7 @@
     "@angular/core": "^6.0.0-rc.0 || ^6.0.0"
   },
   "dependencies": {
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "moment": "^2.25.1",
     "variant-call-format-parser": "^1.0.2"
   }
