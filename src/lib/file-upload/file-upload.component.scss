@@ -1,0 +1,18 @@
+@import '../../styles';
+
+.active {
+  border-color: #039be5 !important;
+  background-color: #cce2ff !important;
+  color: #ffffff !important;
+}
+
+.upload-prompt {
+  text-align: vertical;
+}
+
+.drop-container {
+  border-color: gray;
+  border-style: dotted;
+  background-color: #ffffff;
+  border-radius: 15px;
+}

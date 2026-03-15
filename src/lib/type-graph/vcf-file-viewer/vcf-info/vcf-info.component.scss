@@ -1,0 +1,36 @@
+@import '../../../../styles.scss';
+
+.code {
+  width: inherit;
+  margin: auto;
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+}
+
+.command-header {
+  background-color: #b3b3b3;
+  border: 1px solid black;
+  display: inline-block
+}
+
+.command-header-tab:not(:last-child) {
+  border-right: 1px solid black;
+}
+
+.command-header-tab {
+  display: inline-block;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.command-header-tab p {
+  color: white;
+}
+
+.code p {
+  word-wrap: break-word;
+  white-space: normal;
+  font-family: calibri;
+}

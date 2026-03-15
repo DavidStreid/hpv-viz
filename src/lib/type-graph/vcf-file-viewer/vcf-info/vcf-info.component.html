@@ -1,0 +1,27 @@
+<div>
+  <div>
+    <div class="command-header">
+      <div (click)="model.setSelectedCommand(commands.key)"
+           *ngFor="let commands of model.getCommands() | keyvalue"
+           class="command-header-tab hover">
+        <p>{{commands.key}}</p>
+      </div>
+    </div>
+    <div *ngFor="let commands of model.getCommands() | keyvalue">
+      <div *ngIf="model.isSelectedCommand(commands.key)"
+           class="code">
+        <p>$ {{commands.value}}</p>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div>
+      <p class="inline-block bold">Date Created: </p>
+      <p class="inline-block padding-left-5">{{model.getFileCreationDate()}}</p>
+    </div>
+    <div>
+      <p class="inline-block bold">Sample Date: </p>
+      <p class="inline-block padding-left-5">{{model.getSampleDate()}}</p>
+    </div>
+  </div>
+</div>
