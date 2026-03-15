@@ -1,0 +1,34 @@
+<div class="analysis-container">
+  <tab-toggle
+    (infoToggle)="toggleInfo()"
+    (toggle)="toggleShow()"
+    [show]="show"
+    [title]="title"></tab-toggle>
+  <div *ngIf="show"
+       class="margin-left-5per info-content-container height-inherit">
+    <div *ngIf="showInfo"
+         class="info-view">
+      <p>
+        Shows metadata that could be extracted from the uploaded VCF file for the currently selected patient.
+        Each VCF upload is represented on the left.
+        Currently the <a class="bold">Date Created</a>, <a class="bold">Sample Date</a> (date identified from the
+        uploaded sample name), and any bcftools command (e.g. mpileup/call) used to produce genotype likelihoods or make
+        variant calls.
+      </p>
+    </div>
+    <div class="block height-inherit">
+      <div class="inline-block opt-container height-inherit">
+        <div class="selector flex-center inherit-width height-inherit">
+          <div *ngFor="let patient of patientToggles | keyvalue"
+               [class.none]="!patient.value.isSelected()"
+               class="block patient-opt fill-width height-inherit">
+            <div *ngIf="patient.value.isSelected()"
+                 class="inline-block inherit-width height-inherit">
+              <VcfFileViewer [vcfFileInfo]="vcfFileMap.get(patient.key)"></VcfFileViewer>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

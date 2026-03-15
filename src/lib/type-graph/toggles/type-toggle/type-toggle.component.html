@@ -1,0 +1,28 @@
+<div class="selectors-container fill-width padding-top-15px vertical-align-top">
+  <div>
+    <p class="font-20px">Vcf Type</p>
+    <div class="margin-left-5per">
+      <div class="block">
+        <div class="inline-block opt-container">
+          <div class="selector flex-center">
+            <div class="selector flex-center">
+              <div>
+                <div *ngFor="let val of values" class="inline-block patient-opt">
+                  <div class="inline-block">
+                    <div (click)="toggle(val)"
+                         [class.app-button-selected]="typeMap.get(val).isSelected()"
+                         class="app-button patient-button vert-align-parent margin-right-15px">
+                      <div class="vert-align-child">
+                        <p>{{val}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
