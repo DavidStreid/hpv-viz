@@ -1,9 +1,0 @@
-<div [style.display]="show ? 'block' : 'none'"
-     class="loader-terminal fill-height">
-  <div>
-    <div>
-      <p>{{status}}</p>
-      <p *ngFor="let msg of messages.reverse()">{{msg.getContent()}}</p>
-    </div>
-  </div>
-</div>
