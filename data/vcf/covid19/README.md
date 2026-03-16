@@ -1,10 +1,12 @@
 # Covid-19 VCF generation
 
 ## Data
-[National Genomics Data Center (NGDC)](https://bigd.big.ac.cn/ncov) of China has made the FASTQ files to the COVID-19 Genome publicly available. The FTP link is available here - ftp://download.big.ac.cn/Genome/Viruses/Coronaviridae/genome/
+[National Genomics Data Center (NGDC)](https://bigd.big.ac.cn/ncov) of China has made the FASTQ files to the COVID-19 Genome publicly available. The original FTP link is - ftp://download.big.ac.cn/Genome/Viruses/Coronaviridae/genome/ (may be inaccessible).
+
+Sequences are also available directly from NCBI using the accession numbers below.
 
 ## Methods
-Indexing - We choose all coding region (CDS) FASTAs to index our downloaded FASTA files 
+Indexing - We choose all coding region (CDS) FASTAs to index our downloaded FASTA files
 
 Note - Variants can also be called using specific complete genome FASTA records
 
@@ -20,13 +22,37 @@ Note - Variants can also be called using specific complete genome FASTA records
 ### Dependencies
 * samtools
 * bwa
+* bcftools
+* curl
 
-1. Align downloaded FASTAs and create BAM files. This will write the BWA MEM indexing directory, `./covid19_idx`, and BAM directory, `./covid19_bams`. 
-   ```
-   $ DOWNLOAD_DIR={REPLACE: Where FASTAs were downloaded to}
-   $ ./fastaToBAM.sh $DOWNLOAD_DIR
-   ```
+---
 
-2. BAM -> VCF
+### Step 0 — Download the genome sequences
 
-    Run [Viral Profiler](https://github.com/DavidStreid/viral-profiler) w/ BAM output directory
+Fetches the complete genome and coding region (CDS) sequences for each sample from NCBI and saves them into `./covid19_downloads/`. Each accession gets two files: a full genome FASTA and a CDS-only FASTA.
+
+```
+$ ./download_fastas.sh
+```
+
+---
+
+### Step 1 — Align genomes and produce BAM files
+
+Builds a BWA index from the CDS sequences so alignments focus on coding regions, then aligns each complete genome against that index. Outputs sorted alignment files (BAMs) to `./covid19_bams/`. Any BAMs that fail validation are automatically removed.
+
+```
+$ ./fastaToBAM.sh ./covid19_downloads
+```
+
+---
+
+### Step 2 — Call variants and produce VCF files
+
+**Option A — Viral Profiler**: Run [Viral Profiler](https://github.com/DavidStreid/viral-profiler) pointing at the `./covid19_bams/` output directory.
+
+**Option B — bcftools**: Uses the Wuhan reference genome (NC_045512) as the baseline. Re-aligns each genome to that reference, then compares each sequence position-by-position to identify SNPs. Outputs one VCF per sample to `./covid19_vcfs/`.
+
+```
+$ ./bamToVCF.sh
+```
