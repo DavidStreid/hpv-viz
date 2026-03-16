@@ -19,13 +19,13 @@ echo "Creating BWA index of CDS FASTA files: ${IDX_DIR}"
 mkdir -p $IDX_DIR && touch $IDX_FA
 for FASTA in ${FASTA_DIR}/*cds*; do
    is_human_gene=$(head -1 $FASTA | grep -i "gene" | grep -i "human")
-   if [[ ${is_human_gene}  ]]; then
+   if [[ -z "${is_human_gene}" ]]; then
       cat $FASTA >> ${IDX_FA}
    fi
 done
 bwa index $IDX_FA
 
-echo "Creating BWA index of CDS FASTA files: ${IDX_DIR}"
+echo "Aligning genome FASTAs to CDS index: ${BAM_DIR}"
 mkdir -p $BAM_DIR
 
 # Add log files
@@ -33,8 +33,8 @@ mkdir -p $LOG_DIR
 LOG=${LOG_DIR}/alignment.log
 ERR=${LOG_DIR}/bad_bams.log
 
-# Create BAMs
-for FASTA in ${FASTA_DIR}/*.fasta; do
+# Create BAMs (genome FASTAs only, not CDS)
+for FASTA in ${FASTA_DIR}/*.genome.fasta; do
    FILE_NAME=$(basename $FASTA)
    SAMPLE=$( cut -d '.' -f 1 <<< "${FILE_NAME}" )
    SAM_FILE=${BAM_DIR}/${SAMPLE}.aln.sam
